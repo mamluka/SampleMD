@@ -1,0 +1,12 @@
+#Mon Dec 12 23:22:48 IST 2011
+eclipse.preferences.version=1
+environment/buildEnvironmentInclude/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/CPATH/delimiter=;
+environment/buildEnvironmentInclude/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/CPATH/operation=remove
+environment/buildEnvironmentInclude/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/C_INCLUDE_PATH/delimiter=;
+environment/buildEnvironmentInclude/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/C_INCLUDE_PATH/operation=remove
+environment/buildEnvironmentInclude/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/append=true
+environment/buildEnvironmentInclude/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/appendContributed=true
+environment/buildEnvironmentLibrary/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/LIBRARY_PATH/delimiter=;
+environment/buildEnvironmentLibrary/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/LIBRARY_PATH/operation=remove
+environment/buildEnvironmentLibrary/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/append=true
+environment/buildEnvironmentLibrary/photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198/appendContributed=true

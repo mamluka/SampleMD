@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdconfig>
+<dim>3</dim>
+<timestep>0.002<timestep>
+</mdconfig>
