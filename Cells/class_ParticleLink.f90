@@ -7,7 +7,7 @@ module class_ParticleLink
   public :: Link
   type Link
      private
-     class(Particle), pointer :: value => null() ! value stored in Link
+     class(*), pointer :: value => null() ! value stored in Link
      type(Link), pointer :: next => null()! next Link in list
      contains
      procedure :: Value    ! return value pointer
@@ -15,7 +15,7 @@ module class_ParticleLink
      procedure :: SetNextLink ! set next pointer
   end type Link
 
-  interface Create
+  interface Link
    procedure constructor ! construct/initialize a Link
   end interface
 

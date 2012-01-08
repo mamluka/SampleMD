@@ -7,7 +7,7 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198" moduleId="org.eclipse.cdt.core.settings" name="Debug">
 				<externalSettings/>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.photran.core.GFortranErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -15,31 +15,33 @@
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.photran.core.intel.IntelCompilerErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 				<configuration artifactName="${ProjName}" buildProperties="" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.photran.core.GFortranErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198" name="Debug" parent="photran.managedbuild.config.gnu.fortran.win32.exe.debug">
 					<folderInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198." name="/" resourcePath="">
-						<toolChain id="photran.managedbuild.toolchain.gnu.fortran.win32.exe.debug.1592064624" name="GCC Fortran" superClass="photran.managedbuild.toolchain.gnu.fortran.win32.exe.debug">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="photran.managedbuild.target.gnu.platform.win32.exe.debug.1195241824" name="Debug Platform" osList="win32" superClass="photran.managedbuild.target.gnu.platform.win32.exe.debug"/>
-							<builder buildPath="${workspace_loc:/SampleMD/Debug}" id="photran.managedbuild.target.gnu.builder.win32.exe.debug.1806339396" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="photran.managedbuild.target.gnu.builder.win32.exe.debug"/>
-							<tool id="photran.managedbuild.tool.gnu.c.compiler.win32.exe.debug.753412459" name="GCC C Compiler" superClass="photran.managedbuild.tool.gnu.c.compiler.win32.exe.debug">
-								<option id="gnu.c.compiler.option.preprocessor.def.symbols.761069271" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols"/>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.496311940" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+						<toolChain id="photran.managedbuild.toolchain.intel.fortran.x86.base.977839228" name="Intel(R) Fortran Toolchain on IA-32" superClass="photran.managedbuild.toolchain.intel.fortran.x86.base">
+							<targetPlatform archList="x86" binaryParser="org.eclipse.cdt.core.ELF" id="photran.managedbuild.target.intel.platform.x86.base.412720827" name="IA-32 Platform" osList="linux" superClass="photran.managedbuild.target.intel.platform.x86.base"/>
+							<builder buildPath="${workspace_loc:/SampleMD/Debug}" id="photran.managedbuild.target.intel.builder.x86.base.1064724885" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="photran.managedbuild.target.intel.builder.x86.base"/>
+							<tool id="photran.managedbuild.tool.intel.gnu.c.compiler.x86.base.333366081" name="GCC C Compiler" superClass="photran.managedbuild.tool.intel.gnu.c.compiler.x86.base">
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.43384458" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
-							<tool id="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1202551565" name="GNU Fortran Compiler" superClass="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug">
-								<option id="gnu.fortran.compiler.option.misc.other.137270958" name="Other flags" superClass="gnu.fortran.compiler.option.misc.other" value="-c -fmessage-length=0 -x f95-cpp-input" valueType="string"/>
-								<inputType id="photran.managedbuild.tool.gnu.fortran.compiler.input.544361168" superClass="photran.managedbuild.tool.gnu.fortran.compiler.input"/>
+							<tool id="photran.managedbuild.tool.intel.fortran.compiler.x86.base.28122432" name="Intel(R) IA-32 Fortran Compiler" superClass="photran.managedbuild.tool.intel.fortran.compiler.x86.base">
+								<option id="intel.linux.fortran.compiler.preprocessor.fpp.407704826" name="Preprocess Source File (-fpp)" superClass="intel.linux.fortran.compiler.preprocessor.fpp" value="true" valueType="boolean"/>
+								<option id="intel.linux.fortran.compiler.lang.fixedlen.781506637" name="Fixed Form Line Length" superClass="intel.linux.fortran.compiler.lang.fixedlen" value="intel.lang.132" valueType="enumerated"/>
+								<inputType id="photran.managedbuild.tool.intel.fortran.compiler.input.1101937056" superClass="photran.managedbuild.tool.intel.fortran.compiler.input"/>
 							</tool>
-							<tool id="photran.managedbuild.tool.gnu.fortran.linker.win32.exe.debug.437261793" name="GNU Fortran Linker" superClass="photran.managedbuild.tool.gnu.fortran.linker.win32.exe.debug">
-								<inputType id="photran.managedbuild.tool.gnu.fortran.linker.input.240278466" superClass="photran.managedbuild.tool.gnu.fortran.linker.input">
+							<tool id="photran.managedbuild.tool.intel.fortran.linker.x86.base.1316158385" name="Intel(R) Fortran Linker" superClass="photran.managedbuild.tool.intel.fortran.linker.x86.base">
+								<inputType id="photran.managedbuild.tool.intel.fortran.linker.input.358023085" superClass="photran.managedbuild.tool.intel.fortran.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
 							</tool>
-							<tool id="photran.managedbuild.tool.gnu.assembler.win32.exe.debug.1088965127" name="GCC Assembler" superClass="photran.managedbuild.tool.gnu.assembler.win32.exe.debug">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.987180580" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							<tool id="photran.managedbuild.tool.intel.gnu.assembler.x86.base.1211389559" name="GCC Assembler" superClass="photran.managedbuild.tool.intel.gnu.assembler.x86.base">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2133783113" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
+							<tool id="photran.managedbuild.tool.intel.fortran.archiver.x86.base.1898084184" name="Archiver" superClass="photran.managedbuild.tool.intel.fortran.archiver.x86.base"/>
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198.1489467834" name="mdconfig.xml" rcbsApplicability="disable" resourcePath="mdconfig.xml" toolsToInvoke="">
@@ -50,8 +52,11 @@
 							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.2068208786" name="Resource Custom Build Step Output Type"/>
 						</tool>
 					</fileInfo>
+					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198.2087311895" name="list_mod.f90" rcbsApplicability="disable" resourcePath="Cells/list_mod.f90" toolsToInvoke="photran.managedbuild.tool.intel.fortran.compiler.x86.base.28122432.1983692872">
+						<tool id="photran.managedbuild.tool.intel.fortran.compiler.x86.base.28122432.1983692872" name="Intel(R) IA-32 Fortran Compiler" superClass="photran.managedbuild.tool.intel.fortran.compiler.x86.base.28122432"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Cells/list_mod.f90|Cells/class_AbstractLinkedList.f90|Cells/class_ParticleLink.f90|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
