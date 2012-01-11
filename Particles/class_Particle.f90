@@ -2,7 +2,7 @@ module class_Particle
     implicit none
     private
 
-    public :: Particle
+    public :: Particle,AllocateParticleWithPosition,AllocateParticle
 
     type Particle
         real ,allocatable  :: Velocity(:)
@@ -27,20 +27,22 @@ module class_Particle
     end function
 
     function AllocateParticleWithPosition(x,y,z) result (p)
-        type(Particle) ::  p
+        type(Particle) :: p
+        real :: x,y,z
         p = AllocateParticle()
         call p%SetPosition(x,y,z)
     end function
 
     subroutine SetPosition(this,x,y,z)
-        type(Particle) :: this
-        if (.not. allocated(p%Position)
-            allocate(p%Position(3))
+        class(Particle) :: this
+        real :: x,y,z
+        if (.not. allocated(this%Position)) then
+            allocate(this%Position(3))
         end if
 
-        p%Position(1) = x
-        p%Position(2) = y
-        p%Position(3) = z
+        this%Position(1) = x
+        this%Position(2) = y
+        this%Position(3) = z
 
     end subroutine
 

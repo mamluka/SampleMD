@@ -14,12 +14,15 @@ program SampleMD
     character :: type
     real :: x,y,z
     integer :: inputStatus
+    type(Particle),allocatable :: pArray(:)
     !   configurations=LoadSimulationConfigurations("mdconfig.xml")
 
     !    print *,configurations%Dimension,configurations%TimeStep
 
 
+    pArray = dl%LoadParticlesIntoAnArray("data.xyz")
 
+    print *,pArray(8)%Position(2)
 
 
 

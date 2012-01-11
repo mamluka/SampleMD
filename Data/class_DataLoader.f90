@@ -14,25 +14,27 @@ contains
         integer :: inputStatus
         character :: type
         real :: x,y,z
-        integer :: totalNumberOfAtoms
+        integer :: totalNumberOfAtoms,atomCounter
         type (Particle),allocatable :: pArray(:)
 
 
 
-        open(unit=99,file = "data.xyz",status='old',iostat = inputStatus )
+
+        open(unit=99,file = filename,status='old',iostat = inputStatus )
         read(99,*),totalNumberOfAtoms
 
         allocate (pArray(totalNumberOfAtoms))
+        atomCounter = 1
+        do atomCounter = 1,totalNumberOfAtoms
 
-        do
             if (inputStatus /= 0) exit
             read (99,*),type,x,y,z
-
+            pArray(atomCounter) = AllocateParticleWithPosition(x,y,z)
 
         end do
         close(99)
 
-
+        print *,size(pArray)
 
 
     end function
