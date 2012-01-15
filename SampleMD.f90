@@ -2,7 +2,8 @@ program SampleMD
     use class_ConfigurationManager
     use class_ParticleLinkedList
     use class_Particle
-    use class_DataLoader
+    use class_DataFileReader
+    use lib_GridAlgorithms
     use iso_fortran_env
     implicit none
 
@@ -10,19 +11,27 @@ program SampleMD
     type (ParticleLinkedList) :: list
     class (Particle) ,pointer :: p
     type (Particle) , target :: atom
-    type (DataLoader) :: dl
+    type (DataFileReader) :: dataReader
     character :: type
     real :: x,y,z
     integer :: inputStatus
-    type(Particle),allocatable :: pArray(:)
+    type(Particle),allocatable :: particles(:)
+    real :: box(8,3)
+    integer :: i
+
     !   configurations=LoadSimulationConfigurations("mdconfig.xml")
 
     !    print *,configurations%Dimension,configurations%TimeStep
 
+    call dataReader%LoadParticlesIntoAnArray("data.xyz",particles)
 
-    pArray = dl%LoadParticlesIntoAnArray("data.xyz")
+    box = DetermineSimulationBoxCoordinates(particles)
 
-    print *,pArray(8)%Position(2)
+    do  i=1,8
+        print *,box(i,:)
+    end do
+
+
 
 
 

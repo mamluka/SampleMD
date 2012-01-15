@@ -1,42 +1,40 @@
-module class_DataLoader
+module class_DataFileReader
     use class_Particle
     implicit none
-    public :: DataLoader
+    public :: DataFileReader
 
-    type DataLoader
+    type DataFileReader
+        integer :: TotalNumberOfAtoms
     contains
         procedure,nopass :: LoadParticlesIntoAnArray
-    end type DataLoader
+    end type DataFileReader
+
 contains
 
-    function LoadParticlesIntoAnArray(filename) result (pArray)
+    subroutine LoadParticlesIntoAnArray(filename,particles)
+        type(Particle),allocatable :: particles(:)
         character (len=*) :: filename
+
         integer :: inputStatus
         character :: type
         real :: x,y,z
         integer :: totalNumberOfAtoms,atomCounter
-        type (Particle),allocatable :: pArray(:)
-
-
-
 
         open(unit=99,file = filename,status='old',iostat = inputStatus )
         read(99,*),totalNumberOfAtoms
 
-        allocate (pArray(totalNumberOfAtoms))
+        allocate (particles(totalNumberOfAtoms))
+
         atomCounter = 1
         do atomCounter = 1,totalNumberOfAtoms
 
             if (inputStatus /= 0) exit
             read (99,*),type,x,y,z
-            pArray(atomCounter) = AllocateParticleWithPosition(x,y,z)
+            particles(atomCounter) = AllocateParticleWithPosition(x,y,z)
 
         end do
         close(99)
 
-        print *,size(pArray)
+    end subroutine LoadParticlesIntoAnArray
 
-
-    end function
-
-end module class_DataLoader
+end module class_DataFileReader
