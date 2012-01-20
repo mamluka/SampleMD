@@ -17,15 +17,17 @@ module class_Grid
 
     contains
 
-    function CreateGrid(particles) result(g)
+    function CreateGrid(particles,rc) result(g)
         type(Grid) :: g
+        real :: rc
         type(Particle),allocatable :: particles(:)
-        real :: box(8,3)
+        real ::box(8,3)
 
+        box = DetermineSimulationBoxCoordinates(particles)
 
+        call AllocateGridByCutOffRadii(g%G,rc,box)
 
-
-
+        call DistributeParticlesToGrid(g%G,particles,rc,box)
 
     end function CreateGrid
 
