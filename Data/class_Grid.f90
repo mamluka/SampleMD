@@ -13,7 +13,7 @@ module class_Grid
 
     contains
 
-    subroutine CreateGrid(this,particles)
+    subroutine CreateGrid(this,particles,rc)
         class(Grid) :: this
 
         type(Particle),allocatable :: particles(:)
@@ -21,9 +21,6 @@ module class_Grid
 
         real :: rc
         real ::box(8,3)
-
-
-
 
         box = DetermineSimulationBoxCoordinates(particles)
 
