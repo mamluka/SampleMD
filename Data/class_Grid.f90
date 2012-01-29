@@ -8,27 +8,29 @@ module class_Grid
     type Grid
         type(ParticleLinkedList),allocatable :: G(:,:,:)
         contains
-
+        procedure :: CreateGrid
     end type Grid
-
-    interface CreateGrid
-        module procedure CreateGrid
-    end interface
 
     contains
 
-    function CreateGrid(particles,rc) result(g)
-        type(Grid) :: g
-        real :: rc
+    subroutine CreateGrid(this,particles)
+        class(Grid) :: this
+
         type(Particle),allocatable :: particles(:)
+
+
+        real :: rc
         real ::box(8,3)
+
+
+
 
         box = DetermineSimulationBoxCoordinates(particles)
 
-        call AllocateGridByCutOffRadii(g%G,rc,box)
+        call AllocateGridByCutOffRadii(this%G,rc,box)
 
-        call DistributeParticlesToGrid(g%G,particles,rc,box)
+        call DistributeParticlesToGrid(this%G,particles,rc,box)
 
-    end function CreateGrid
+    end subroutine CreateGrid
 
 end module class_Grid

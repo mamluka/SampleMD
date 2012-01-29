@@ -1,25 +1,30 @@
 program SampleMD
-    use class_ConfigurationManager
-    use class_ParticleLinkedList
-    use class_Particle
-    use class_DataFileReader
-    use lib_GridAlgorithms
-    use iso_fortran_env
-    use class_Grid
     use class_RandomVelocityBootstapper
+    use class_IntegrationRunnerSelector
+    use lib_ConfigurationManager
+    use class_DataFileReader
+    use class_Grid
 implicit none
 
+    type(IntegrationRunnerSelector) :: runnerSelector
+    class(IntegrationRunnerBase) ,pointer :: runner
+
+    type(SimulationConfigurations) :: configurations
+
+    type(DataFileReader) :: dataReader
+    type(Particle),allocatable :: particles(:)
+    type(Grid) :: g
+
+    call dataReader%LoadParticlesUsingConfigurations(configurations,particles)
 
 
 
 
 
+    runner => runnerSelector%Select("standard")
 
-
-
-
-
-
+    call runner%Setup(g,configurations)
+    call runner%Start()
 
 
 end program SampleMD

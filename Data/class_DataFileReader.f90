@@ -1,5 +1,6 @@
 module class_DataFileReader
     use class_Particle
+    use lib_ConfigurationManager
     implicit none
     public :: DataFileReader
 
@@ -7,6 +8,7 @@ module class_DataFileReader
         integer :: TotalNumberOfAtoms
     contains
         procedure,nopass :: LoadParticlesIntoAnArray
+        procedure,nopass :: LoadPArticlesUsingConfigurations
     end type DataFileReader
 
 contains
@@ -36,5 +38,14 @@ contains
         close(99)
 
     end subroutine LoadParticlesIntoAnArray
+
+    subroutine LoadPArticlesUsingConfigurations(configurations,particles)
+
+        type(SimulationConfigurations) :: configurations
+        type(Particle),allocatable :: particles(:)
+
+        call LoadParticlesIntoAnArray(configurations%DataFileName,particles)
+
+    end subroutine LoadPArticlesUsingConfigurations
 
 end module class_DataFileReader

@@ -1,4 +1,4 @@
-module class_ConfigurationManager
+module lib_ConfigurationManager
     use flib_dom
     use class_ErrorHandler
     implicit none
@@ -9,6 +9,8 @@ module class_ConfigurationManager
     type SimulationConfigurations
         real :: TimeStep
         integer :: Dimension
+        character (len=:),allocatable :: PotentialName
+        character (len=:),allocatable :: DataFileName
     end type
 
 contains
@@ -80,4 +82,4 @@ contains
 
     end function LoadXMLAttributeToInt
 
-end module class_ConfigurationManager
+end module lib_ConfigurationManager

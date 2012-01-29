@@ -1,14 +1,35 @@
 module class_IntegrationRunnerBase
+    use class_PotentialBase
+    use lib_ConfigurationManager
+    use class_Grid
     implicit none
 
+    public :: IntegrationRunnerBase
+
     type,abstract :: IntegrationRunnerBase
-        contains
+        class(PotentialBase) ,pointer :: Potential
+        type(Grid) :: G
+        type(SimulationConfigurations) :: Configurations
+    contains
         procedure(IStart),deferred,nopass :: Start
+        procedure(ISetup),deferred :: Setup
     end type
 
     abstract interface
         subroutine IStart()
         end subroutine
+
+        subroutine ISetup(this,g,configurations)
+            import
+            class(IntegrationRunnerBase) :: this
+            type(Grid) :: g
+            type(SimulationConfigurations) :: configurations
+        end subroutine
     end interface
+
+    contains
+
+
+
 
 end module class_IntegrationRunnerBase

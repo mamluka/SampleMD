@@ -31,7 +31,7 @@
 							</builder>
 							<tool id="photran.managedbuild.tool.intel.gnu.c.compiler.x86.base.333366081" name="GCC C Compiler" superClass="photran.managedbuild.tool.intel.gnu.c.compiler.x86.base">
 								<option id="gnu.c.compiler.option.debugging.level.1756856959" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.include.paths.1212879040" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.c.compiler.option.include.paths.1212879040" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.8.273/mkl/include"/>
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.7.256/tbb/include"/>
 								</option>
@@ -46,7 +46,7 @@
 								<option id="intel.linux.fortran.compiler.runtime.chkoutcon.1152299712" name="Check Edit Descriptor Data Size (-check output-conversion)" superClass="intel.linux.fortran.compiler.runtime.chkoutcon" value="false" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.runtime.chkfmt.1034658679" name="Check Edit Descriptor Data Type (-check format)" superClass="intel.linux.fortran.compiler.runtime.chkfmt" value="false" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.runtime.chkargtmp.62399164" name="Check For Actual Arguments Using Temporary Storage (-check arg-temp-created)" superClass="intel.linux.fortran.compiler.runtime.chkargtmp" value="false" valueType="boolean"/>
-								<option id="intel.linux.fortran.compiler.preprocessor.includedirectories.1937978670" superClass="intel.linux.fortran.compiler.preprocessor.includedirectories" valueType="includePath">
+								<option id="intel.linux.fortran.compiler.preprocessor.includedirectories.1937978670" name="Additional Include Directories (-I)" superClass="intel.linux.fortran.compiler.preprocessor.includedirectories" valueType="includePath">
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.8.273/mkl/include"/>
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.7.256/tbb/include"/>
 								</option>
@@ -59,7 +59,7 @@
 								</inputType>
 							</tool>
 							<tool id="photran.managedbuild.tool.intel.gnu.assembler.x86.base.1211389559" name="GCC Assembler" superClass="photran.managedbuild.tool.intel.gnu.assembler.x86.base">
-								<option id="gnu.both.asm.option.include.paths.2002578921" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+								<option id="gnu.both.asm.option.include.paths.2002578921" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.8.273/mkl/include"/>
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.7.256/tbb/include"/>
 								</option>
@@ -77,9 +77,11 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
+						<entry excluding="lib_StandardDataAnalysis.f90|Cells/integer_list_mod.f90|xmlsample|Data|Math|Bootstrappers|Potentials|Cells/abstract_list_mod.f90|DataAnalysis|Cells/class_AbstractLinkedList.f90|Cells/list_mod.f90" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
-						<entry excluding="xmlsample|Cells/integer_list_mod.f90|Bootstrappers|Math|Data|Cells/abstract_list_mod.f90|Cells/class_AbstractLinkedList.f90|Cells/list_mod.f90" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -126,10 +128,12 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
 						<entry excluding="Bootstrappers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
+						<entry excluding="lib_StandardDataAnalysis.f90|DataAnalysis|Potentials|Bootstrappers|Math|Data|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data/Bootstrappers"/>
-						<entry excluding="Bootstrappers|Math|Data|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

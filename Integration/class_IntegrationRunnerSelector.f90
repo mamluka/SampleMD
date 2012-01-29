@@ -1,5 +1,6 @@
 module class_IntegrationRunnerSelector
     use class_IntegrationRunnerBase
+    use class_StandardVelocityVarlentIntegrationRunner,CreateStandard=>Create
     implicit none
 
     type IntegrationRunnerSelector
@@ -15,8 +16,9 @@ contains
 
         select case (runnerName)
             case ("standard")
-
+                runner => CreateStandard()
             case default
+                runner => CreateStandard()
         end select
 
     end function
