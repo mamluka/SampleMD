@@ -26,5 +26,7 @@ implicit none
     call runner%Setup(g,configurations)
     call runner%Start()
 
+    print *, "It works"
+
 
 end program SampleMD
