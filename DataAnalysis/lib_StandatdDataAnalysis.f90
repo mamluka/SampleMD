@@ -1,11 +1,11 @@
 module lib_StandatdDataAnalysis
-    use class_ParticleLinkedList
+    use class_Cell
     implicit none
 
     contains
 
     subroutine Analyze(particles)
-        type(ParticleLinkedList) :: particles
+        type(Cell) :: particles
     end subroutine Analyze
 
 

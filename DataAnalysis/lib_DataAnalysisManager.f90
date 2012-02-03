@@ -4,9 +4,9 @@ module lib_DataAnalysisManager
 
 contains
 
-    subroutine ApplyDataAnalysis(particles)
-        type(ParticleLinkedList) :: particles
-        call StandardDataAnalysis(particles)
+    subroutine ApplyDataAnalysis(c)
+        type(Cell) :: c
+        call StandardDataAnalysis(c)
     end subroutine ApplyDataAnalysis
 
 end module lib_DataAnalysisManager

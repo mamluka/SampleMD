@@ -10,7 +10,7 @@ module lib_ConfigurationManager
         real :: TimeStep
         integer :: Dimension
         character (len=:),allocatable :: PotentialName
-        character (len=:),allocatable :: DataFileName
+        character (len=:),allocatable :: DataFilename
     end type
 
 contains
@@ -47,6 +47,8 @@ contains
 
         configurations%Dimension = LoadXMLAttributeToInt(simulationNode,"dim")
         configurations%TimeStep = LoadXMLAttributeToReal(simulationNode,"timestep")
+        configurations%DataFilename = char(getAttribute(simulationNode,"data-filename"))
+        configurations%PotentialName = char(getAttribute(simulationNode,"potential"))
 
 
         !simAttribute = getAttribute(myNode,"dim")

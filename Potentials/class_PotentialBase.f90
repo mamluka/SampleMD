@@ -14,9 +14,10 @@ module class_PotentialBase
             type(Grid) :: g
         end subroutine
 
-        function ISizeOfGridCell(this)
+        function ISizeOfGridCell(this) result(gridSize)
             import
             class(PotentialBase) :: this
+            real :: gridSize
         end function
     end interface
 

@@ -19,11 +19,12 @@ module class_IntegrationRunnerBase
         subroutine IStart()
         end subroutine
 
-        subroutine ISetup(this,g,configurations)
+        subroutine ISetup(this,g,potential,configurations)
             import
             class(IntegrationRunnerBase) :: this
             type(Grid) :: g
             type(SimulationConfigurations) :: configurations
+            class(PotentialBase),pointer :: potential
         end subroutine
     end interface
 
