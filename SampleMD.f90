@@ -7,12 +7,6 @@ program SampleMD
     use class_Grid
     implicit none
 
-
-
-    type cellc
-        type(Cell),pointer :: cell
-    end type
-
     type(IntegrationRunnerSelector) :: runnerSelector
     class(IntegrationRunnerBase) ,pointer :: runner
 
@@ -23,36 +17,10 @@ program SampleMD
     type(Grid) :: g
     class(PotentialBase),pointer :: potential
 
-    type(Cell),pointer :: c1
-    type(Cell),pointer :: c3
-    type(Cell),target :: c2
+    type(Cell),pointer :: c
+    type(Particle) :: p
 
-    type(Cell) :: cool
-
-    class(Particle) ,pointer :: p
-    type(Particle),target:: p2
-
-
-    p2%Mass=1
-
-    p=>p2
-
-    c2=EmptyCell()
-    c1=>c2
-    call c1%AddParticle(p)
-
-    c2=EmptyCell()
-    p%Mass=2
-
-    call c1%AddParticle(p)
-    c3=>c2
-
-    print *,c1%MoreValues()
-    print *,c3%MoreValues()
-
-
-
-
+    integer :: I,J,K
 
 
     configurations = LoadSimulationConfigurations("mdconfig.xml")
@@ -62,6 +30,42 @@ program SampleMD
     potential => LoadPotentialByName("lg")
 
     call g%CreateGrid(particles,potential%SizeOfGridCell())
+
+!    do I=1,g%GridSize(1)+2
+!        do J=1,g%GridSize(2)+2
+!            do K=1,g%GridSize(3)+2
+!
+!                c=>g%GetCell(I,J,K)
+!                call c%Reset()
+!
+!                print *,I,J,K
+!                print *,c%ParticleCount()
+!
+!                do while (c%AreThereMoreParticles())
+!                    p=c%CurrentValue()
+!                    print *,p%Position(1),p%Position(2),p%Position(3)
+!                    call c%Next()
+!                end do
+!
+!                print *,"-------------------"
+!
+!            end do
+!        end do
+!    end do
+
+!    do I=1,g%GridSize(1)+2
+!        do J=1,g%GridSize(2)+2
+!            do K=1,g%GridSize(3)+2
+!
+!                c=>g%GetCell(I,J,K)
+!                call c%Reset()
+!
+!                print *,I,J,K,g%IsGhost(I,J,K)
+!
+!
+!            end do
+!        end do
+!    end do
 
     runner => runnerSelector%Select("standard")
 

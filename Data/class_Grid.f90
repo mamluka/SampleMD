@@ -1,6 +1,7 @@
 module class_Grid
     use class_Cell
     use lib_GridAlgorithms
+        use class_NeighborCell
     implicit none
 
     public :: Grid
@@ -8,10 +9,12 @@ module class_Grid
     type Grid
         type(CellContainer),allocatable :: CellContainers(:,:,:)
         integer :: GridSize(3)
+        real :: SimulationBoxSize(3)
         contains
         procedure :: CreateGrid
         procedure :: GetCell
         procedure :: DetermineCellNeighbors
+        procedure :: IsGhost
     end type Grid
 
 
@@ -28,6 +31,8 @@ module class_Grid
 
         box = DetermineSimulationBoxCoordinates(particles)
 
+        this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
+
         call AllocateGridByCutOffRadiiWithGhostCells(this%CellContainers,rc,box)
 
         this%GridSize(1) = size(this%CellContainers,1)-GhostCellsWidth
@@ -39,12 +44,21 @@ module class_Grid
     end subroutine CreateGrid
 
     function GetCell(this,x,y,z) result(c)
-        type(Cell) :: c
+        type(Cell),pointer :: c
         class(Grid) :: this
 
         integer :: x,y,z
+        c=>this%CellContainers(x,y,z)%C
 
-        c=this%CellContainers(x,y,z)%C
+    end function
+
+    function IsGhost(this,x,y,z) result(ghost)
+        logical :: ghost
+        class(Grid) :: this
+
+        integer :: x,y,z
+        ghost=this%CellContainers(x,y,z)%Ghost
+
     end function
 
     function DetermineCellNeighbors(this,x,y,z) result (cellNeighbors)
@@ -53,20 +67,23 @@ module class_Grid
 
         type(Cell),pointer :: currentCell
 
-        type(Cell) :: cellNeighbors(26)
+        type(CellNeightbor) :: cellNeighbors(26)
 
         type(CellContainer) :: cellsContainerCube(3,3,3)
 
-        integer :: I,J,K,counter=1
+        integer :: I,J,K,counter
 
-        cellsContainerCube=this%CellContainers(x-1:x:x+1,y-1:y:y+1,z-1:z:z+1)
+        counter=1
+
+        cellsContainerCube=this%CellContainers((/x-1,x,x+1/),(/y-1,y,y+1/),(/z-1,z,z+1/))
 
         do I=1,3
             do J=1,3
                 do K=1,3
                     if (.not. (I==2 .and. J==2 .and. K==2)) then
-                        currentCell = cellsContainerCube(I,J,K)%C
-                        cellNeighbors(counter) = currentCell
+                        currentCell => cellsContainerCube(I,J,K)%C
+                        cellNeighbors(counter)%C => currentCell
+                        cellNeighbors(counter)%Ghost = cellsContainerCube(I,J,K)%Ghost
                         counter=counter+1
                     endif
                 end do

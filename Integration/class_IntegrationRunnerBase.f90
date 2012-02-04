@@ -11,12 +11,14 @@ module class_IntegrationRunnerBase
         type(Grid) :: G
         type(SimulationConfigurations) :: Configurations
     contains
-        procedure(IStart),deferred,nopass :: Start
+        procedure(IStart),deferred :: Start
         procedure(ISetup),deferred :: Setup
     end type
 
     abstract interface
-        subroutine IStart()
+        subroutine IStart(this)
+            import
+            class(IntegrationRunnerBase) :: this
         end subroutine
 
         subroutine ISetup(this,g,potential,configurations)

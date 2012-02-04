@@ -23,7 +23,7 @@ contains
     function nextParticleLink(this)
         class(ParticleLink) :: this
         class(ParticleLink), pointer :: nextParticleLink
-        if (.not.associated(this%next) ) then
+        if (.not. associated(this%next) ) then
             nextParticleLink=>null()
         else
             nextParticleLink => this%next
@@ -45,10 +45,11 @@ contains
 
 
     function CreateParticleLink(value)
-        class(ParticleLink),pointer :: createParticleLink
+        class(ParticleLink),pointer :: CreateParticleLink
         class(Particle) :: value
+        type(ParticleLink),target :: newLink
 
-        allocate(createParticleLink)
+        allocate(CreateParticleLink,source=newLink)
         allocate(createParticleLink%value, source=value)
 
 

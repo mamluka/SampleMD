@@ -1,29 +1,24 @@
 module class_Cell
     use class_ParticleLink
     use class_Particle
+    use IFPORT
     private
-    public :: Cell,CellContainer,EmptyCell
+    public :: Cell,EmptyCell
     type :: Cell
         private
         class(ParticleLink),pointer :: firstLink => null() ! first link in list
         class(ParticleLink),pointer :: lastLink => null()  ! last link in list
         class(ParticleLink),pointer :: currLink => null()  ! list iterator
+        integer :: NumberOfParticles=0
     contains
         procedure, non_overridable :: AddParticle     ! add class(Particle) to list
         procedure, non_overridable :: FirstValue   ! value of first link in list
         procedure, non_overridable :: Reset        ! reset list iterator
         procedure, non_overridable :: Next         ! increment list iterator
         procedure, non_overridable :: CurrentValue ! get value from currLink
-        procedure, non_overridable :: MoreValues   ! more values for iterator?
         procedure, non_overridable :: AreThereMoreParticles   ! more values for iterator?
+        procedure, non_overridable :: ParticleCount   ! more values for iterator?
     end type Cell
-
-    type CellContainer
-        type(Cell),pointer :: C => null()
-    end type
-
-
-
 
 contains
 
@@ -33,6 +28,8 @@ contains
         class(ParticleLink), pointer :: newLink
 
         class(ParticleLink) ,pointer :: firstLink,nextLink
+
+
 
         if (.not. associated(this%firstLink)) then
             firstLink => this%firstLink
@@ -46,6 +43,8 @@ contains
             this%lastLink => newLink
 
         end if
+
+        this%NumberOfParticles=this%NumberOfParticles+1
 
     end subroutine AddParticle
 
@@ -70,22 +69,24 @@ contains
 
     end subroutine Next
 
-    function MoreValues(this)
-        class(Cell) :: this
-        logical moreValues
-        moreValues = associated(this%currLink)
-    end function MoreValues
-
     function AreThereMoreParticles(this)
         class(Cell) :: this
         logical AreThereMoreParticles
-        AreThereMoreParticles = associated(this%currLink%nextParticleLink())
+        AreThereMoreParticles = associated(this%currLink)
     end function AreThereMoreParticles
+
+
 
     subroutine Reset(this)
         class(Cell) :: this
         this%currLink => this%firstLink
     end subroutine Reset
+
+    function ParticleCount(this) result(total)
+        class(Cell) :: this
+        total = this%NumberOfParticles
+    end function
+
 
     function EmptyCell() result (c)
         type(Cell) :: c

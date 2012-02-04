@@ -6,7 +6,7 @@ module class_LeonardJonesPotential
 
     public :: LeonardJonesPotential
     type,extends(PotentialBase) :: LeonardJonesPotential
-        real :: CutOfDistance = 2.4
+        real :: CutOfDistance = 4.2
     contains
         procedure,nopass :: CalculateForce
         procedure :: SizeOfGridCell
@@ -16,7 +16,7 @@ contains
 
     subroutine CalculateForce(g)
         type(Grid) :: g
-        print *,"IT works!"
+
     end subroutine CalculateForce
 
     function SizeOfGridCell(this) result(rc)

@@ -1,6 +1,7 @@
 module lib_GridAlgorithms
     use class_Particle
     use class_Cell
+    use class_CellContainer
     implicit none
 
 contains
@@ -65,16 +66,15 @@ contains
         integer :: gridSize(3)
 
 
-        type(Cell),target :: currentCell
+        type(Cell),pointer :: currentCell
         class(Particle),pointer ::particlePointer
         integer :: i,xIndex,yIndex,zIndex
 
-        integer :: ShiftDueToGhostCellsOnTheBoundry=1
+        integer :: BoundryShift=1
 
         integer :: BoundryX,BoundryY,BoundryZ
         integer :: InnerMaxX,InnerMinX,InnerMaxY,InnerMinY,InnerMaxZ,InnerMinZ
         integer :: OuterMaxX,OuterMinX,OuterMaxY,OuterMinY,OuterMaxZ,OuterMinZ
-
 
         open(unit=98,file="cellsIndex.data")
 
@@ -90,20 +90,21 @@ contains
 
             write (98,*),xIndex,yIndex,zIndex
 
-
             particlePointer => particles(i)
 
+            currentCell => cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%BoxedCell()
+            call currentCell%AddParticle(particlePointer)
 
-            if (associated(cellContainers(xIndex+ShiftDueToGhostCellsOnTheBoundry,yIndex+ShiftDueToGhostCellsOnTheBoundry,zIndex+ShiftDueToGhostCellsOnTheBoundry)%C)) then
-                currentCell = cellContainers(xIndex+ShiftDueToGhostCellsOnTheBoundry,yIndex+ShiftDueToGhostCellsOnTheBoundry,zIndex+ShiftDueToGhostCellsOnTheBoundry)%C
-                call currentCell%AddParticle(particlePointer)
-            else
-                currentCell = EmptyCell()
-                call currentCell%AddParticle(particlePointer)
-                cellContainers(xIndex+ShiftDueToGhostCellsOnTheBoundry,yIndex+ShiftDueToGhostCellsOnTheBoundry,zIndex+ShiftDueToGhostCellsOnTheBoundry)%C => currentCell
-            endif
+            !print *,currentCell%ParticleCount(),xIndex,yIndex,zIndex,currentCell%CellID(),i
+            !print *,cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%Ghost
+
+            currentCell => null()
 
         end do
+
+
+
+
 
         close(98)
 
@@ -125,6 +126,9 @@ contains
             do BoundryZ=InnerMinZ,InnerMaxZ
                 cellContainers(OuterMinX,BoundryY,BoundryZ)%C => cellContainers(InnerMaxX,BoundryY,BoundryZ)%C
                 cellContainers(OuterMaxX,BoundryY,BoundryZ)%C => cellContainers(innerMinX,BoundryY,BoundryZ)%C
+
+                cellContainers(OuterMinX,BoundryY,BoundryZ)%Ghost = .true.
+                cellContainers(OuterMaxX,BoundryY,BoundryZ)%Ghost = .true.
             end do
         end do
 
@@ -132,6 +136,9 @@ contains
             do BoundryY=InnerMinY,InnerMaxY
                 cellContainers(BoundryX,BoundryY,OuterMinZ)%C => cellContainers(BoundryX,BoundryY,InnerMaxZ)%C
                 cellContainers(BoundryX,BoundryY,OuterMaxZ)%C => cellContainers(BoundryX,BoundryY,InnerMinZ)%C
+
+                cellContainers(BoundryX,BoundryY,OuterMinZ)%Ghost = .true.
+                cellContainers(BoundryX,BoundryY,OuterMaxZ)%Ghost = .true.
             end do
         end do
 
@@ -139,6 +146,9 @@ contains
             do BoundryZ=InnerMinZ,InnerMaxZ
                 cellContainers(BoundryX,OuterMinY,BoundryZ)%C => cellContainers(BoundryX,InnerMaxY,BoundryZ)%C
                 cellContainers(BoundryX,OuterMaxY,BoundryZ)%C => cellContainers(BoundryX,InnerMinY,BoundryZ)%C
+
+                cellContainers(BoundryX,OuterMinY,BoundryZ)%Ghost = .true.
+                cellContainers(BoundryX,OuterMaxY,BoundryZ)%Ghost = .true.
             end do
         end do
 
@@ -148,6 +158,12 @@ contains
 
             cellContainers(BoundryX,OuterMinY,OuterMaxZ)%C => cellContainers(BoundryX,InnerMaxY,InnerMinZ)%C
             cellContainers(BoundryX,OuterMaxY,OuterMinZ)%C => cellContainers(BoundryX,InnerMinY,InnerMaxZ)%C
+
+            cellContainers(BoundryX,OuterMinY,OuterMinZ)%Ghost = .true.
+            cellContainers(BoundryX,OuterMaxY,OuterMaxZ)%Ghost = .true.
+
+            cellContainers(BoundryX,OuterMinY,OuterMaxZ)%Ghost = .true.
+            cellContainers(BoundryX,OuterMaxY,OuterMinZ)%Ghost = .true.
         end do
 
         do BoundryY=InnerMinY,InnerMaxY
@@ -156,6 +172,12 @@ contains
 
             cellContainers(OuterMinX,BoundryY,OuterMaxZ)%C => cellContainers(InnerMaxX,BoundryY,InnerMinZ)%C
             cellContainers(OuterMaxX,BoundryY,OuterMinZ)%C => cellContainers(InnerMinX,BoundryY,InnerMaxZ)%C
+
+            cellContainers(OuterMinX,BoundryY,OuterMinZ)%Ghost = .true.
+            cellContainers(OuterMaxX,BoundryY,OuterMaxZ)%Ghost = .true.
+
+            cellContainers(OuterMinX,BoundryY,OuterMaxZ)%Ghost = .true.
+            cellContainers(OuterMaxX,BoundryY,OuterMinZ)%Ghost = .true.
         end do
 
         do BoundryZ=InnerMinZ,InnerMaxZ
@@ -164,6 +186,12 @@ contains
 
             cellContainers(OuterMinX,OuterMaxY,BoundryZ)%C => cellContainers(InnerMaxX,InnerMinY,BoundryZ)%C
             cellContainers(OuterMaxX,OuterMinY,BoundryZ)%C => cellContainers(InnerMinX,InnerMaxY,BoundryZ)%C
+
+            cellContainers(OuterMinX,OuterMinY,BoundryZ)%Ghost = .true.
+            cellContainers(OuterMaxX,OuterMaxY,BoundryZ)%Ghost = .true.
+
+            cellContainers(OuterMinX,OuterMaxY,BoundryZ)%Ghost = .true.
+            cellContainers(OuterMaxX,OuterMinY,BoundryZ)%Ghost = .true.
         end do
 
         cellContainers(OuterMinX,OuterMinY,OuterMinZ)%C => cellContainers(InnerMaxX,InnerMaxY,InnerMaxZ)%C
@@ -177,6 +205,18 @@ contains
         cellContainers(OuterMinX,OuterMaxY,OuterMaxZ)%C => cellContainers(InnerMaxX,InnerMinY,InnerMinZ)%C
 
         cellContainers(OuterMaxX,OuterMaxY,OuterMaxZ)%C => cellContainers(InnerMinX,InnerMinY,InnerMinZ)%C
+
+        cellContainers(OuterMinX,OuterMinY,OuterMinZ)%Ghost = .true.
+
+        cellContainers(OuterMaxX,OuterMinY,OuterMinZ)%Ghost = .true.
+        cellContainers(OuterMinX,OuterMaxY,OuterMinZ)%Ghost = .true.
+        cellContainers(OuterMinX,OuterMinY,OuterMaxZ)%Ghost = .true.
+
+        cellContainers(OuterMaxX,OuterMaxY,OuterMinZ)%Ghost = .true.
+        cellContainers(OuterMaxX,OuterMinY,OuterMaxZ)%Ghost = .true.
+        cellContainers(OuterMinX,OuterMaxY,OuterMaxZ)%Ghost = .true.
+
+        cellContainers(OuterMaxX,OuterMaxY,OuterMaxZ)%Ghost = .true.
 
 
 
