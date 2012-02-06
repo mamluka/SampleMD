@@ -1,16 +1,16 @@
 module class_Grid
     use class_Cell
     use lib_GridAlgorithms
-        use class_NeighborCell
+    use class_CellNeightbor
     implicit none
 
     public :: Grid
-
+    private
     type Grid
         type(CellContainer),allocatable :: CellContainers(:,:,:)
         integer :: GridSize(3)
         real :: SimulationBoxSize(3)
-        contains
+    contains
         procedure :: CreateGrid
         procedure :: GetCell
         procedure :: DetermineCellNeighbors
@@ -18,7 +18,7 @@ module class_Grid
     end type Grid
 
 
-    contains
+contains
 
     subroutine CreateGrid(this,particles,rc)
         class(Grid) :: this

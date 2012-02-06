@@ -2,7 +2,7 @@ module class_Cell
     use class_ParticleLink
     use class_Particle
     use IFPORT
-    private
+
     public :: Cell,EmptyCell
     type :: Cell
         private
@@ -10,8 +10,11 @@ module class_Cell
         class(ParticleLink),pointer :: lastLink => null()  ! last link in list
         class(ParticleLink),pointer :: currLink => null()  ! list iterator
         integer :: NumberOfParticles=0
+        integer :: CellCoordinates(3)
     contains
         procedure, non_overridable :: AddParticle     ! add class(Particle) to list
+        procedure, non_overridable :: SetCellCoordinates     ! add class(Particle) to list
+        procedure, non_overridable :: GetCellCoordinates     ! add class(Particle) to list
         procedure, non_overridable :: FirstValue   ! value of first link in list
         procedure, non_overridable :: Reset        ! reset list iterator
         procedure, non_overridable :: Next         ! increment list iterator
@@ -91,5 +94,22 @@ contains
     function EmptyCell() result (c)
         type(Cell) :: c
     end function
+
+    subroutine SetCellCoordinates(this,x,y,z)
+        class(Cell) :: this
+        integer :: x,y,z
+
+        this%CellCoordinates = (/x,y,z/)
+
+    end subroutine SetCellCoordinates
+
+    function GetCellCoordinates(this) result(coord)
+        class(Cell) :: this
+        integer :: coord(3)
+
+
+        coord = this%CellCoordinates
+
+    end function GetCellCoordinates
 
 end module class_Cell

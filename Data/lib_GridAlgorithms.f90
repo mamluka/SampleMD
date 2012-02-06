@@ -46,6 +46,7 @@ contains
         integer :: numberOfXCells,numberOfYCells,numberOfZCells
 
         integer :: ghostCellsAddition=2
+        integer :: I,J,K
 
 
         boxsize=DetermineSimulationBoxDimensions(box)
@@ -55,6 +56,10 @@ contains
         numberOfZCells = ceiling(boxsize(3)/rc)+ghostCellsAddition
 
         allocate(cellContainers(numberOfXCells,numberOfYCells,numberOfZCells))
+
+
+
+
 
     end subroutine
 
@@ -92,7 +97,12 @@ contains
 
             particlePointer => particles(i)
 
-            currentCell => cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%BoxedCell()
+            if (cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%Exists()) then
+                currentCell => cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%CurrentCell()
+            else
+                currentCell => cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%New(xIndex,yIndex,zIndex)
+            end if
+
             call currentCell%AddParticle(particlePointer)
 
             !print *,currentCell%ParticleCount(),xIndex,yIndex,zIndex,currentCell%CellID(),i
@@ -218,12 +228,9 @@ contains
 
         cellContainers(OuterMaxX,OuterMaxY,OuterMaxZ)%Ghost = .true.
 
-
-
-
-
-
     end subroutine DistributeParticlesToGrid
+
+
 
 
 

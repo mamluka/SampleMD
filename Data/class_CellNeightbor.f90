@@ -1,4 +1,4 @@
-module class_NeighborCell
+module class_CellNeightbor
     use class_Cell
     implicit none
 
@@ -8,4 +8,4 @@ module class_NeighborCell
         type(Cell),pointer :: C
         logical :: Ghost
     end type
-end module class_NeighborCell
+end module class_CellNeightbor

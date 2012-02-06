@@ -3,8 +3,9 @@ module class_StandardVelocityVarlentIntegrationRunner
     use class_Grid
     use class_Particle
     use lib_Integration
+    use class_Cell
+    use class_CellNeightbor
     implicit none
-    private
 
     public :: StandardVelocityVarlentIntegrationRunner,Create
 
@@ -50,7 +51,7 @@ contains
         integer :: IndexX,IndexY,IndexZ
         integer :: NeighborIndex
 
-
+        integer :: flop
 
         type(Cell),pointer :: currentCell
         type(Cell) :: currentNeighborCell
@@ -62,6 +63,8 @@ contains
         integer :: InnerMaxX,InnerMinX,InnerMaxY,InnerMinY,InnerMaxZ,InnerMinZ
 
         real :: Distance
+
+        flop=0
 
         TotalX = g%GridSize(1)
         TotalY = g%GridSize(2)
@@ -92,6 +95,8 @@ contains
 
                             currentNeighborCell=CellNeighbors(NeighborIndex)%C
 
+
+
                             !print *,CellNeighbors(NeighborIndex)%Ghost
 
                             do while (currentNeighborCell%AreThereMoreParticles())
@@ -101,20 +106,17 @@ contains
 
 
                                 if (CellNeighbors(NeighborIndex)%Ghost == .true. ) then
-                                    print *,"Ghost"
-                                    Distance=DistanceBetweenParticlesWithPeriodicConditions(currentParticle,currentInteractionParticle,g%SimulationBoxSize)
+                                    Distance=DistanceBetweenParticlesWithPeriodicConditions(currentParticle,currentInteractionParticle,currentCell%GetCellCoordinates(),currentNeighborCell%GetCellCoordinates(),g%SimulationBoxSize)
                                 else
                                     Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
                                 endif
 
+                                flop=flop+1
 
-                                print *,Distance
 
                                 call currentNeighborCell%Next()
 
                             end do
-
-                            print *,"-------------"
 
                         end do
 
@@ -125,6 +127,8 @@ contains
                 end do
             end do
         end do
+
+        print *,"number of oporations on particles",flop
 
 
 
