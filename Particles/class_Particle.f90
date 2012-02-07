@@ -9,8 +9,11 @@ module class_Particle
         real ,allocatable :: Position(:)
         real  :: Mass
         real ,allocatable :: Force(:)
+        real ,allocatable :: ForceFromPreviousIteration(:)
+        integer :: ID
         contains
         procedure :: SetPosition
+        procedure :: GiveID
     end type
 
 
@@ -23,6 +26,7 @@ module class_Particle
         allocate(p%Velocity(3))
         allocate(p%Force(3))
         allocate(p%Position(3))
+        allocate(p%ForceFromPreviousIteration(3))
 
     end function
 
@@ -32,6 +36,12 @@ module class_Particle
         p = AllocateParticle()
         call p%SetPosition(x,y,z)
     end function
+
+    subroutine GiveID(this,id)
+        class(Particle) :: this
+        integer :: id
+        this%ID = id
+    end subroutine GiveID
 
     subroutine SetPosition(this,x,y,z)
         class(Particle) :: this

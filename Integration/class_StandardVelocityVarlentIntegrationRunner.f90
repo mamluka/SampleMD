@@ -5,15 +5,24 @@ module class_StandardVelocityVarlentIntegrationRunner
     use lib_Integration
     use class_Cell
     use class_CellNeightbor
+    use class_IntegrationConfigurationsBase
     implicit none
-
+    private
     public :: StandardVelocityVarlentIntegrationRunner,Create
 
+    type,extends(IntegrationConfigurationsBase) :: StandardIntegrationConfigurations
+
+    end type
+
     type,extends(IntegrationRunnerBase) :: StandardVelocityVarlentIntegrationRunner
+        type(StandardIntegrationConfigurations) :: Configurations
     contains
         procedure :: Start
         procedure :: Setup
+        procedure :: LoadIntegraionConfigurations
     end type
+
+
 
 contains
 
@@ -24,7 +33,11 @@ contains
 
         print *,"Calculating forces for the first time"
 
-        call CalculateForces(this%G)
+        call CalculateForces(this)
+
+        print *,"Calculating new positions"
+
+        call ComputePosition(this)
 
     end subroutine
 
@@ -35,7 +48,8 @@ contains
         class(PotentialBase),pointer :: potential
 
         this%G=g
-        this%Configurations=configurations
+        call this%LoadIntegraionConfigurations(configurations)
+        this%GlobalConfigurations = configurations
         this%Potential => potential
     end subroutine
 
@@ -44,7 +58,8 @@ contains
         allocate(runner)
     end function
 
-    subroutine CalculateForces(g)
+    subroutine CalculateForces(this)
+        class(StandardVelocityVarlentIntegrationRunner) :: this
         type(Grid) :: g
 
         integer :: TotalX,TotalY,TotalZ
@@ -58,11 +73,13 @@ contains
 
         type(Particle),pointer :: currentParticle,currentInteractionParticle
 
-        type(CellNeightbor) :: CellNeighbors(26)
+        type(CellNeightbor) :: CellNeighbors(27)
 
         integer :: InnerMaxX,InnerMinX,InnerMaxY,InnerMinY,InnerMaxZ,InnerMinZ
 
         real :: Distance
+
+        g=this%G
 
         flop=0
 
@@ -83,7 +100,7 @@ contains
 
                     currentCell => g%GetCell(IndexX,IndexY,IndexZ)
 
-                    CellNeighbors = g%DetermineCellNeighbors(IndexX,IndexY,IndexZ)
+                    CellNeighbors = g%DetermineCellNeighborsAndSelf(IndexX,IndexY,IndexZ)
 
                     do while (currentCell%AreThereMoreParticles())
 
@@ -95,7 +112,7 @@ contains
 
                             currentNeighborCell=CellNeighbors(NeighborIndex)%C
 
-
+                            !print *,g%SimulationBoxSize
 
                             !print *,CellNeighbors(NeighborIndex)%Ghost
 
@@ -103,15 +120,21 @@ contains
 
                                 currentInteractionParticle=>currentNeighborCell%CurrentValue()
 
+                                if ( .not. ( currentParticle%ID == currentInteractionParticle%ID)) then
 
+                                    if (CellNeighbors(NeighborIndex)%Ghost == .true. ) then
+                                        Distance=DistanceBetweenParticlesWithPeriodicConditions(currentParticle,currentInteractionParticle,currentCell%GetCellCoordinates(),currentNeighborCell%GetCellCoordinates(),g%SimulationBoxSize)
+                                    else
+                                        Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
+                                    endif
 
-                                if (CellNeighbors(NeighborIndex)%Ghost == .true. ) then
-                                    Distance=DistanceBetweenParticlesWithPeriodicConditions(currentParticle,currentInteractionParticle,currentCell%GetCellCoordinates(),currentNeighborCell%GetCellCoordinates(),g%SimulationBoxSize)
-                                else
-                                    Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
-                                endif
+                                    if (Distance .le. this%Potential%CutOffRadii() ) then
+                                        call this%Potential%Force(currentParticle,currentInteractionParticle,Distance)
+                                    end if
 
-                                flop=flop+1
+                                    flop=flop+1
+
+                                end if
 
 
                                 call currentNeighborCell%Next()
@@ -133,6 +156,66 @@ contains
 
 
     end subroutine CalculateForces
+
+    subroutine ComputePosition(this)
+        class(StandardVelocityVarlentIntegrationRunner) :: this
+        type(Grid) :: g
+
+        call this%g%ForEachParticle(CalculatePositionIterator,this%Configurations)
+
+
+    end subroutine ComputePosition
+
+    subroutine CalculatePositionIterator(p,configurations)
+        type(Particle),pointer :: p
+        class(IntegrationConfigurationsBase) :: configurations
+
+        real ::a,dt
+
+        dt = configurations%TimeStep
+        a=dt*0.5/p%Mass
+
+        p%Position = p%Position + dt*(p%Velocity+a*p%Force)
+        p%ForceFromPreviousIteration = p%Force
+
+
+    end subroutine CalculatePositionIterator
+
+    subroutine CalculateVelocities(this)
+        class(StandardVelocityVarlentIntegrationRunner) :: this
+        type(Grid) :: g
+
+        call this%g%ForEachParticle(CalculateVelocitiesIterator,this%Configurations)
+
+
+    end subroutine CalculateVelocities
+
+    subroutine CalculateVelocitiesIterator(p,configurations)
+        type(Particle),pointer :: p
+        class(IntegrationConfigurationsBase) :: configurations
+
+        real ::a,dt
+
+        dt = configurations%TimeStep
+        a=dt*0.5/p%Mass
+
+        p%Velocity = p%Velocity + a*(p%ForceFromPreviousIteration+ p%Force)
+
+
+
+    end subroutine CalculateVelocitiesIterator
+
+
+    subroutine LoadIntegraionConfigurations(this,simConfigurations)
+        class(StandardVelocityVarlentIntegrationRunner) :: this
+        type(SimulationConfigurations) :: simConfigurations
+
+        type(StandardIntegrationConfigurations) :: standardConfigurations
+
+        this%Configurations = standardConfigurations
+
+
+    end subroutine LoadIntegraionConfigurations
 
 
 

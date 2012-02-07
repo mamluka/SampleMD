@@ -9,10 +9,11 @@ module class_IntegrationRunnerBase
     type,abstract :: IntegrationRunnerBase
         class(PotentialBase) ,pointer :: Potential
         type(Grid) :: G
-        type(SimulationConfigurations) :: Configurations
+        type(SimulationConfigurations) :: GlobalConfigurations
     contains
         procedure(IStart),deferred :: Start
         procedure(ISetup),deferred :: Setup
+        procedure(ILoadIntegraionConfigurations),deferred :: LoadIntegraionConfigurations
     end type
 
     abstract interface
@@ -28,6 +29,12 @@ module class_IntegrationRunnerBase
             type(SimulationConfigurations) :: configurations
             class(PotentialBase),pointer :: potential
         end subroutine
+
+        subroutine ILoadIntegraionConfigurations(this,simConfigurations)
+            import
+            class(IntegrationRunnerBase) :: this
+            type(SimulationConfigurations) :: simConfigurations
+        end subroutine ILoadIntegraionConfigurations
     end interface
 
     contains

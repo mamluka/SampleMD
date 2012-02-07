@@ -20,7 +20,7 @@ contains
         real :: box(3),new(3)
         integer :: CellPosition(3),NeighborPosition(3)
 
-        new = particleI%Position
+        new = particleJ%Position
 
         if (abs(CellPosition(1)-NeighborPosition(1)) > 1 ) then
             new(1) = particleJ%Position(1) + (CellPosition(1)-NeighborPosition(1))/abs(CellPosition(1)-NeighborPosition(1))*box(1)

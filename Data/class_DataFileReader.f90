@@ -38,6 +38,7 @@ contains
             read (99,*),type,x,y,z
             p=AllocateParticleWithPosition(x,y,z)
             p%Mass=atomProperties%AtomMassInAMU(type)
+            call p%GiveID(atomCounter)
 
             particles(atomCounter) = p
 

@@ -6,12 +6,25 @@ module lib_ConfigurationManager
 
     public :: SimulationConfigurations
 
+    type :: ReducersDTO
+        real :: Time
+        real :: Energy
+        real :: Length
+        real :: Mass
+    end type
+
+
     type SimulationConfigurations
         real :: TimeStep
         integer :: Dimension
         character (len=:),allocatable :: PotentialName
+        character (len=:),allocatable :: PotentialDataFile
         character (len=:),allocatable :: DataFilename
+        logical :: hasReduction = .false.
+        type(ReducersDTO) :: Reducers
     end type
+
+
 
 contains
 
@@ -20,9 +33,11 @@ contains
         character (len=*) :: filename
 
         type(fnode), pointer          :: confDoc
-        type(fnode), pointer          :: rootNode,simulationNode
+        type(fnode), pointer          :: rootNode,simulationNode,reducerNode
         type(fnodeList), pointer      :: tmpList,configNodes
         character (len=100) :: simulatiomNodeName,simulatiomNodeValue
+
+        real :: timeReducer,lengthReducer,energyReducer,massReducer
 
         integer :: i
 
@@ -49,12 +64,25 @@ contains
         configurations%TimeStep = LoadXMLAttributeToReal(simulationNode,"timestep")
         configurations%DataFilename = char(getAttribute(simulationNode,"data-filename"))
         configurations%PotentialName = char(getAttribute(simulationNode,"potential"))
+        configurations%PotentialDataFile = char(getAttribute(simulationNode,"potential-data-file"))
 
+        tmpList => getElementsByTagName(rootNode, "dless")
 
-        !simAttribute = getAttribute(myNode,"dim")
+        if (getLength(tmpList) .gt. 0) then
+            reducerNode => item(tmpList, 0)
+            timeReducer = LoadXMLAttributeToReal(reducerNode,"time")
+            lengthReducer = LoadXMLAttributeToReal(reducerNode,"length")
+            massReducer = LoadXMLAttributeToReal(reducerNode,"mass")
+            energyReducer = LoadXMLAttributeToReal(reducerNode,"energy")
 
-       ! if (simAttribute == "") call die("When asked to load the dim from xml the attribute couldn't be found")
-       ! read(unit=simAttribute,fmt=*) configurations%Dimension
+            configurations%HasReduction = .true.
+
+            configurations%Reducers%Time = timeReducer
+            configurations%Reducers%Length = LengthReducer
+            configurations%Reducers%Mass = massReducer
+            configurations%Reducers%Energy = energyReducer
+
+        end if
 
     end function
 
@@ -83,5 +111,7 @@ contains
         read(unit=simAttribute,fmt=*) returnValue
 
     end function LoadXMLAttributeToInt
+
+
 
 end module lib_ConfigurationManager

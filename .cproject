@@ -40,7 +40,7 @@
 							<tool id="photran.managedbuild.tool.intel.fortran.compiler.x86.base.28122432" name="Intel(R) IA-32 Fortran Compiler" superClass="photran.managedbuild.tool.intel.fortran.compiler.x86.base">
 								<option id="intel.linux.fortran.compiler.preprocessor.fpp.407704826" name="Preprocess Source File (-fpp)" superClass="intel.linux.fortran.compiler.preprocessor.fpp" value="true" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.lang.fixedlen.781506637" name="Fixed Form Line Length" superClass="intel.linux.fortran.compiler.lang.fixedlen" value="intel.lang.132" valueType="enumerated"/>
-								<option id="intel.linux.fortran.compiler.option.debug.infoparam.1465941538" name="Information for PARAMETER constants" superClass="intel.linux.fortran.compiler.option.debug.infoparam" value="intel.debug.infoparam.none" valueType="enumerated"/>
+								<option id="intel.linux.fortran.compiler.option.debug.infoparam.1465941538" name="Information for PARAMETER constants" superClass="intel.linux.fortran.compiler.option.debug.infoparam" value="intel.debug.infoparam.all" valueType="enumerated"/>
 								<option id="intel.linux.fortran.compiler.runtime.chkbnds.1429841982" name="Check Array and String Bounds (-check bounds)" superClass="intel.linux.fortran.compiler.runtime.chkbnds" value="true" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.runtime.traceback.1662616275" name="Generate Traceback Information (-traceback)" superClass="intel.linux.fortran.compiler.runtime.traceback" value="false" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.runtime.chkoutcon.1152299712" name="Check Edit Descriptor Data Size (-check output-conversion)" superClass="intel.linux.fortran.compiler.runtime.chkoutcon" value="false" valueType="boolean"/>
@@ -52,6 +52,7 @@
 								</option>
 								<option id="intel.linux.fortran.compiler.runtime.rterrorchk.1406066521" name="Runtime Error Checking" superClass="intel.linux.fortran.compiler.runtime.rterrorchk" value="intel.runtime.rterrorchk.custom" valueType="enumerated"/>
 								<option id="intel.linux.fortran.compiler.runtime.ccdefault.1588902136" name="Default Output Carriage Control" superClass="intel.linux.fortran.compiler.runtime.ccdefault" value="intel.runtime.ccdefault.default" valueType="enumerated"/>
+								<option id="intel.linux.fortran.compiler.general.debug.1602997164" superClass="intel.linux.fortran.compiler.general.debug" value="true" valueType="boolean"/>
 								<inputType id="photran.managedbuild.tool.intel.fortran.compiler.input.1101937056" superClass="photran.managedbuild.tool.intel.fortran.compiler.input"/>
 							</tool>
 							<tool id="photran.managedbuild.tool.intel.fortran.linker.x86.base.1316158385" name="Intel(R) Fortran Linker" superClass="photran.managedbuild.tool.intel.fortran.linker.x86.base">

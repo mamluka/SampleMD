@@ -2,6 +2,7 @@ module class_Grid
     use class_Cell
     use lib_GridAlgorithms
     use class_CellNeightbor
+    use class_IntegrationConfigurationsBase
     implicit none
 
     public :: Grid
@@ -13,10 +14,18 @@ module class_Grid
     contains
         procedure :: CreateGrid
         procedure :: GetCell
-        procedure :: DetermineCellNeighbors
+        procedure :: DetermineCellNeighborsAndSelf
         procedure :: IsGhost
+        procedure :: ForEachParticle
     end type Grid
 
+    abstract interface
+        subroutine IMapParticles(p,configurations)
+            import
+            type(Particle),pointer :: p
+            class(IntegrationConfigurationsBase) :: configurations
+        end subroutine
+    end interface
 
 contains
 
@@ -61,13 +70,13 @@ contains
 
     end function
 
-    function DetermineCellNeighbors(this,x,y,z) result (cellNeighbors)
+    function DetermineCellNeighborsAndSelf(this,x,y,z) result (cellNeighbors)
         integer :: x,y,z
         class(Grid) :: this
 
         type(Cell),pointer :: currentCell
 
-        type(CellNeightbor) :: cellNeighbors(26)
+        type(CellNeightbor) :: cellNeighbors(27)
 
         type(CellContainer) :: cellsContainerCube(3,3,3)
 
@@ -80,12 +89,12 @@ contains
         do I=1,3
             do J=1,3
                 do K=1,3
-                    if (.not. (I==2 .and. J==2 .and. K==2)) then
-                        currentCell => cellsContainerCube(I,J,K)%C
-                        cellNeighbors(counter)%C => currentCell
-                        cellNeighbors(counter)%Ghost = cellsContainerCube(I,J,K)%Ghost
-                        counter=counter+1
-                    endif
+
+                    currentCell => cellsContainerCube(I,J,K)%C
+                    cellNeighbors(counter)%C => currentCell
+                    cellNeighbors(counter)%Ghost = cellsContainerCube(I,J,K)%Ghost
+                    counter=counter+1
+
                 end do
             end do
         end do
@@ -96,6 +105,43 @@ contains
 
 
     end function
+
+    subroutine ForEachParticle(this,proc,configurations)
+        class(Grid) :: this
+        procedure(IMapParticles),pointer,intent(in) :: proc
+        class(IntegrationConfigurationsBase) :: configurations
+        type(Cell),pointer :: currentCell
+        integer :: I,J,K
+
+        type(Particle),pointer :: currentParticle
+
+        do I=1,this%GridSize(1)
+            do J=1,this%GridSize(2)
+                do K=1,this%GridSize(3)
+
+                    currentCell => this%CellContainers(I,J,K)%C
+
+                    call currentCell%Reset()
+
+                    do while (currentCell%AreThereMoreParticles())
+
+                        currentParticle => currentCell%CurrentValue()
+
+                        call proc(currentParticle,configurations)
+
+                        call currentCell%Next()
+
+                    end do
+
+                end do
+            end do
+        end do
+
+
+
+    end subroutine ForEachParticle
+
+
 
 
 
