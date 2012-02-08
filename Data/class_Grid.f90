@@ -17,6 +17,8 @@ module class_Grid
         procedure :: DetermineCellNeighborsAndSelf
         procedure :: IsGhost
         procedure :: ForEachParticle
+        procedure :: ForEachParticleWithConfigurations
+        procedure :: DumpDataToFile
     end type Grid
 
     abstract interface
@@ -24,6 +26,11 @@ module class_Grid
             import
             type(Particle),pointer :: p
             class(IntegrationConfigurationsBase) :: configurations
+        end subroutine
+
+        subroutine IMapPureParticles(p)
+            import
+            type(Particle),pointer :: p
         end subroutine
     end interface
 
@@ -106,7 +113,7 @@ contains
 
     end function
 
-    subroutine ForEachParticle(this,proc,configurations)
+    subroutine ForEachParticleWithConfigurations(this,proc,configurations)
         class(Grid) :: this
         procedure(IMapParticles),pointer,intent(in) :: proc
         class(IntegrationConfigurationsBase) :: configurations
@@ -137,9 +144,76 @@ contains
             end do
         end do
 
+    end subroutine ForEachParticleWithConfigurations
 
+    subroutine ForEachParticle(this,proc)
+        class(Grid) :: this
+        procedure(IMapPureParticles),pointer,intent(in) :: proc
+        type(Cell),pointer :: currentCell
+        integer :: I,J,K
 
-    end subroutine ForEachParticle
+        type(Particle),pointer :: currentParticle
+
+        do I=1,this%GridSize(1)
+            do J=1,this%GridSize(2)
+                do K=1,this%GridSize(3)
+
+                    currentCell => this%CellContainers(I,J,K)%C
+
+                    call currentCell%Reset()
+
+                    do while (currentCell%AreThereMoreParticles())
+
+                        currentParticle => currentCell%CurrentValue()
+
+                        call proc(currentParticle)
+
+                        call currentCell%Next()
+
+                    end do
+
+                end do
+            end do
+        end do
+
+    end subroutine
+
+    subroutine DumpDataToFile(this)
+        class(Grid) :: this
+        type(Cell),pointer :: currentCell
+        integer :: I,J,K
+
+        type(Particle),pointer :: currentParticle
+
+        open(unit=98,file="dump.data",form="formatted",access="append")
+
+        do I=1,this%GridSize(1)
+            do J=1,this%GridSize(2)
+                do K=1,this%GridSize(3)
+
+                    currentCell => this%CellContainers(I,J,K)%C
+
+                    call currentCell%Reset()
+
+                    do while (currentCell%AreThereMoreParticles())
+
+                        currentParticle => currentCell%CurrentValue()
+
+                        write(98,'(I6.4,9(F15.8,2X))'),currentParticle%ID, currentParticle%Position,currentParticle%Velocity,currentParticle%Force
+
+                        call currentCell%Next()
+
+                    end do
+
+                end do
+            end do
+        end do
+
+        write (98,*),"-------------------------------------------------------------"
+
+        close(98)
+
+    end subroutine DumpDataToFile
 
 
 

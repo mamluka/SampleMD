@@ -32,8 +32,6 @@ program SampleMD
 
     potential => LoadPotentialByConfiguration(configurations)
 
-    print *,potential%Reducers,"out side"
-
     call g%CreateGrid(particles,potential%SizeOfGridCell())
 
     runner => runnerSelector%Select("standard")

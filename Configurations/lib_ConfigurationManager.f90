@@ -12,11 +12,12 @@ module lib_ConfigurationManager
 
     type SimulationConfigurations
         real :: TimeStep
+        real :: EndOfSimulation
         integer :: Dimension
         character (len=:),allocatable :: PotentialName
         character (len=:),allocatable :: PotentialDataFile
         character (len=:),allocatable :: DataFilename
-        type(ReducersDTO) :: Reducers
+        type(ReducersDTO),allocatable :: Reducers
     end type
 
 
@@ -33,6 +34,7 @@ contains
         character (len=100) :: simulatiomNodeName,simulatiomNodeValue
 
         real :: timeReducer,lengthReducer,energyReducer,massReducer
+        type(ReducersDTO),target :: Reducers
 
         integer :: i
 
@@ -40,7 +42,6 @@ contains
         confDoc => parsefile(filename)
 
         call normalize(confDoc)
-
 
         tmpList => getElementsByTagName(confDoc, "mdconfig")
 
@@ -57,6 +58,7 @@ contains
 
         configurations%Dimension = LoadXMLAttributeToInt(simulationNode,"dim")
         configurations%TimeStep = LoadXMLAttributeToReal(simulationNode,"timestep")
+        configurations%EndOfSimulation = LoadXMLAttributeToReal(simulationNode,"sim-end")
         configurations%DataFilename = char(getAttribute(simulationNode,"data-filename"))
         configurations%PotentialName = char(getAttribute(simulationNode,"potential"))
         configurations%PotentialDataFile = char(getAttribute(simulationNode,"potential-data-file"))
@@ -70,14 +72,17 @@ contains
             massReducer = LoadXMLAttributeToReal(reducerNode,"mass")
             energyReducer = LoadXMLAttributeToReal(reducerNode,"energy")
 
-            configurations%Reducers%HasDimensionlessReduction = .true.
+            Reducers%HasDimensionlessReduction = .true.
 
-            configurations%Reducers%Time = timeReducer
-            configurations%Reducers%Length = LengthReducer
-            configurations%Reducers%Mass = massReducer
-            configurations%Reducers%Energy = energyReducer
+            Reducers%Time = timeReducer
+            Reducers%Length = LengthReducer
+            Reducers%Mass = massReducer
+            Reducers%Energy = energyReducer
+
+            allocate(configurations%Reducers,source=Reducers)
 
             configurations%TimeStep = configurations%TimeStep/timeReducer
+            configurations%EndOfSimulation = configurations%EndOfSimulation/timeReducer
 
         end if
 

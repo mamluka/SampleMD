@@ -57,12 +57,12 @@ contains
         reducedSigma = 1
         reducedEpsilon = 1
 
-        reducedDirection = (pj%Position-pi%Position)/this%Sigma
+        reducedDirection = (pj%Position-pi%Position)
 
         reducedrcut = this%Rcut/this%Sigma
         reducedrl = this%Rl/this%Sigma
 
-        reducedr=r/this%Sigma
+        reducedr=r
 
         SigmaOverR = reducedSigma/reducedr
 
@@ -138,14 +138,9 @@ contains
 
     subroutine SetReducers(this,reducers)
         class(ArgonModifiedLeonardJonesPotential) :: this
-        type(ReducersDTO) :: reducers
+        type(ReducersDTO),target :: reducers
 
-        print *,reducers,"before set"
-
-        this%Reducers = reducers
-        !this%Reducers%HasDimensionlessReduction=.true.
-
-        print *,this%Reducers,"after set"
+        allocate(this%Reducers,source=reducers)
 
     end subroutine SetReducers
 

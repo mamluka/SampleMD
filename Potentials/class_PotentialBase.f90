@@ -5,7 +5,7 @@ module class_PotentialBase
     implicit none
 
     type,abstract :: PotentialBase
-        type(ReducersDTO) :: Reducers
+        type(ReducersDTO),pointer :: Reducers
     contains
         procedure(IForce),deferred :: Force
         procedure(ISizeOfGridCell),deferred :: SizeOfGridCell
@@ -44,7 +44,7 @@ module class_PotentialBase
         subroutine ISetReducers(this,reducers)
             import
             class(PotentialBase) :: this
-            type(ReducersDTO) :: reducers
+            type(ReducersDTO),target :: reducers
         end subroutine ISetReducers
     end interface
 

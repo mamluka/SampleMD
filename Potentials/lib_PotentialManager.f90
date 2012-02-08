@@ -27,29 +27,30 @@ contains
         type(SimulationConfigurations) :: configurations
         class(PotentialBase),pointer :: potential
 
-        class(LeonardJonesPotential),allocatable,target :: lg
-        class(ArgonModifiedLeonardJonesPotential),allocatable ,target:: argon
+        type(LeonardJonesPotential),target :: lg
+        type(ArgonModifiedLeonardJonesPotential) ,target:: argon
 
         select case (configurations%PotentialName)
             case ("lg")
-                allocate(lg)
+                !allocate(lg)
                 potential => lg
             case ("argon")
-                allocate(argon)
+                !allocate(argon)
                 potential => argon
             case default
-                allocate(lg)
+                !allocate(lg)
                 potential => lg
         end select
 
         call potential%LoadPotentialParameters(configurations%PotentialDataFile)
 
         if (configurations%Reducers%HasDimensionlessReduction == .true.) then
-            potential%Reducers=configurations%Reducers
-            print *,potential%Reducers,"after set"
+            call potential%SetReducers(configurations%Reducers)
         end if
 \
     end function LoadPotentialByConfiguration
+
+
 
 
 

@@ -43,7 +43,7 @@ contains
 
     subroutine SetReducers(this,reducers)
         class(LeonardJonesPotential) :: this
-        type(ReducersDTO) :: reducers
+        type(ReducersDTO),target :: reducers
 
         this%Reducers = reducers
 

@@ -29,15 +29,34 @@ contains
     subroutine Start(this)
         class(StandardVelocityVarlentIntegrationRunner) :: this
 
-        print *,"Starting..."
+        real :: time
 
-        print *,"Calculating forces for the first time"
+        time=0
+
+        print *,"Starting..."
 
         call CalculateForces(this)
 
-        print *,"Calculating new positions"
+        call this%G%DumpDataToFile()
 
-        call ComputePosition(this)
+        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*10
+
+!        do while (time .lt. this%Configurations%EndOfSimulation)
+!
+!            time=time + this%Configurations%TimeStep
+!
+!            call ComputePosition(this)
+!
+!            call CalculateForces(this)
+!
+!            call ComputeVelocities(this)
+!
+!            call this%G%DumpDataToFile()
+!
+!        end do
+
+
+
 
     end subroutine
 
@@ -46,11 +65,10 @@ contains
         type(Grid) :: g
         type(SimulationConfigurations) :: configurations
         class(PotentialBase),pointer :: potential
-        print *,potential%Reducers
+
         this%G=g
         call this%LoadIntegraionConfigurations(configurations)
         this%GlobalConfigurations = configurations
-        print *,potential%Reducers
         this%Potential => potential
 
     end subroutine
@@ -102,17 +120,21 @@ contains
 
                     currentCell => g%GetCell(IndexX,IndexY,IndexZ)
 
+                    call currentCell%Reset()
+
                     CellNeighbors = g%DetermineCellNeighborsAndSelf(IndexX,IndexY,IndexZ)
 
                     do while (currentCell%AreThereMoreParticles())
 
                         currentParticle => currentCell%CurrentValue()
 
-                        currentParticle%Force(:)=0
+                        currentParticle%Force=0
 
                         do NeighborIndex=1,size(CellNeighbors)
 
                             currentNeighborCell=CellNeighbors(NeighborIndex)%C
+
+                            call currentNeighborCell%Reset()
 
                             !print *,g%SimulationBoxSize
 
@@ -130,16 +152,18 @@ contains
                                         Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
                                     endif
 
+                                    if (Distance .le. 1E-6) then
+                                        print *,Distance
+                                    end if
+
                                     !print *,this%Potential%CutOffRadii()
 
-                                    if (Distance .le. this%Potential%CutOffRadii() ) then
-                                        print *,Distance,this%Potential%CutOffRadii()
+                                    if ((Distance .le. this%Potential%CutOffRadii())) then
+                                       ! print *,Distance,this%Potential%CutOffRadii()
                                         call this%Potential%Force(currentParticle,currentInteractionParticle,Distance)
 
                                         flop=flop+1
                                     end if
-
-
 
                                 end if
 
@@ -149,11 +173,8 @@ contains
 
                         end do
 
-
-
                         call currentCell%Next()
                     end do
-
 
                 end do
             end do
@@ -169,7 +190,7 @@ contains
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(Grid) :: g
 
-        call this%g%ForEachParticle(CalculatePositionIterator,this%Configurations)
+        call this%g%ForEachParticleWithConfigurations(CalculatePositionIterator,this%Configurations)
 
 
     end subroutine ComputePosition
@@ -186,17 +207,18 @@ contains
         p%Position = p%Position + dt*(p%Velocity+a*p%Force)
         p%ForceFromPreviousIteration = p%Force
 
+        !print *,p%Position
 
     end subroutine CalculatePositionIterator
 
-    subroutine CalculateVelocities(this)
+    subroutine ComputeVelocities(this)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(Grid) :: g
 
-        call this%g%ForEachParticle(CalculateVelocitiesIterator,this%Configurations)
+        call this%g%ForEachParticleWithConfigurations(CalculateVelocitiesIterator,this%Configurations)
 
 
-    end subroutine CalculateVelocities
+    end subroutine ComputeVelocities
 
     subroutine CalculateVelocitiesIterator(p,configurations)
         type(Particle),pointer :: p
@@ -209,8 +231,6 @@ contains
 
         p%Velocity = p%Velocity + a*(p%ForceFromPreviousIteration+ p%Force)
 
-
-
     end subroutine CalculateVelocitiesIterator
 
 
@@ -219,6 +239,10 @@ contains
         type(SimulationConfigurations) :: simConfigurations
 
         type(StandardIntegrationConfigurations) :: standardConfigurations
+
+        standardConfigurations%TimeStep = simConfigurations%TimeStep
+        standardConfigurations%EndOfSimulation = simConfigurations%EndOfSimulation
+
 
         this%Configurations = standardConfigurations
 

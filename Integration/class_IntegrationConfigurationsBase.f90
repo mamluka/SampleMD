@@ -3,6 +3,7 @@ module class_IntegrationConfigurationsBase
 
         type,abstract :: IntegrationConfigurationsBase
             real :: TimeStep
+            real :: EndOfSimulation
         end type
 
     contains

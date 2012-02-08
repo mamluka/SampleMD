@@ -1,6 +1,7 @@
 module lib_Integration
     use lib_Math
     use class_Particle
+    use class_Grid
     implicit none
 
 contains
@@ -42,4 +43,16 @@ contains
         d=Distance(particleI%Position,new)
 
     end function
+
+    subroutine PrintParticlesPosition(g)
+        type(Grid) :: g
+        call g%ForEachParticle(PrintParticlePositionIterator)
+
+    end subroutine PrintParticlesPosition
+
+    subroutine PrintParticlePositionIterator(p)
+        type(Particle),pointer :: p
+        print *,p%Position
+    end subroutine PrintParticlePositionIterator
+
 end module lib_Integration
