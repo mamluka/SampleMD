@@ -3,6 +3,7 @@ module class_ArgonModifiedLeonardJonesPotential
     use lib_Integration
     use flib_dom
     use lib_ConfigurationManager
+    use class_ReducersDTO
     implicit none
 
     private
@@ -10,7 +11,7 @@ module class_ArgonModifiedLeonardJonesPotential
     public :: ArgonModifiedLeonardJonesPotential
     type,extends(PotentialBase) :: ArgonModifiedLeonardJonesPotential
         private
-        real :: CutOfDistance = 4.2
+        real :: CutOfDistance
         real :: Sigma
         real :: Eps
         real :: Rcut
@@ -20,6 +21,7 @@ module class_ArgonModifiedLeonardJonesPotential
         procedure :: SizeOfGridCell
         procedure :: CutOffRadii
         procedure :: LoadPotentialParameters
+        procedure :: SetReducers
     end type
 
 contains
@@ -88,13 +90,14 @@ contains
     function SizeOfGridCell(this) result(rc)
         class(ArgonModifiedLeonardJonesPotential) :: this
         real :: rc
-        rc = this%CutOfDistance
+        rc = this%Rcut/this%Reducers%Length
     end function
 
     function CutOffRadii(this) result(rc)
         class(ArgonModifiedLeonardJonesPotential) :: this
         real :: rc
-        rc = this%CutOfDistance
+        rc = this%Rcut/this%Reducers%Length
+
     end function
 
     subroutine LoadPotentialParameters(this,filename)
@@ -132,6 +135,19 @@ contains
         this%Rl = LoadXMLAttributeToReal(simulationNode,"rl")
 
     end subroutine LoadPotentialParameters
+
+    subroutine SetReducers(this,reducers)
+        class(ArgonModifiedLeonardJonesPotential) :: this
+        type(ReducersDTO) :: reducers
+
+        print *,reducers,"before set"
+
+        this%Reducers = reducers
+        !this%Reducers%HasDimensionlessReduction=.true.
+
+        print *,this%Reducers,"after set"
+
+    end subroutine SetReducers
 
 
 end module class_ArgonModifiedLeonardJonesPotential

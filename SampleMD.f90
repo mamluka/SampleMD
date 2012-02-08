@@ -19,23 +19,24 @@ program SampleMD
     type(Grid) :: g
     class(PotentialBase),pointer :: potential
 
+    character(len=2) :: aa
+
     type(Cell),pointer :: c
     type(Particle) :: p
 
     integer :: I,J,K
 
-
     configurations = LoadSimulationConfigurations("/home/mamluka/SampleMD/mdconfig.xml")
-
 
     call dataReader%LoadParticlesUsingConfigurations(configurations,particles)
 
     potential => LoadPotentialByConfiguration(configurations)
 
+    print *,potential%Reducers,"out side"
+
     call g%CreateGrid(particles,potential%SizeOfGridCell())
 
     runner => runnerSelector%Select("standard")
-
     call runner%Setup(g,potential,configurations)
 
     call runner%Start()

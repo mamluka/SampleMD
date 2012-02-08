@@ -12,6 +12,14 @@ module class_DataFileReader
         procedure,nopass :: LoadPArticlesUsingConfigurations
     end type DataFileReader
 
+    abstract interface
+        subroutine IMapParticles(p,configurations)
+            import
+            type(Particle) :: p
+            type(SimulationConfigurations) :: configurations
+        end subroutine IMapParticles
+    end interface
+
 contains
 
     subroutine LoadParticlesIntoAnArray(filename,particles)
@@ -19,7 +27,7 @@ contains
         character (len=*) :: filename
 
         integer :: inputStatus
-        character :: type
+        character(len=2) :: type
         real :: x,y,z
         integer :: totalNumberOfAtoms,atomCounter
 
@@ -54,6 +62,35 @@ contains
 
         call LoadParticlesIntoAnArray(configurations%DataFilename,particles)
 
-    end subroutine LoadPArticlesUsingConfigurations
+        if (configurations%Reducers%HasDimensionlessReduction == .true. ) then
+           call ForEachParticle(particles,ReduceToDimensionlessParameters,configurations)
+        end if
+
+    end subroutine LoadParticlesUsingConfigurations
+
+    subroutine ReduceToDimensionlessParameters(p,configurations)
+        type(Particle) :: p
+        type(SimulationConfigurations) :: configurations
+
+        p%Position = p%Position/configurations%Reducers%Length
+        p%Mass = p%Mass/configurations%Reducers%Mass
+
+    end subroutine ReduceToDimensionlessParameters
+
+    subroutine ForEachParticle(particles,proc,configurations)
+        type(Particle) :: particles(:)
+        procedure(IMapParticles) :: proc
+        type(SimulationConfigurations) :: configurations
+        type(SimulationConfigurations),pointer :: configurationsPointer
+
+        integer :: i
+
+        do i=1,size(particles)
+            call proc(particles(i),configurations)
+        end do
+
+    end subroutine ForEachParticle
+
+
 
 end module class_DataFileReader

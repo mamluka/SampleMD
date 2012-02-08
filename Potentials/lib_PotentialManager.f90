@@ -26,19 +26,28 @@ contains
     function LoadPotentialByConfiguration(configurations) result(potential)
         type(SimulationConfigurations) :: configurations
         class(PotentialBase),pointer :: potential
-        type(LeonardJonesPotential),target :: lg
-        type(ArgonModifiedLeonardJonesPotential),target :: aragon
+
+        class(LeonardJonesPotential),allocatable,target :: lg
+        class(ArgonModifiedLeonardJonesPotential),allocatable ,target:: argon
 
         select case (configurations%PotentialName)
             case ("lg")
+                allocate(lg)
                 potential => lg
             case ("argon")
-                potential => aragon
+                allocate(argon)
+                potential => argon
             case default
+                allocate(lg)
                 potential => lg
         end select
 
         call potential%LoadPotentialParameters(configurations%PotentialDataFile)
+
+        if (configurations%Reducers%HasDimensionlessReduction == .true.) then
+            potential%Reducers=configurations%Reducers
+            print *,potential%Reducers,"after set"
+        end if
 \
     end function LoadPotentialByConfiguration
 

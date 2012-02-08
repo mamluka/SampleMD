@@ -1,17 +1,13 @@
 module lib_ConfigurationManager
     use flib_dom
     use class_ErrorHandler
+    use class_ReducersDTO
     implicit none
 
 
     public :: SimulationConfigurations
 
-    type :: ReducersDTO
-        real :: Time
-        real :: Energy
-        real :: Length
-        real :: Mass
-    end type
+
 
 
     type SimulationConfigurations
@@ -20,7 +16,6 @@ module lib_ConfigurationManager
         character (len=:),allocatable :: PotentialName
         character (len=:),allocatable :: PotentialDataFile
         character (len=:),allocatable :: DataFilename
-        logical :: hasReduction = .false.
         type(ReducersDTO) :: Reducers
     end type
 
@@ -75,12 +70,14 @@ contains
             massReducer = LoadXMLAttributeToReal(reducerNode,"mass")
             energyReducer = LoadXMLAttributeToReal(reducerNode,"energy")
 
-            configurations%HasReduction = .true.
+            configurations%Reducers%HasDimensionlessReduction = .true.
 
             configurations%Reducers%Time = timeReducer
             configurations%Reducers%Length = LengthReducer
             configurations%Reducers%Mass = massReducer
             configurations%Reducers%Energy = energyReducer
+
+            configurations%TimeStep = configurations%TimeStep/timeReducer
 
         end if
 

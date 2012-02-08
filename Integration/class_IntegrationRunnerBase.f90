@@ -10,6 +10,7 @@ module class_IntegrationRunnerBase
         class(PotentialBase) ,pointer :: Potential
         type(Grid) :: G
         type(SimulationConfigurations) :: GlobalConfigurations
+
     contains
         procedure(IStart),deferred :: Start
         procedure(ISetup),deferred :: Setup

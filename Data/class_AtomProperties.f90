@@ -14,9 +14,13 @@ module class_AtomProperties
     real :: mass
     character (len=*) :: atomType
 
-    select case (atomType)
+
+
+    select case (trim(atomType))
     case ("C")
         mass = 12.0107
+    case ("Ar")
+        mass = 39.948
     case default
         mass = 12.0107
     end select

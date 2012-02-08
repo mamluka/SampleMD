@@ -13,6 +13,7 @@ module class_LeonardJonesPotential
         procedure :: SizeOfGridCell
         procedure :: CutOffRadii
         procedure :: LoadPotentialParameters
+        procedure :: SetReducers
     end type
 
 contains
@@ -39,6 +40,15 @@ contains
         class(LeonardJonesPotential) :: this
         character(len=*) :: filename
     end subroutine LoadPotentialParameters
+
+    subroutine SetReducers(this,reducers)
+        class(LeonardJonesPotential) :: this
+        type(ReducersDTO) :: reducers
+
+        this%Reducers = reducers
+
+
+    end subroutine SetReducers
 
 
 end module class_LeonardJonesPotential

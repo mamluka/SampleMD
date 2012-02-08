@@ -46,11 +46,13 @@ contains
         type(Grid) :: g
         type(SimulationConfigurations) :: configurations
         class(PotentialBase),pointer :: potential
-
+        print *,potential%Reducers
         this%G=g
         call this%LoadIntegraionConfigurations(configurations)
         this%GlobalConfigurations = configurations
+        print *,potential%Reducers
         this%Potential => potential
+
     end subroutine
 
     function Create() result(runner)
@@ -128,20 +130,26 @@ contains
                                         Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
                                     endif
 
+                                    !print *,this%Potential%CutOffRadii()
+
                                     if (Distance .le. this%Potential%CutOffRadii() ) then
+                                        print *,Distance,this%Potential%CutOffRadii()
                                         call this%Potential%Force(currentParticle,currentInteractionParticle,Distance)
+
+                                        flop=flop+1
                                     end if
 
-                                    flop=flop+1
+
 
                                 end if
-
 
                                 call currentNeighborCell%Next()
 
                             end do
 
                         end do
+
+
 
                         call currentCell%Next()
                     end do

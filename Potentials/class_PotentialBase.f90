@@ -1,14 +1,18 @@
 module class_PotentialBase
     use class_Grid
     use class_Particle
+    use class_ReducersDTO
     implicit none
 
     type,abstract :: PotentialBase
+        type(ReducersDTO) :: Reducers
     contains
         procedure(IForce),deferred :: Force
         procedure(ISizeOfGridCell),deferred :: SizeOfGridCell
         procedure(ICutOffRadii),deferred :: CutOffRadii
         procedure(ILoadPotentialParameters),deferred :: LoadPotentialParameters
+        procedure(ISetReducers),deferred :: SetReducers
+
     end type
 
     abstract interface
@@ -36,6 +40,12 @@ module class_PotentialBase
             class(PotentialBase) :: this
             character(len=*) :: filename
         end subroutine ILoadPotentialParameters
+
+        subroutine ISetReducers(this,reducers)
+            import
+            class(PotentialBase) :: this
+            type(ReducersDTO) :: reducers
+        end subroutine ISetReducers
     end interface
 
 end module class_PotentialBase
