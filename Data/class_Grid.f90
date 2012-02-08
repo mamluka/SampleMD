@@ -43,9 +43,13 @@ contains
 
         real ::box(8,3)
 
-        integer :: GhostCellsWidth =2
+        integer :: GhostCellsWidth = 2
 
-        box = DetermineSimulationBoxCoordinates(particles)
+        real :: addToGrid
+
+        addToGrid = 3.9950/3.4
+
+        box = DetermineSimulationBoxCoordinates(particles,addToGrid)
 
         this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
 
@@ -199,7 +203,7 @@ contains
 
                         currentParticle => currentCell%CurrentValue()
 
-                        write(98,'(I6.4,9(F15.8,2X))'),currentParticle%ID, currentParticle%Position,currentParticle%Velocity,currentParticle%Force
+                        write(98,'(I6.4,9(F15.8,2X))'),currentParticle%ID, currentParticle%Position,currentParticle%Force,currentParticle%Velocity
 
                         call currentCell%Next()
 

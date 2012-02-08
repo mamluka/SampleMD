@@ -26,11 +26,12 @@ module class_ArgonModifiedLeonardJonesPotential
 
 contains
 
-    subroutine Force(this,pi,pj,r)
+    subroutine Force(this,pi,pj,r,direction)
         class(ArgonModifiedLeonardJonesPotential) :: this
         type(Particle):: pi,pj
 
-        real :: r
+
+        real :: r,direction(3)
 
 
         real :: reducedm
@@ -52,12 +53,14 @@ contains
         real :: dS
         real :: S
 
+        real :: dV(3)
+
 
         reducedm=1
         reducedSigma = 1
         reducedEpsilon = 1
 
-        reducedDirection = (pj%Position-pi%Position)
+        reducedDirection = direction
 
         reducedrcut = this%Rcut/this%Sigma
         reducedrl = this%Rl/this%Sigma
@@ -69,7 +72,9 @@ contains
         dLGBasic = 24*reducedEpsilon*(2*SigmaOverR**12-SigmaOverR**6)*reducedDirection/reducedr**2
 
         if ( reducedr .le. reducedrl ) then
-            pi%Force = pi%Force + dLGBasic
+            !print *,pi%ID,"used rl",reducedr
+            dV = dLGBasic
+            pi%Force = pi%Force - dV
         elseif ( ( reducedr .gt. reducedrl ) .and. ( reducedr .le. reducedrcut )) then
             LGBasic = 4*reducedEpsilon*(SigmaOverR**12-SigmaOverR**6)
 
@@ -78,9 +83,14 @@ contains
 
             S=(1-(reducedr-reducedrl)**2*(3*reducedrcut-reducedrl-2*reducedr)/(reducedrcut-reducedrl)**3)
 
-            pi%Force= pi%Force + LGBasic*2*reducedDirection*(dSpart1-dSpart2)+dLGBasic*S
+            dV=LGBasic*2*reducedDirection*(dSpart1-dSpart2)+dLGBasic*S
+
+            pi%Force= pi%Force - dV
+
+            !print *,pi%ID,"used rcut",reducedr
         else
             pi%Force = pi%Force+0
+            !print *,pi%ID,"used zero",reducedr
         end if
 
 

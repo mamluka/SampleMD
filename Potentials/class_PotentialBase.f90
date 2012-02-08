@@ -16,11 +16,12 @@ module class_PotentialBase
     end type
 
     abstract interface
-        subroutine IForce(this,pi,pj,r)
+        subroutine IForce(this,pi,pj,r,direction)
             import
             class(PotentialBase) :: this
             type(Particle) :: pi,pj
             real :: r
+            real :: direction(3)
         end subroutine
 
         function ISizeOfGridCell(this) result(gridSize)

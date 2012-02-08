@@ -18,10 +18,10 @@ module class_LeonardJonesPotential
 
 contains
 
-    subroutine Force(this,pi,pj,r)
+    subroutine Force(this,pi,pj,r,direction)
         class(LeonardJonesPotential) :: this
         type(Particle):: pi,pj
-        real :: r
+        real :: r,direction(3)
     end subroutine Force
 
     function SizeOfGridCell(this) result(rc)

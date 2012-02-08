@@ -6,10 +6,12 @@ module lib_GridAlgorithms
 
 contains
 
-    function DetermineSimulationBoxCoordinates(particles) result(box)
+    function DetermineSimulationBoxCoordinates(particles,rc) result(box)
         type(Particle),allocatable :: particles(:)
         real :: particlePosition(size(particles),3)
         real :: box(8,3)
+
+        real :: rc
 
         integer :: i,xPosition=1,yPosition=2,zPosition=3
 
@@ -17,14 +19,14 @@ contains
             particlePosition(i,:) =  particles(i)%Position
         end do
 
-        box(1:4,xPosition) = minval(particlePosition(:,xPosition))
-        box(5:8,xPosition) = maxval(particlePosition(:,xPosition))
+        box(1:4,xPosition) = minval(particlePosition(:,xPosition))-rc/2.0
+        box(5:8,xPosition) = maxval(particlePosition(:,xPosition))+rc/2.0
 
-        box((/1,4,5,8/),yPosition) = minval(particlePosition(:,yPosition))
-        box((/2,3,6,7/),yPosition) = maxval(particlePosition(:,yPosition))
+        box((/1,4,5,8/),yPosition) = minval(particlePosition(:,yPosition))-rc/2.0
+        box((/2,3,6,7/),yPosition) = maxval(particlePosition(:,yPosition))+rc/2.0
 
-        box((/1,2,5,6/),zPosition) = minval(particlePosition(:,zPosition))
-        box((/3,4,7,8/),zPosition) = maxval(particlePosition(:,zPosition))
+        box((/1,2,5,6/),zPosition) = minval(particlePosition(:,zPosition))-rc/2.0
+        box((/3,4,7,8/),zPosition) = maxval(particlePosition(:,zPosition))+rc/2.0
 
     end function DetermineSimulationBoxCoordinates
 

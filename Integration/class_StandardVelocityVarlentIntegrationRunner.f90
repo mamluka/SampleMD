@@ -35,12 +35,14 @@ contains
 
         print *,"Starting..."
 
+ !       call this%G%DumpDataToFile()
+
         call CalculateForces(this)
 
         call this%G%DumpDataToFile()
-
-        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*10
-
+!
+!        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*10
+!
 !        do while (time .lt. this%Configurations%EndOfSimulation)
 !
 !            time=time + this%Configurations%TimeStep
@@ -51,10 +53,11 @@ contains
 !
 !            call ComputeVelocities(this)
 !
-!            call this%G%DumpDataToFile()
+!
 !
 !        end do
 
+        call this%G%DumpDataToFile()
 
 
 
@@ -97,7 +100,15 @@ contains
 
         integer :: InnerMaxX,InnerMinX,InnerMaxY,InnerMinY,InnerMaxZ,InnerMinZ
 
-        real :: Distance
+        real :: Distance,forceDirection(3)
+
+        integer :: ncounter
+
+        logical :: isGhostCell
+
+        forceDirection=0
+
+        ncounter=0
 
         g=this%G
 
@@ -146,21 +157,26 @@ contains
 
                                 if ( .not. ( currentParticle%ID == currentInteractionParticle%ID)) then
 
-                                    if (CellNeighbors(NeighborIndex)%Ghost == .true. ) then
+                                    isGhostCell = CellNeighbors(NeighborIndex)%Ghost
+
+                                    if ( isGhostCell == .true. ) then
                                         Distance=DistanceBetweenParticlesWithPeriodicConditions(currentParticle,currentInteractionParticle,currentCell%GetCellCoordinates(),currentNeighborCell%GetCellCoordinates(),g%SimulationBoxSize)
                                     else
                                         Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
                                     endif
 
-                                    if (Distance .le. 1E-6) then
-                                        print *,Distance
-                                    end if
+                                    !print *,currentParticle%Position-currentInteractionParticle%Position
 
-                                    !print *,this%Potential%CutOffRadii()
 
-                                    if ((Distance .le. this%Potential%CutOffRadii())) then
-                                       ! print *,Distance,this%Potential%CutOffRadii()
-                                        call this%Potential%Force(currentParticle,currentInteractionParticle,Distance)
+                                    if (Distance .le. (this%Potential%CutOffRadii())) then
+
+                                        ncounter=ncounter+1
+
+                                        forceDirection = DirectionBetweenParticlesWithPeriodicConditions(currentParticle,currentInteractionParticle,currentCell%GetCellCoordinates(),currentNeighborCell%GetCellCoordinates(),g%SimulationBoxSize)
+
+                                        call this%Potential%Force(currentParticle,currentInteractionParticle,Distance,forceDirection)
+
+
 
                                         flop=flop+1
                                     end if
@@ -172,6 +188,12 @@ contains
                             end do
 
                         end do
+                        if (ncounter == 18) then
+                        print *,currentParticle%ID,currentParticle%Position,ncounter
+                        end if
+                        !print *,"------------"
+
+                        ncounter=0
 
                         call currentCell%Next()
                     end do
@@ -180,7 +202,7 @@ contains
             end do
         end do
 
-        print *,"number of oporations on particles",flop
+        !print *,"number of oporations on particles",flop
 
 
 
