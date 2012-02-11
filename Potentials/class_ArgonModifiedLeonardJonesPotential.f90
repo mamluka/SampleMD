@@ -69,10 +69,10 @@ contains
 
         SigmaOverR = reducedSigma/reducedr
 
-        dLGBasic = 24*reducedEpsilon*(2*SigmaOverR**12-SigmaOverR**6)*reducedDirection/reducedr**2
+        dLGBasic = 24.0*reducedEpsilon*(2.0*SigmaOverR**12-SigmaOverR**6)*reducedDirection/reducedr**2
 
         if ( reducedr .le. reducedrl ) then
-            !print *,pi%ID,"used rl",reducedr
+          !  print *,pi%ID,"used rl"
             dV = dLGBasic
             pi%Force = pi%Force - dV
         elseif ( ( reducedr .gt. reducedrl ) .and. ( reducedr .le. reducedrcut )) then
@@ -87,10 +87,10 @@ contains
 
             pi%Force= pi%Force - dV
 
-            !print *,pi%ID,"used rcut",reducedr
+           ! print *,pi%ID,"used rcut"
         else
             pi%Force = pi%Force+0
-            !print *,pi%ID,"used zero",reducedr
+            !print *,pi%ID,"used zero"
         end if
 
 

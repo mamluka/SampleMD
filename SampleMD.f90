@@ -7,6 +7,8 @@ program SampleMD
     use class_Grid
     use class_Cell
     use testme
+    use IFPORT
+    use lib_Math
     implicit none
 
     type(IntegrationRunnerSelector) :: runnerSelector
@@ -26,6 +28,8 @@ program SampleMD
 
     integer :: I,J,K
 
+    REAL :: r(5,5)
+
     configurations = LoadSimulationConfigurations("/home/mamluka/SampleMD/mdconfig.xml")
 
     call dataReader%LoadParticlesUsingConfigurations(configurations,particles)
@@ -38,8 +42,6 @@ program SampleMD
     call runner%Setup(g,potential,configurations)
 
     call runner%Start()
-
-
 
 end program SampleMD
 

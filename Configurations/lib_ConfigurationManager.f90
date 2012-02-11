@@ -2,6 +2,7 @@ module lib_ConfigurationManager
     use flib_dom
     use class_ErrorHandler
     use class_ReducersDTO
+    use class_DataOptionsDTO
     implicit none
 
 
@@ -18,6 +19,7 @@ module lib_ConfigurationManager
         character (len=:),allocatable :: PotentialDataFile
         character (len=:),allocatable :: DataFilename
         type(ReducersDTO),allocatable :: Reducers
+        type(DataOptionsDTO),allocatable :: DataOptions
     end type
 
 
@@ -29,12 +31,14 @@ contains
         character (len=*) :: filename
 
         type(fnode), pointer          :: confDoc
-        type(fnode), pointer          :: rootNode,simulationNode,reducerNode
+        type(fnode), pointer          :: rootNode,simulationNode,reducerNode,dataOptionsNude
         type(fnodeList), pointer      :: tmpList,configNodes
         character (len=100) :: simulatiomNodeName,simulatiomNodeValue
 
         real :: timeReducer,lengthReducer,energyReducer,massReducer
-        type(ReducersDTO),target :: Reducers
+        type(ReducersDTO),target :: reducers
+
+        type(DataOptionsDTO),target :: dataOptions
 
         integer :: i
 
@@ -72,12 +76,12 @@ contains
             massReducer = LoadXMLAttributeToReal(reducerNode,"mass")
             energyReducer = LoadXMLAttributeToReal(reducerNode,"energy")
 
-            Reducers%HasDimensionlessReduction = .true.
+            reducers%HasDimensionlessReduction = .true.
 
-            Reducers%Time = timeReducer
-            Reducers%Length = LengthReducer
-            Reducers%Mass = massReducer
-            Reducers%Energy = energyReducer
+            reducers%Time = timeReducer
+            reducers%Length = LengthReducer
+            reducers%Mass = massReducer
+            reducers%Energy = energyReducer
 
             allocate(configurations%Reducers,source=Reducers)
 
@@ -85,6 +89,29 @@ contains
             configurations%EndOfSimulation = configurations%EndOfSimulation/timeReducer
 
         end if
+
+        tmpList => getElementsByTagName(rootNode, "data")
+
+        if (getLength(tmpList) .gt. 0) then
+
+            dataOptionsNude => item(tmpList, 0)
+
+            if (IsFlagSet(dataOptionsNude,"use-strapping") == .true.) then
+
+                dataOptions%TempForInitialVelocity = LoadXMLAttributeToInt(dataOptionsNude,"temp-for-initial-v")
+
+                dataOptions%BootstrapperType=char(getAttribute(dataOptionsNude,"bootstrapper-type"))
+
+                dataOptions%UseVelocityStrapper = .true.
+
+                allocate(configurations%DataOptions,source=dataOptions)
+
+            end if
+
+        end if
+
+
+
 
     end function
 
@@ -113,6 +140,24 @@ contains
         read(unit=simAttribute,fmt=*) returnValue
 
     end function LoadXMLAttributeToInt
+
+    function IsFlagSet(node,flagName) result(flag)
+        type(fnode) , pointer :: node
+        character (len=*) :: flagName
+        logical :: flag
+        character (len=100) :: simAttribute
+
+        simAttribute = getAttribute(node,flagName)
+
+        if (simAttribute == "" .or. simAttribute == "false")  then
+            flag = .false.
+        elseif (simAttribute == "true") then
+            flag = .true.
+        else
+            flag = .false.
+        end if
+
+    end function
 
 
 

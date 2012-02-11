@@ -47,7 +47,7 @@ contains
 
         real :: addToGrid
 
-        addToGrid = 3.9950/3.4
+        addToGrid = 1.342857142857143
 
         box = DetermineSimulationBoxCoordinates(particles,addToGrid)
 

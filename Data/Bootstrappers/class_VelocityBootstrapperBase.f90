@@ -1,19 +1,22 @@
 module class_VelocityBootstrapperBase
     use class_Particle
+    use class_DataOptionsDTO
     implicit none
 
     type,abstract :: VelocityBootstrapperBase
     contains
-        procedure(LoadVelocityIntoAnArray) ,nopass,deferred:: LoadVelocityIntoAnArray
+        procedure(ILoadVelocityIntoAnArray),nopass,deferred:: LoadVelocityIntoAnArray
     end type
 
     abstract interface
-        subroutine LoadVelocityIntoAnArray (particles)
+        subroutine ILoadVelocityIntoAnArray(particles,dataOptions)
             import
-            type(Particle) ,allocatable ,intent(in):: particles(:)
-
-        end subroutine LoadVelocityIntoAnArray
+            type(Particle),allocatable :: particles(:)
+            type(DataOptionsDTO) :: dataOptions
+        end subroutine ILoadVelocityIntoAnArray
     end interface
+
+
 
 contains
 

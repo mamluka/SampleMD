@@ -55,7 +55,7 @@
 								<option id="intel.linux.fortran.compiler.general.debug.1602997164" name="Include Debug Information (-g)" superClass="intel.linux.fortran.compiler.general.debug" value="true" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.fp.fpexcept.1824912623" name="Reliable Floating Point Exceptions Model (-fp-model except)" superClass="intel.linux.fortran.compiler.fp.fpexcept" value="false" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.fp.fpconstant.653220913" name="Extend Precision of Single Precision Constants (-fpconstant)" superClass="intel.linux.fortran.compiler.fp.fpconstant" value="false" valueType="boolean"/>
-								<option id="intel.linux.fortran.compiler.fp.fpmodel.757604800" superClass="intel.linux.fortran.compiler.fp.fpmodel" value="fpmodel.precise" valueType="enumerated"/>
+								<option id="intel.linux.fortran.compiler.fp.fpmodel.757604800" name="Floating Point Model" superClass="intel.linux.fortran.compiler.fp.fpmodel" value="fpmodel.source" valueType="enumerated"/>
 								<inputType id="photran.managedbuild.tool.intel.fortran.compiler.input.1101937056" superClass="photran.managedbuild.tool.intel.fortran.compiler.input"/>
 							</tool>
 							<tool id="photran.managedbuild.tool.intel.fortran.linker.x86.base.1316158385" name="Intel(R) Fortran Linker" superClass="photran.managedbuild.tool.intel.fortran.linker.x86.base">

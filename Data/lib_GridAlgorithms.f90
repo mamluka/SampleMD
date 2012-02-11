@@ -97,6 +97,8 @@ contains
 
             write (98,*),xIndex,yIndex,zIndex
 
+
+
             particlePointer => particles(i)
 
             if (cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%Exists()) then

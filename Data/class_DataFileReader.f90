@@ -2,6 +2,8 @@ module class_DataFileReader
     use class_Particle
     use lib_ConfigurationManager
     use class_AtomProperties
+    use class_DataOptionsDTO
+    use lib_BootstrapperManager
     implicit none
     public :: DataFileReader
 
@@ -48,6 +50,8 @@ contains
             p%Mass=atomProperties%AtomMassInAMU(type)
             call p%GiveID(atomCounter)
 
+
+
             particles(atomCounter) = p
 
         end do
@@ -63,7 +67,11 @@ contains
         call LoadParticlesIntoAnArray(configurations%DataFilename,particles)
 
         if (configurations%Reducers%HasDimensionlessReduction == .true. ) then
-           call ForEachParticle(particles,ReduceToDimensionlessParameters,configurations)
+            call ForEachParticle(particles,ReduceToDimensionlessParameters,configurations)
+        end if
+
+        if (configurations%DataOptions%UseVelocityStrapper == .true. ) then
+            call BootstrapVelocity(particles,configurations%DataOptions)
         end if
 
     end subroutine LoadParticlesUsingConfigurations
@@ -90,6 +98,20 @@ contains
         end do
 
     end subroutine ForEachParticle
+
+    subroutine BootstrapVelocity(particles,dataOptions)
+        type(Particle),allocatable :: particles(:)
+        type(DataOptionsDTO) :: dataOptions
+
+        class(VelocityBootstrapperBase),pointer :: strapper
+
+        strapper => LoadVelocityBootstrapperByType(dataOptions%BootstrapperType)
+
+        call strapper%LoadVelocityIntoAnArray(particles,dataOptions)
+
+
+
+    end subroutine BootstrapVelocity
 
 
 

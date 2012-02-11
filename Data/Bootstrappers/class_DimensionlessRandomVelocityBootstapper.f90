@@ -1,22 +1,24 @@
-module class_RandomVelocityBootstapper
+module class_DimensionlessRandomVelocityBootstapper
     use class_VelocityBootstrapperBase
     implicit none
 
     private
 
-    public :: RandomVelocityBootstapper
+    public :: DimensionlessRandomVelocityBootstapper
 
-    type,extends(VelocityBootstrapperBase) :: RandomVelocityBootstapper
-    contains
+    type,extends(VelocityBootstrapperBase) :: DimensionlessRandomVelocityBootstapper
+        contains
         procedure,nopass ::LoadVelocityIntoAnArray
     end type
 
-contains
+    contains
 
     subroutine LoadVelocityIntoAnArray(particles,dataOptions)
         type(Particle),allocatable :: particles(:)
         type(DataOptionsDTO) :: dataOptions
 
+
+
     end subroutine LoadVelocityIntoAnArray
 
-end module class_RandomVelocityBootstapper
+end module class_DimensionlessRandomVelocityBootstapper

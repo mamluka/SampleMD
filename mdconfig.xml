@@ -3,6 +3,7 @@
 <sim dim="3" timestep="0.00217" data-filename="argon.xyz" potential="argon" 
 potential-data-file="argon.xml" sim-end="0.217"
 ></sim>
+<data temp-for-initial-v="300" bootstrapper-type="random" use-strapping="true"></data>
 <dless time="2.1555" energy="1.65E-21" length="3.4" mass="39.948"
 >
 </dless>
