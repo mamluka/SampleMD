@@ -11,6 +11,8 @@ module class_Grid
         type(CellContainer),allocatable :: CellContainers(:,:,:)
         integer :: GridSize(3)
         real :: SimulationBoxSize(3)
+        real :: SimulationBoxCoordinates(8,3)
+        real :: GridPartitioningLength
     contains
         procedure :: CreateGrid
         procedure :: GetCell
@@ -18,19 +20,29 @@ module class_Grid
         procedure :: IsGhost
         procedure :: ForEachParticle
         procedure :: ForEachParticleWithConfigurations
+        procedure :: ForEachParticleWithGridObjectAndCoordinates
         procedure :: DumpDataToFile
+        procedure :: ParticleCellCoordinatesByPosition
+        procedure :: MoveParticleBetweenCells
     end type Grid
 
     abstract interface
-        subroutine IMapParticles(p,configurations)
+        subroutine IMapParticlesWithConfigurations(p,configurations)
             import
             type(Particle),pointer :: p
             class(IntegrationConfigurationsBase) :: configurations
         end subroutine
 
-        subroutine IMapPureParticles(p)
+        subroutine IMapParticles(p)
             import
             type(Particle),pointer :: p
+        end subroutine
+
+        subroutine IMapParticlesWithGridObjectAndCoordinates(g,p,currentGridCoordinates)
+            import
+            type(Particle),pointer :: p
+            type(Grid) :: g
+            integer :: currentGridCoordinates(3)
         end subroutine
     end interface
 
@@ -52,12 +64,16 @@ contains
         box = DetermineSimulationBoxCoordinates(particles,addToGrid)
 
         this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
+        this%SimulationBoxCoordinates = box
 
         call AllocateGridByCutOffRadiiWithGhostCells(this%CellContainers,rc,box)
 
         this%GridSize(1) = size(this%CellContainers,1)-GhostCellsWidth
         this%GridSize(2) = size(this%CellContainers,2)-GhostCellsWidth
         this%GridSize(3) = size(this%CellContainers,3)-GhostCellsWidth
+
+        this%GridPartitioningLength = rc
+
 
         call DistributeParticlesToGrid(this%CellContainers,particles,rc,box,this%GridSize)
 
@@ -119,7 +135,7 @@ contains
 
     subroutine ForEachParticleWithConfigurations(this,proc,configurations)
         class(Grid) :: this
-        procedure(IMapParticles),pointer,intent(in) :: proc
+        procedure(IMapParticlesWithConfigurations),pointer,intent(in) :: proc
         class(IntegrationConfigurationsBase) :: configurations
         type(Cell),pointer :: currentCell
         integer :: I,J,K
@@ -152,7 +168,7 @@ contains
 
     subroutine ForEachParticle(this,proc)
         class(Grid) :: this
-        procedure(IMapPureParticles),pointer,intent(in) :: proc
+        procedure(IMapParticles),pointer,intent(in) :: proc
         type(Cell),pointer :: currentCell
         integer :: I,J,K
 
@@ -181,6 +197,115 @@ contains
         end do
 
     end subroutine
+
+    subroutine ForEachParticleWithGridObjectAndCoordinates(this,proc)
+        class(Grid) :: this
+        procedure(IMapParticlesWithGridObjectAndCoordinates),pointer,intent(in) :: proc
+        type(Cell),pointer :: currentCell
+        integer :: I,J,K
+
+        type(Particle),pointer :: currentParticle
+
+        do I=1,this%GridSize(1)
+            do J=1,this%GridSize(2)
+                do K=1,this%GridSize(3)
+
+                    currentCell => this%CellContainers(I,J,K)%C
+
+                    call currentCell%Reset()
+
+                    do while (currentCell%AreThereMoreParticles())
+
+                        currentParticle => currentCell%CurrentValue()
+
+                        call proc(this,currentParticle,currentCell%GetCellCoordinates())
+
+                        call currentCell%Next()
+
+                    end do
+
+                end do
+            end do
+        end do
+    end subroutine ForEachParticleWithGridObjectAndCoordinates
+
+    function ParticleCellCoordinatesByPosition(this,particlePos) result(cord)
+        class(Grid) :: this
+
+        real :: particlePos(3)
+        real :: cord(3)
+
+        real :: box(8,3)
+
+        real :: particleDeltaX,particleDeltaY,particleDeltaZ
+
+        real :: rc,xIndex,yIndex,zIndex
+
+        real :: gridSize(3)
+
+        gridSize = this%GridSize
+
+        rc=this%GridPartitioningLength
+
+        box = this%SimulationBoxCoordinates
+
+        particleDeltaX = (particlePos(1)-box(1,1))/rc
+        particleDeltaY = (particlePos(2)-box(1,2))/rc
+        particleDeltaZ = (particlePos(3)-box(1,3))/rc
+
+
+
+        if ( particleDeltaX .lt. 0 ) then
+            xIndex=gridSize(1)
+        else
+            xIndex=ceiling(particleDeltaX)
+        end if
+
+        if ( particleDeltaY .lt. 0 ) then
+            yIndex=gridSize(2)
+        else
+            yIndex=ceiling(particleDeltaY)
+        end if
+
+        if ( particleDeltaZ .lt. 0 ) then
+            zIndex=gridSize(3)
+        else
+            zIndex=ceiling(particleDeltaZ)
+        end if
+
+        if (xIndex == 0)  xIndex=1
+        if (yIndex == 0)  yIndex=1
+        if (zIndex == 0)  zIndex=1
+
+        if (xIndex > gridSize(1)) xIndex=1
+        if (yIndex > gridSize(2)) yIndex=1
+        if (zIndex > gridSize(3)) zIndex=1
+
+        cord = (/xIndex,yIndex,zIndex/)
+
+    end function
+
+    subroutine MoveParticleBetweenCells(this,currentCellCoord,targetCellCoord,p)
+        class(Grid) :: this
+        type(Particle),pointer :: p
+        integer :: currentCellCoord(3)
+        integer :: targetCellCoord(3)
+
+        type(Particle),pointer :: p2
+
+        type(Cell),pointer :: currentCell,targetCell
+
+        currentCell => this%GetCell(currentCellCoord(1),currentCellCoord(2),currentCellCoord(3))
+        targetCell => this%GetCell(targetCellCoord(1),targetCellCoord(2),targetCellCoord(3))
+
+
+        call currentCell%RemoveParticle(p)
+
+        print *,p%ID
+
+       ! call targetCell%AddParticle(p)
+
+    end subroutine MoveParticleBetweenCells
 
     subroutine DumpDataToFile(this)
         class(Grid) :: this

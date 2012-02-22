@@ -1,6 +1,6 @@
 module class_VelocityBootstrapperBase
     use class_Particle
-    use class_DataOptionsDTO
+    use lib_ConfigurationManager
     implicit none
 
     type,abstract :: VelocityBootstrapperBase
@@ -9,10 +9,10 @@ module class_VelocityBootstrapperBase
     end type
 
     abstract interface
-        subroutine ILoadVelocityIntoAnArray(particles,dataOptions)
+        subroutine ILoadVelocityIntoAnArray(particles,configurations)
             import
             type(Particle),allocatable :: particles(:)
-            type(DataOptionsDTO) :: dataOptions
+            type(SimulationConfigurations) :: Configurations
         end subroutine ILoadVelocityIntoAnArray
     end interface
 

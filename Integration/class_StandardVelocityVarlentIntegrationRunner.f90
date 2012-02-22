@@ -35,27 +35,23 @@ contains
 
         print *,"Starting..."
 
-        !       call this%G%DumpDataToFile()
-
         call CalculateForces(this)
 
-        call this%G%DumpDataToFile()
-        !
-        !        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*10
-        !
-        !        do while (time .lt. this%Configurations%EndOfSimulation)
-        !
-        !            time=time + this%Configurations%TimeStep
-        !
-        !            call ComputePosition(this)
-        !
-        !            call CalculateForces(this)
-        !
-        !            call ComputeVelocities(this)
-        !
-        !
-        !
-        !        end do
+        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*30
+
+        do while (time .lt. this%Configurations%EndOfSimulation)
+
+            time=time + this%Configurations%TimeStep
+
+            call ComputePositions(this)
+
+            call RedistributeParticlesToCells(this)
+
+            call CalculateForces(this)
+
+            call ComputeVelocities(this)
+
+        end do
 
         call this%G%DumpDataToFile()
 
@@ -206,14 +202,14 @@ contains
 
     end subroutine CalculateForces
 
-    subroutine ComputePosition(this)
+    subroutine ComputePositions(this)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(Grid) :: g
 
         call this%g%ForEachParticleWithConfigurations(CalculatePositionIterator,this%Configurations)
 
 
-    end subroutine ComputePosition
+    end subroutine ComputePositions
 
     subroutine CalculatePositionIterator(p,configurations)
         type(Particle),pointer :: p
@@ -227,13 +223,31 @@ contains
         p%Position = p%Position + dt*(p%Velocity+a*p%Force)
         p%ForceFromPreviousIteration = p%Force
 
-        !print *,p%Position
-
     end subroutine CalculatePositionIterator
+
+    subroutine RedistributeParticlesToCells(this)
+        class(StandardVelocityVarlentIntegrationRunner) :: this
+
+        call this%g%ForEachParticleWithGridObjectAndCoordinates(RedistributeParticlesToCellsIterator)
+
+    end subroutine RedistributeParticlesToCells
+
+    subroutine RedistributeParticlesToCellsIterator(g,p,currentCellCoordinates)
+        type(Particle),pointer :: p
+        type(Grid) :: g
+        integer :: currentCellCoordinates(3)
+        integer :: currentParticleCoordinates(3)
+
+        currentParticleCoordinates=g%ParticleCellCoordinatesByPosition(p%Position)
+        if ( (currentCellCoordinates(1) /= currentParticleCoordinates(1)) .or. (currentCellCoordinates(2) /= currentParticleCoordinates(2)) .or. (currentCellCoordinates(3) /= currentParticleCoordinates(3))) then
+            call g%MoveParticleBetweenCells(currentCellCoordinates,currentParticleCoordinates,p)
+        end if
+
+
+    end subroutine RedistributeParticlesToCellsIterator
 
     subroutine ComputeVelocities(this)
         class(StandardVelocityVarlentIntegrationRunner) :: this
-        type(Grid) :: g
 
         call this%g%ForEachParticleWithConfigurations(CalculateVelocitiesIterator,this%Configurations)
 

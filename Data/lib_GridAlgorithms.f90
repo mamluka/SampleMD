@@ -74,7 +74,7 @@ contains
 
 
         type(Cell),pointer :: currentCell
-        class(Particle),pointer ::particlePointer
+        type(Particle),pointer ::particlePointer
         integer :: i,xIndex,yIndex,zIndex
 
         integer :: BoundryShift=1
@@ -108,9 +108,6 @@ contains
             end if
 
             call currentCell%AddParticle(particlePointer)
-
-            !print *,currentCell%ParticleCount(),xIndex,yIndex,zIndex,currentCell%CellID(),i
-            !print *,cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%Ghost
 
             currentCell => null()
 

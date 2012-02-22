@@ -47,10 +47,10 @@ contains
             if (inputStatus /= 0) exit
             read (99,*),type,x,y,z
             p=AllocateParticleWithPosition(x,y,z)
+
             p%Mass=atomProperties%AtomMassInAMU(type)
+
             call p%GiveID(atomCounter)
-
-
 
             particles(atomCounter) = p
 
@@ -71,7 +71,7 @@ contains
         end if
 
         if (configurations%DataOptions%UseVelocityStrapper == .true. ) then
-            call BootstrapVelocity(particles,configurations%DataOptions)
+            call BootstrapVelocity(particles,configurations)
         end if
 
     end subroutine LoadParticlesUsingConfigurations
@@ -99,15 +99,15 @@ contains
 
     end subroutine ForEachParticle
 
-    subroutine BootstrapVelocity(particles,dataOptions)
+    subroutine BootstrapVelocity(particles,configurations)
         type(Particle),allocatable :: particles(:)
-        type(DataOptionsDTO) :: dataOptions
+        type(SimulationConfigurations) :: configurations
 
         class(VelocityBootstrapperBase),pointer :: strapper
 
-        strapper => LoadVelocityBootstrapperByType(dataOptions%BootstrapperType)
+        strapper => LoadVelocityBootstrapperByType(configurations%dataOptions%BootstrapperType)
 
-        call strapper%LoadVelocityIntoAnArray(particles,dataOptions)
+        call strapper%LoadVelocityIntoAnArray(particles,configurations)
 
 
 

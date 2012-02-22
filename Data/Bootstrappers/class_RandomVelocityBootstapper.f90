@@ -13,9 +13,9 @@ module class_RandomVelocityBootstapper
 
 contains
 
-    subroutine LoadVelocityIntoAnArray(particles,dataOptions)
+    subroutine LoadVelocityIntoAnArray(particles,configurations)
         type(Particle),allocatable :: particles(:)
-        type(DataOptionsDTO) :: dataOptions
+        type(SimulationConfigurations) :: Configurations
 
     end subroutine LoadVelocityIntoAnArray
 

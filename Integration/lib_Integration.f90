@@ -12,10 +12,6 @@ contains
 
         d=Distance(particleI%Position,particleJ%Position)
 
-        if ((d .ge. 2.29) .and. (d .le. 2.31)) then
-            print *,"problem"
-        end if
-
     end function
 
     function DistanceBetweenParticlesWithPeriodicConditions(particleI,particleJ,CellPosition,NeighborPosition,box) result (d)

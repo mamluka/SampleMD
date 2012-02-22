@@ -6,33 +6,32 @@ module class_Cell
     public :: Cell,EmptyCell
     type :: Cell
         private
-        class(ParticleLink),pointer :: firstLink => null() ! first link in list
-        class(ParticleLink),pointer :: lastLink => null()  ! last link in list
-        class(ParticleLink),pointer :: currLink => null()  ! list iterator
+        type(ParticleLink),pointer :: firstLink => null() ! first link in list
+        type(ParticleLink),pointer :: lastLink => null()  ! last link in list
+        type(ParticleLink),pointer :: currLink => null()  ! list iterator
         integer :: NumberOfParticles=0
         integer :: CellCoordinates(3)
     contains
-        procedure, non_overridable :: AddParticle     ! add class(Particle) to list
-        procedure, non_overridable :: SetCellCoordinates     ! add class(Particle) to list
-        procedure, non_overridable :: GetCellCoordinates     ! add class(Particle) to list
-        procedure, non_overridable :: FirstValue   ! value of first link in list
-        procedure, non_overridable :: Reset        ! reset list iterator
-        procedure, non_overridable :: Next         ! increment list iterator
-        procedure, non_overridable :: CurrentValue ! get value from currLink
-        procedure, non_overridable :: AreThereMoreParticles   ! more values for iterator?
-        procedure, non_overridable :: ParticleCount   ! more values for iterator?
+        procedure, non_overridable :: AddParticle
+        procedure, non_overridable :: SetCellCoordinates
+        procedure, non_overridable :: GetCellCoordinates
+        procedure, non_overridable :: FirstValue
+        procedure, non_overridable :: Reset
+        procedure, non_overridable :: Next
+        procedure, non_overridable :: CurrentValue
+        procedure, non_overridable :: RemoveParticle
+        procedure, non_overridable :: AreThereMoreParticles
+        procedure, non_overridable :: ParticleCount
     end type Cell
 
 contains
 
     subroutine AddParticle(this, value)
         class(Cell) :: this
-        class(Particle) ,pointer :: value
-        class(ParticleLink), pointer :: newLink
+        type(Particle) ,pointer :: value
+        type(ParticleLink), pointer :: newLink
 
-        class(ParticleLink) ,pointer :: firstLink,nextLink
-
-
+        type(ParticleLink) ,pointer :: firstLink,nextLink
 
         if (.not. associated(this%firstLink)) then
             firstLink => this%firstLink
@@ -53,7 +52,7 @@ contains
 
     function FirstValue(this)
         class(Cell) :: this
-        class(Particle), pointer :: firstValue
+        type(Particle), pointer :: firstValue
 
         firstValue => this%firstLink%getValue()
 
@@ -61,7 +60,7 @@ contains
 
     function CurrentValue(this)
         class(Cell) :: this
-        class(Particle), pointer :: CurrentValue
+        type(Particle), pointer :: CurrentValue
         CurrentValue => this%currLink%getValue()
     end function CurrentValue
 
@@ -89,6 +88,43 @@ contains
         class(Cell) :: this
         total = this%NumberOfParticles
     end function
+
+    subroutine RemoveParticle(this,particleToBeDeleted)
+        class(Cell) :: this
+        type(Particle),pointer :: particleToBeDeleted,currentParticle
+        integer :: particleID
+        type(ParticleLink),pointer  :: previousLink,nextLink
+
+        previousLink => null()
+
+        call this%Reset()
+
+        do while (this%AreThereMoreParticles())
+
+            currentParticle => this%CurrentValue()
+            particleID = currentParticle%ID
+
+            if ( particleID == particleToBeDeleted%ID ) then
+                if (.not. associated(previousLink)) then
+                    this%firstLink => this%currLink%nextParticleLink()
+                    this%lastLink => this%firstLink
+                    this%currLink => this%firstLink
+                else
+                    nextLink => this%currLink%nextParticleLink()
+                    call previousLink%setNextParticleLink(nextLink)
+                end if
+                this%NumberOfParticles=this%NumberOfParticles-1
+                exit
+
+            end if
+            previousLink => this%currLink
+
+            call this%Next()
+
+        end do
+
+
+    end subroutine RemoveParticle
 
 
     function EmptyCell() result (c)

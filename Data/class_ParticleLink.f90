@@ -6,7 +6,7 @@ module class_ParticleLink
     public :: ParticleLink,CreateParticleLink
     type ParticleLink
         private
-        class(Particle), pointer :: value => null() ! value stored in ParticleLink
+        type(Particle), pointer :: value => null() ! value stored in ParticleLink
         type(ParticleLink), pointer :: next => null()! next ParticleLink in list
     contains
         procedure :: getValue    ! return value pointer
@@ -22,7 +22,7 @@ contains
 
     function nextParticleLink(this)
         class(ParticleLink) :: this
-        class(ParticleLink), pointer :: nextParticleLink
+        type(ParticleLink), pointer :: nextParticleLink
         if (.not. associated(this%next) ) then
             nextParticleLink=>null()
         else
@@ -32,13 +32,13 @@ contains
 
     subroutine setNextParticleLink(this,next)
         class(ParticleLink) :: this
-        class(ParticleLink), pointer :: next
+        type(ParticleLink), pointer :: next
         this%next => next
     end subroutine setNextParticleLink
 
     function getValue(this)
         class(ParticleLink) :: this
-        class(Particle), pointer :: getValue
+        type(Particle), pointer :: getValue
         getValue => this%value
     end function getValue
 
@@ -46,7 +46,7 @@ contains
 
     function CreateParticleLink(value)
         class(ParticleLink),pointer :: CreateParticleLink
-        class(Particle) :: value
+        type(Particle) :: value
         type(ParticleLink),target :: newLink
 
         allocate(CreateParticleLink,source=newLink)
