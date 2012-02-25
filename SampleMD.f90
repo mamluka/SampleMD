@@ -9,6 +9,7 @@ program SampleMD
     use testme
     use IFPORT
     use lib_Math
+    use class_ParticlePredicateForID
     implicit none
 
     type(IntegrationRunnerSelector) :: runnerSelector
@@ -22,6 +23,7 @@ program SampleMD
     class(PotentialBase),pointer :: potential
     type(Cell),pointer :: c
     type(Particle),pointer :: p
+    type(ParticlePredicateForID) :: predicate
 
     real :: pos(3)
 
@@ -33,16 +35,21 @@ program SampleMD
 
     call g%CreateGrid(particles,potential%SizeOfGridCell())
 
-    c => g%GetCell(2,2,2)
-    call c%RemoveParticle(c%CurrentValue())
-
-    call c%Reset()
-
-    do while (c%AreThereMoreParticles())
-        p=> c%CurrentValue()
-        print *, p%ID
-        call c%Next()
-    end do
+!    predicate%ParticleID=73;
+!
+!
+!    c=>g%GetCell(1,1,1)
+!    call c%RemoveWhenTrue(predicate)
+!
+!    call c%Reset()
+!
+!    do while (c%AreThereMoreParticles())
+!        p=> c%CurrentValue()
+!
+!        print *,p%ID
+!
+!        call c%Next()
+!    end do
 
     runner => runnerSelector%Select("standard")
     call runner%Setup(g,potential,configurations)

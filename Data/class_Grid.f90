@@ -15,6 +15,7 @@ module class_Grid
         real :: GridPartitioningLength
     contains
         procedure :: CreateGrid
+        procedure :: GetCellWithGhostIncluded
         procedure :: GetCell
         procedure :: DetermineCellNeighborsAndSelf
         procedure :: IsGhost
@@ -23,7 +24,8 @@ module class_Grid
         procedure :: ForEachParticleWithGridObjectAndCoordinates
         procedure :: DumpDataToFile
         procedure :: ParticleCellCoordinatesByPosition
-        procedure :: MoveParticleBetweenCells
+        procedure :: ForEachCell
+        procedure :: TotalParticlesCount
     end type Grid
 
     abstract interface
@@ -44,6 +46,12 @@ module class_Grid
             type(Grid) :: g
             integer :: currentGridCoordinates(3)
         end subroutine
+
+        subroutine IMapCells(g,currentCell)
+            import
+            type(Grid) :: g
+            type(Cell) :: currentCell
+        end subroutine IMapCells
     end interface
 
 contains
@@ -79,7 +87,7 @@ contains
 
     end subroutine CreateGrid
 
-    function GetCell(this,x,y,z) result(c)
+    function GetCellWithGhostIncluded(this,x,y,z) result(c)
         type(Cell),pointer :: c
         class(Grid) :: this
 
@@ -87,6 +95,20 @@ contains
         c=>this%CellContainers(x,y,z)%C
 
     end function
+
+    function GetCell(this,x,y,z) result(c)
+        type(Cell),pointer :: c
+        class(Grid) :: this
+
+        integer :: x,y,z
+        integer :: ghostOffset
+
+        ghostOffset = 1
+
+        c=>this%CellContainers(x+ghostOffset,y+ghostOffset,z+ghostOffset)%C
+
+    end function
+
 
     function IsGhost(this,x,y,z) result(ghost)
         logical :: ghost
@@ -146,7 +168,7 @@ contains
             do J=1,this%GridSize(2)
                 do K=1,this%GridSize(3)
 
-                    currentCell => this%CellContainers(I,J,K)%C
+                    currentCell => this%GetCell(I,J,K)
 
                     call currentCell%Reset()
 
@@ -178,7 +200,7 @@ contains
             do J=1,this%GridSize(2)
                 do K=1,this%GridSize(3)
 
-                    currentCell => this%CellContainers(I,J,K)%C
+                    currentCell => this%GetCell(I,J,K)
 
                     call currentCell%Reset()
 
@@ -210,7 +232,7 @@ contains
             do J=1,this%GridSize(2)
                 do K=1,this%GridSize(3)
 
-                    currentCell => this%CellContainers(I,J,K)%C
+                    currentCell => this%GetCell(I,J,K)
 
                     call currentCell%Reset()
 
@@ -228,6 +250,28 @@ contains
             end do
         end do
     end subroutine ForEachParticleWithGridObjectAndCoordinates
+
+    subroutine ForEachCell(this,proc)
+        class(Grid) :: this
+        procedure(IMapCells) :: proc
+        type(Cell),pointer :: currentCell
+
+        integer :: I,J,K
+
+        do I=1,this%GridSize(1)
+            do J=1,this%GridSize(2)
+                do K=1,this%GridSize(3)
+
+                    currentCell => this%GetCell(I,J,K)
+
+                    call proc(this,currentCell)
+
+                end do
+            end do
+        end do
+
+
+    end subroutine ForEachCell
 
     function ParticleCellCoordinatesByPosition(this,particlePos) result(cord)
         class(Grid) :: this
@@ -285,27 +329,37 @@ contains
 
     end function
 
-    subroutine MoveParticleBetweenCells(this,currentCellCoord,targetCellCoord,p)
+    function TotalParticlesCount(this) result(total)
         class(Grid) :: this
-        type(Particle),pointer :: p
-        integer :: currentCellCoord(3)
-        integer :: targetCellCoord(3)
+        type(Cell),pointer :: currentCell
+        integer :: I,J,K
+        integer :: total
 
-        type(Particle),pointer :: p2
+        type(Particle),pointer :: currentParticle
 
-        type(Cell),pointer :: currentCell,targetCell
+        total = 0
 
-        currentCell => this%GetCell(currentCellCoord(1),currentCellCoord(2),currentCellCoord(3))
-        targetCell => this%GetCell(targetCellCoord(1),targetCellCoord(2),targetCellCoord(3))
+        do I=1,this%GridSize(1)
+            do J=1,this%GridSize(2)
+                do K=1,this%GridSize(3)
 
+                    currentCell => this%GetCell(I,J,K)
 
-        call currentCell%RemoveParticle(p)
+                    call currentCell%Reset()
 
-        print *,p%ID
+                    do while (currentCell%AreThereMoreParticles())
 
-       ! call targetCell%AddParticle(p)
+                        total = total + 1
 
-    end subroutine MoveParticleBetweenCells
+                        call currentCell%Next()
+
+                    end do
+
+                end do
+            end do
+        end do
+
+    end function
 
     subroutine DumpDataToFile(this)
         class(Grid) :: this

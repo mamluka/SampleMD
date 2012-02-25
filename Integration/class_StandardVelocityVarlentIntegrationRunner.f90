@@ -6,6 +6,7 @@ module class_StandardVelocityVarlentIntegrationRunner
     use class_Cell
     use class_CellNeightbor
     use class_IntegrationConfigurationsBase
+    use class_ParticlePredicateForCellMigration
     implicit none
     private
     public :: StandardVelocityVarlentIntegrationRunner,Create
@@ -37,7 +38,7 @@ contains
 
         call CalculateForces(this)
 
-        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*30
+        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*35
 
         do while (time .lt. this%Configurations%EndOfSimulation)
 
@@ -125,7 +126,7 @@ contains
             do IndexY=InnerMinY,InnerMaxY
                 do IndexX=InnerMinX,InnerMaxX
 
-                    currentCell => g%GetCell(IndexX,IndexY,IndexZ)
+                    currentCell => g%GetCellWithGhostIncluded(IndexX,IndexY,IndexZ)
 
                     call currentCell%Reset()
 
@@ -143,10 +144,6 @@ contains
 
                             call currentNeighborCell%Reset()
 
-                            !print *,currentNeighborCell%ParticleCount(),currentNeighborCell%GetCellCoordinates()
-
-                            !print *,CellNeighbors(NeighborIndex)%Ghost
-
                             do while (currentNeighborCell%AreThereMoreParticles())
 
                                 currentInteractionParticle=>currentNeighborCell%CurrentValue()
@@ -155,18 +152,11 @@ contains
 
                                     isGhostCell = CellNeighbors(NeighborIndex)%Ghost
 
-                                    if (currentNeighborCell%ParticleCount() == 8) then
-                                        !print *,currentInteractionParticle%Position
-                                    end if
-
                                     if ( isGhostCell == .true. ) then
                                         Distance=DistanceBetweenParticlesWithPeriodicConditions(currentParticle,currentInteractionParticle,currentCell%GetCellCoordinates(),currentNeighborCell%GetCellCoordinates(),g%SimulationBoxSize)
                                     else
                                         Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
                                     endif
-
-                                    !print *,currentParticle%Position-currentInteractionParticle%Position
-
 
                                     if (Distance .le. (this%Potential%CutOffRadii())) then
 
@@ -196,10 +186,6 @@ contains
             end do
         end do
 
-        !print *,"number of oporations on particles",flop
-
-
-
     end subroutine CalculateForces
 
     subroutine ComputePositions(this)
@@ -228,21 +214,40 @@ contains
     subroutine RedistributeParticlesToCells(this)
         class(StandardVelocityVarlentIntegrationRunner) :: this
 
-        call this%g%ForEachParticleWithGridObjectAndCoordinates(RedistributeParticlesToCellsIterator)
+        call this%g%ForEachCell(RedistributeParticlesToCellsIterator)
 
     end subroutine RedistributeParticlesToCells
 
-    subroutine RedistributeParticlesToCellsIterator(g,p,currentCellCoordinates)
-        type(Particle),pointer :: p
+    subroutine RedistributeParticlesToCellsIterator(g,c)
         type(Grid) :: g
-        integer :: currentCellCoordinates(3)
-        integer :: currentParticleCoordinates(3)
+        type(Cell) :: c
+        type(Cell) :: removedParticlesCell
 
-        currentParticleCoordinates=g%ParticleCellCoordinatesByPosition(p%Position)
-        if ( (currentCellCoordinates(1) /= currentParticleCoordinates(1)) .or. (currentCellCoordinates(2) /= currentParticleCoordinates(2)) .or. (currentCellCoordinates(3) /= currentParticleCoordinates(3))) then
-            call g%MoveParticleBetweenCells(currentCellCoordinates,currentParticleCoordinates,p)
+
+        type(ParticlePredicateForCellMigration) :: predicate
+        integer :: currentCellCoordinates(3),movedToCellCoordinates(3)
+        type(Particle),pointer :: currentDeletedParticle
+        type(Cell),pointer :: movedToCell
+
+        currentCellCoordinates = c%GetCellCoordinates()
+
+        call predicate%PredicateSetup(g,currentCellCoordinates)
+
+        call c%RemoveWhenTrue(predicate,removedParticlesCell)
+
+        if (removedParticlesCell%ParticleCount() .gt. 0) then
+            do while (removedParticlesCell%AreThereMoreParticles())
+                currentDeletedParticle => removedParticlesCell%CurrentValue()
+                movedToCellCoordinates = g%ParticleCellCoordinatesByPosition(currentDeletedParticle%Position)
+                movedToCell => g%GetCell(movedToCellCoordinates(1),movedToCellCoordinates(2),movedToCellCoordinates(3))
+
+                call movedToCell%AddParticle(currentDeletedParticle)
+
+                call removedParticlesCell%Next()
+            end do
+
+
         end if
-
 
     end subroutine RedistributeParticlesToCellsIterator
 

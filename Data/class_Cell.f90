@@ -1,7 +1,7 @@
 module class_Cell
     use class_ParticleLink
     use class_Particle
-    use IFPORT
+    use class_ParticlePredicateBase
 
     public :: Cell,EmptyCell
     type :: Cell
@@ -20,6 +20,7 @@ module class_Cell
         procedure, non_overridable :: Next
         procedure, non_overridable :: CurrentValue
         procedure, non_overridable :: RemoveParticle
+        procedure, non_overridable :: RemoveWhenTrue
         procedure, non_overridable :: AreThereMoreParticles
         procedure, non_overridable :: ParticleCount
     end type Cell
@@ -105,6 +106,7 @@ contains
             particleID = currentParticle%ID
 
             if ( particleID == particleToBeDeleted%ID ) then
+
                 if (.not. associated(previousLink)) then
                     this%firstLink => this%currLink%nextParticleLink()
                     this%lastLink => this%firstLink
@@ -125,6 +127,48 @@ contains
 
 
     end subroutine RemoveParticle
+
+    subroutine RemoveWhenTrue(this,predicateObject,removedParticlesCell)
+        class(Cell) :: this
+        class(ParticlePredicateBase) :: predicateObject
+        type(Cell) :: removedParticlesCell
+
+        type(Particle),pointer :: particleToBeDeleted,currentParticle
+        integer :: particleID
+        type(ParticleLink),pointer  :: previousLink,nextLink
+
+        previousLink => null()
+
+        call this%Reset()
+
+        do while (this%AreThereMoreParticles())
+
+            currentParticle => this%CurrentValue()
+
+            if ( predicateObject%IsTrueForThisParticle(currentParticle) ) then
+
+                !print *,currentParticle%ID
+
+                if (.not. associated(previousLink)) then
+                    this%firstLink => this%currLink%nextParticleLink()
+                    this%lastLink => this%firstLink
+                    this%currLink => this%firstLink
+                else
+                    nextLink => this%currLink%nextParticleLink()
+                    call previousLink%setNextParticleLink(nextLink)
+                end if
+                this%NumberOfParticles=this%NumberOfParticles-1
+
+                call removedParticlesCell%AddParticle(currentParticle)
+
+            end if
+            previousLink => this%currLink
+
+            call this%Next()
+
+        end do
+
+    end subroutine RemovewhenTrue
 
 
     function EmptyCell() result (c)
