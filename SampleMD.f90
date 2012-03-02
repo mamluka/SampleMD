@@ -35,21 +35,22 @@ program SampleMD
 
     call g%CreateGrid(particles,potential%SizeOfGridCell())
 
-!    predicate%ParticleID=73;
-!
-!
-!    c=>g%GetCell(1,1,1)
-!    call c%RemoveWhenTrue(predicate)
-!
-!    call c%Reset()
-!
-!    do while (c%AreThereMoreParticles())
-!        p=> c%CurrentValue()
-!
-!        print *,p%ID
-!
-!        call c%Next()
-!    end do
+    !    predicate%ParticleID=73;
+    !
+    !
+    !    c=>g%GetCell(1,1,1)
+    !    call c%RemoveWhenTrue(predicate)
+    !
+    !    call c%Reset()
+    !
+    !    do while (c%AreThereMoreParticles())
+    !        p=> c%CurrentValue()
+    !
+    !        print *,p%ID
+    !
+    !        call c%Next()
+    !    end do
+    !allocate(aa,source=12123)
 
     runner => runnerSelector%Select("standard")
     call runner%Setup(g,potential,configurations)

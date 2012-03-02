@@ -3,6 +3,7 @@ module class_ParticlePredicateForCellMigration
     use class_ParticlePredicateBase
     use class_Grid
     use class_Cell
+    use lib_Parse
     implicit none
 
     public :: ParticlePredicateForCellMigration

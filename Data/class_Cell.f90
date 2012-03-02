@@ -35,19 +35,14 @@ contains
         type(ParticleLink) ,pointer :: firstLink,nextLink
 
         if (.not. associated(this%firstLink)) then
-            firstLink => this%firstLink
             this%firstLink => CreateParticleLink(value)
             this%lastLink => this%firstLink
             this%currLink => this%firstLink
         else
-
             newLink => CreateParticleLink(value)
             call this%lastLink%setNextParticleLink(newLink)
             this%lastLink => newLink
-
         end if
-
-        this%NumberOfParticles=this%NumberOfParticles+1
 
     end subroutine AddParticle
 
@@ -87,7 +82,19 @@ contains
 
     function ParticleCount(this) result(total)
         class(Cell) :: this
-        total = this%NumberOfParticles
+        integer :: total
+
+        call this%Reset()
+
+        total=0
+
+        do while(this%AreThereMoreParticles())
+            total = total + 1
+            call this%Next()
+        end do
+
+        call this%Reset()
+
     end function
 
     subroutine RemoveParticle(this,particleToBeDeleted)
@@ -137,7 +144,11 @@ contains
         integer :: particleID
         type(ParticleLink),pointer  :: previousLink,nextLink
 
+        integer :: counter
+
         previousLink => null()
+
+        counter = 1
 
         call this%Reset()
 
@@ -147,29 +158,34 @@ contains
 
             if ( predicateObject%IsTrueForThisParticle(currentParticle) ) then
 
-                !print *,currentParticle%ID
-
                 if (.not. associated(previousLink)) then
                     this%firstLink => this%currLink%nextParticleLink()
-                    this%lastLink => this%firstLink
                     this%currLink => this%firstLink
+
                 else
                     nextLink => this%currLink%nextParticleLink()
                     call previousLink%setNextParticleLink(nextLink)
+                    if (associated(this%lastLink,this%currLink)) then
+                        call previousLink%nullifyNext()
+                        this%lastLink =>previousLink
+                    end if
                 end if
-                this%NumberOfParticles=this%NumberOfParticles-1
 
                 call removedParticlesCell%AddParticle(currentParticle)
 
+                if (.not. associated(this%firstLink)) then
+                    exit
+                end if
+
+                call this%Reset()
             end if
             previousLink => this%currLink
+            counter = counter + 1
 
             call this%Next()
-
         end do
 
     end subroutine RemovewhenTrue
-
 
     function EmptyCell() result (c)
         type(Cell) :: c

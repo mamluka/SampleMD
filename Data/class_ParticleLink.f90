@@ -12,6 +12,7 @@ module class_ParticleLink
         procedure :: getValue    ! return value pointer
         procedure :: nextParticleLink    ! return next pointer
         procedure :: setNextParticleLink ! set next pointer
+        procedure :: nullifyNext
     end type ParticleLink
 
     interface CreateParticleLink
@@ -55,5 +56,12 @@ contains
 
 
     end function CreateParticleLink
+
+    subroutine nullifyNext(this)
+        class(ParticleLink) :: this
+
+        this%next => null()
+
+    end subroutine nullifyNext
 
 end module class_ParticleLink

@@ -46,6 +46,8 @@ module class_DimensionlessRandomVelocityBootstapper
 
             particles(i)%Velocity = velocityTempArray
 
+            print *,velocityTempArray
+
         end do
 
     end subroutine LoadVelocityIntoAnArray

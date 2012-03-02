@@ -7,6 +7,7 @@ module class_StandardVelocityVarlentIntegrationRunner
     use class_CellNeightbor
     use class_IntegrationConfigurationsBase
     use class_ParticlePredicateForCellMigration
+    use lib_Parse
     implicit none
     private
     public :: StandardVelocityVarlentIntegrationRunner,Create
@@ -32,13 +33,17 @@ contains
 
         real :: time
 
+        integer :: stepCounter
+
         time=0
+
+        stepCounter = 1
 
         print *,"Starting..."
 
         call CalculateForces(this)
 
-        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*35
+        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*50000
 
         do while (time .lt. this%Configurations%EndOfSimulation)
 
@@ -46,7 +51,16 @@ contains
 
             call ComputePositions(this)
 
+            if (mod(stepCounter,50) == 0) then
+
+                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+                print *,"written file #",stepCounter
+
+            end if
+
             call RedistributeParticlesToCells(this)
+
+            stepCounter = stepCounter + 1
 
             call CalculateForces(this)
 
@@ -54,7 +68,7 @@ contains
 
         end do
 
-        call this%G%DumpDataToFile()
+
 
 
 
@@ -228,6 +242,12 @@ contains
         integer :: currentCellCoordinates(3),movedToCellCoordinates(3)
         type(Particle),pointer :: currentDeletedParticle
         type(Cell),pointer :: movedToCell
+        integer :: movedCellCounter
+        integer :: particleCount
+
+        movedCellCounter=0
+
+        particleCount = c%ParticleCount()
 
         currentCellCoordinates = c%GetCellCoordinates()
 
@@ -236,9 +256,13 @@ contains
         call c%RemoveWhenTrue(predicate,removedParticlesCell)
 
         if (removedParticlesCell%ParticleCount() .gt. 0) then
+
             do while (removedParticlesCell%AreThereMoreParticles())
                 currentDeletedParticle => removedParticlesCell%CurrentValue()
                 movedToCellCoordinates = g%ParticleCellCoordinatesByPosition(currentDeletedParticle%Position)
+
+                call g%RebaseParticlePosition(currentDeletedParticle)
+
                 movedToCell => g%GetCell(movedToCellCoordinates(1),movedToCellCoordinates(2),movedToCellCoordinates(3))
 
                 call movedToCell%AddParticle(currentDeletedParticle)

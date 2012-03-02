@@ -23,9 +23,12 @@ module class_Grid
         procedure :: ForEachParticleWithConfigurations
         procedure :: ForEachParticleWithGridObjectAndCoordinates
         procedure :: DumpDataToFile
+        procedure :: DumpPositionToFile
+        procedure :: DumpPositionToFileWithParticleId
         procedure :: ParticleCellCoordinatesByPosition
         procedure :: ForEachCell
         procedure :: TotalParticlesCount
+        procedure :: RebaseParticlePosition
     end type Grid
 
     abstract interface
@@ -329,6 +332,32 @@ contains
 
     end function
 
+    subroutine RebaseParticlePosition(this,p)
+        class(Grid) :: this
+        type(Particle),pointer :: p
+
+        real :: origin(3)
+        real :: particlePosition(3)
+        real :: gridDimensions(3)
+
+        particlePosition = p%Position
+
+        gridDimensions = this%SimulationBoxSize
+
+        origin = this%SimulationBoxCoordinates(1,:)
+
+        if (particlePosition(1) .gt. gridDimensions(1) + origin(1)) p%Position(1) = p%Position(1) - gridDimensions(1)
+        if (particlePosition(1) .lt.  origin(1)) p%Position(1) = p%Position(1) + gridDimensions(1)
+
+        if (particlePosition(2) .gt. gridDimensions(2) + origin(2)) p%Position(2) = p%Position(2) - gridDimensions(2)
+        if (particlePosition(2) .lt.  origin(2)) p%Position(2) = p%Position(2) + gridDimensions(2)
+
+        if (particlePosition(3) .gt. gridDimensions(3) + origin(3)) p%Position(3) = p%Position(3) - gridDimensions(3)
+        if (particlePosition(3) .lt.  origin(3)) p%Position(3) = p%Position(3) + gridDimensions(3)
+
+
+    end subroutine RebaseParticlePosition
+
     function TotalParticlesCount(this) result(total)
         class(Grid) :: this
         type(Cell),pointer :: currentCell
@@ -392,11 +421,99 @@ contains
             end do
         end do
 
-        write (98,*),"-------------------------------------------------------------"
-
         close(98)
 
     end subroutine DumpDataToFile
+
+    subroutine DumpPositionToFile(this,filename,fileNumberSuffix)
+        class(Grid) :: this
+        integer :: fileNumberSuffix
+        character(len=*) :: filename
+        character(len=5) :: fileCharSuffix
+        character(len=len(filename)+5) :: combinedFileName
+        type(Cell),pointer :: currentCell
+        integer :: I,J,K
+
+
+
+        type(Particle),pointer :: currentParticle
+
+        write(fileCharSuffix,'(I5.5)'),fileNumberSuffix
+
+        combinedFileName = filename // fileCharSuffix
+
+        open(unit=98,file=combinedFileName,form="formatted")
+
+        do I=1,this%GridSize(1)
+            do J=1,this%GridSize(2)
+                do K=1,this%GridSize(3)
+
+                    currentCell => this%CellContainers(I,J,K)%C
+
+                    call currentCell%Reset()
+
+                    do while (currentCell%AreThereMoreParticles())
+
+                        currentParticle => currentCell%CurrentValue()
+
+                        write(98,'(3(F15.8,2X))'),currentParticle%Position
+
+                        call currentCell%Next()
+
+                    end do
+
+                end do
+            end do
+        end do
+
+        close(98)
+
+    end subroutine DumpPositionToFile
+
+    subroutine DumpPositionToFileWithParticleId(this,filename,fileNumberSuffix)
+        class(Grid) :: this
+        integer :: fileNumberSuffix
+        character(len=*) :: filename
+        character(len=5) :: fileCharSuffix
+        character(len=len(filename)+5) :: combinedFileName
+        type(Cell),pointer :: currentCell
+        integer :: I,J,K
+
+
+
+        type(Particle),pointer :: currentParticle
+
+        write(fileCharSuffix,'(I5.5)'),fileNumberSuffix
+
+        combinedFileName = filename // fileCharSuffix
+
+        open(unit=98,file=combinedFileName,form="formatted")
+
+        do I=1,this%GridSize(1)
+            do J=1,this%GridSize(2)
+                do K=1,this%GridSize(3)
+
+                    currentCell => this%CellContainers(I,J,K)%C
+
+                    call currentCell%Reset()
+
+                    do while (currentCell%AreThereMoreParticles())
+
+                        currentParticle => currentCell%CurrentValue()
+
+                        write(98,'(I6.4,3(F15.8,2X))'),currentParticle%ID,currentParticle%Position
+
+                        call currentCell%Next()
+
+                    end do
+
+                end do
+            end do
+        end do
+
+        close(98)
+
+    end subroutine DumpPositionToFileWithParticleId
 
 
 
