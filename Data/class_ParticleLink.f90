@@ -2,6 +2,7 @@
 
 module class_ParticleLink
     use class_Particle
+
     private
     public :: ParticleLink,CreateParticleLink
     type ParticleLink

@@ -54,7 +54,6 @@ contains
             if (mod(stepCounter,50) == 0) then
 
                 call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
-                print *,"written file #",stepCounter
 
             end if
 
@@ -305,7 +304,6 @@ contains
 
         standardConfigurations%TimeStep = simConfigurations%TimeStep
         standardConfigurations%EndOfSimulation = simConfigurations%EndOfSimulation
-
 
         this%Configurations = standardConfigurations
 

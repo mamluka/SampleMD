@@ -5,11 +5,7 @@ module lib_ConfigurationManager
     use class_DataOptionsDTO
     implicit none
 
-
     public :: SimulationConfigurations
-
-
-
 
     type SimulationConfigurations
         real :: TimeStep

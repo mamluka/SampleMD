@@ -21,11 +21,6 @@ program SampleMD
     type(Particle),allocatable ,target:: particles(:)
     type(Grid) :: g
     class(PotentialBase),pointer :: potential
-    type(Cell),pointer :: c
-    type(Particle),pointer :: p
-    type(ParticlePredicateForID) :: predicate
-
-    real :: pos(3)
 
     configurations = LoadSimulationConfigurations("/home/mamluka/SampleMD/mdconfig.xml")
 
@@ -34,23 +29,6 @@ program SampleMD
     potential => LoadPotentialByConfiguration(configurations)
 
     call g%CreateGrid(particles,potential%SizeOfGridCell())
-
-    !    predicate%ParticleID=73;
-    !
-    !
-    !    c=>g%GetCell(1,1,1)
-    !    call c%RemoveWhenTrue(predicate)
-    !
-    !    call c%Reset()
-    !
-    !    do while (c%AreThereMoreParticles())
-    !        p=> c%CurrentValue()
-    !
-    !        print *,p%ID
-    !
-    !        call c%Next()
-    !    end do
-    !allocate(aa,source=12123)
 
     runner => runnerSelector%Select("standard")
     call runner%Setup(g,potential,configurations)

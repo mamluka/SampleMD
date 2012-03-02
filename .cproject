@@ -83,12 +83,13 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
-						<entry excluding="Logger|lib_StandardDataAnalysis.f90|Cells/integer_list_mod.f90|xmlsample|Data|Math|Bootstrappers|Potentials|Cells/abstract_list_mod.f90|DataAnalysis|Cells/class_AbstractLinkedList.f90|Cells/list_mod.f90" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
+						<entry excluding="Core|Logger|lib_StandardDataAnalysis.f90|Cells/integer_list_mod.f90|xmlsample|Data|Math|Bootstrappers|Potentials|Cells/abstract_list_mod.f90|DataAnalysis|Cells/class_AbstractLinkedList.f90|Cells/list_mod.f90" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -135,13 +136,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
-						<entry excluding="Bootstrappers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data/Bootstrappers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
-						<entry excluding="Logger|lib_StandardDataAnalysis.f90|DataAnalysis|Potentials|Bootstrappers|Math|Data|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Bootstrappers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
+						<entry excluding="Core|Logger|lib_StandardDataAnalysis.f90|DataAnalysis|Potentials|Bootstrappers|Math|Data|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data/Bootstrappers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
