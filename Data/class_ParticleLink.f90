@@ -48,11 +48,11 @@ contains
 
     function CreateParticleLink(value)
         class(ParticleLink),pointer :: CreateParticleLink
-        type(Particle) :: value
+        type(Particle),pointer :: value
         type(ParticleLink),target :: newLink
 
         allocate(CreateParticleLink,source=newLink)
-        allocate(createParticleLink%value, source=value)
+        createParticleLink%value => value
 
 
 

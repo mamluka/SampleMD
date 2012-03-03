@@ -2,6 +2,7 @@ module class_IntegrationRunnerBase
     use class_PotentialBase
     use lib_ConfigurationManager
     use class_Grid
+    use class_DataAnalyzersContainer
     implicit none
 
     public :: IntegrationRunnerBase
@@ -10,6 +11,7 @@ module class_IntegrationRunnerBase
         class(PotentialBase) ,pointer :: Potential
         type(Grid) :: G
         type(SimulationConfigurations) :: GlobalConfigurations
+        type(DataAnalyzersContainer) :: dataAnalyzers
 
     contains
         procedure(IStart),deferred :: Start
@@ -23,11 +25,12 @@ module class_IntegrationRunnerBase
             class(IntegrationRunnerBase) :: this
         end subroutine
 
-        subroutine ISetup(this,g,potential,configurations)
+        subroutine ISetup(this,g,potential,dataAnalyzers,configurations)
             import
             class(IntegrationRunnerBase) :: this
             type(Grid) :: g
             type(SimulationConfigurations) :: configurations
+            type(DataAnalyzersContainer) :: dataAnalyzers
             class(PotentialBase),pointer :: potential
         end subroutine
 

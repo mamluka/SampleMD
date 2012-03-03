@@ -37,15 +37,16 @@ contains
         class(AnalyzerLink) :: this
         class(DataAnalyzerBase), pointer :: getAnalyzer
         getAnalyzer => this%value
+
     end function getAnalyzer
 
     function CreateAnalyzerLink(value)
         class(AnalyzerLink),pointer :: CreateAnalyzerLink
-        class(DataAnalyzerBase) :: value
+        class(DataAnalyzerBase),pointer :: value
         type(AnalyzerLink),target :: newLink
 
         allocate(CreateAnalyzerLink,source=newLink)
-        allocate(CreateAnalyzerLink%value, source=value)
+        allocate(CreateAnalyzerLink%value,source=value)
 
     end function CreateAnalyzerLink
 

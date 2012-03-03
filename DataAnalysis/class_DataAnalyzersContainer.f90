@@ -1,22 +1,26 @@
-module class_DataAnalysisContainer
+module class_DataAnalyzersContainer
     use class_DataAnalyzerBase
     use class_AnalyzerLink
     implicit none
 
-    type :: DataAnalysisContainer
+    type :: DataAnalyzersContainer
         private
         type(AnalyzerLink),pointer :: firstLink => null() ! first link in list
         type(AnalyzerLink),pointer :: lastLink => null()  ! last link in list
         type(AnalyzerLink),pointer :: currLink => null()  ! list iterator
     contains
         procedure :: AddAnalyzer
+        procedure :: CurrentAnalyzer
+        procedure :: Next
+        procedure :: AreThereMoreAnalyzers
+        procedure :: Reset
     end type
 
     contains
 
     subroutine AddAnalyzer(this, value)
-        class(DataAnalysisContainer) :: this
-        class(DataAnalyzerBase) :: value
+        class(DataAnalyzersContainer) :: this
+        class(DataAnalyzerBase),pointer,intent(in) :: value
         type(AnalyzerLink), pointer :: newLink
 
         type(AnalyzerLink) ,pointer :: firstLink,nextLink
@@ -31,17 +35,25 @@ module class_DataAnalysisContainer
             this%lastLink => newLink
         end if
 
+
+
     end subroutine AddAnalyzer
 
+    function CurrentAnalyzer(this)
+        class(DataAnalyzersContainer) :: this
+        class(DataAnalyzerBase), pointer :: CurrentAnalyzer
+        CurrentAnalyzer => this%currLink%getAnalyzer()
+    end function
+
     subroutine Next(this)
-        class(DataAnalysisContainer) :: this
+        class(DataAnalyzersContainer) :: this
         this%currLink => this%currLink%nextAnalyzerLink()
 
 
     end subroutine Next
 
     function AreThereMoreAnalyzers(this)
-        class(DataAnalysisContainer) :: this
+        class(DataAnalyzersContainer) :: this
         logical AreThereMoreAnalyzers
         AreThereMoreAnalyzers = associated(this%currLink)
     end function AreThereMoreAnalyzers
@@ -49,7 +61,7 @@ module class_DataAnalysisContainer
 
 
     subroutine Reset(this)
-        class(DataAnalysisContainer) :: this
+        class(DataAnalyzersContainer) :: this
         this%currLink => this%firstLink
     end subroutine Reset
-end module class_DataAnalysisContainer
+end module class_DataAnalyzersContainer

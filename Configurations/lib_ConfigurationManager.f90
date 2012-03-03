@@ -3,6 +3,7 @@ module lib_ConfigurationManager
     use class_ErrorHandler
     use class_ReducersDTO
     use class_DataOptionsDTO
+    use class_DataAnalyzersListDTO
     implicit none
 
     public :: SimulationConfigurations
@@ -16,6 +17,7 @@ module lib_ConfigurationManager
         character (len=:),allocatable :: DataFilename
         type(ReducersDTO),allocatable :: Reducers
         type(DataOptionsDTO),allocatable :: DataOptions
+        type(DataAnalyzersListDTO),allocatable ::DataAnalyzersList
     end type
 
 
@@ -27,14 +29,14 @@ contains
         character (len=*) :: filename
 
         type(fnode), pointer          :: confDoc
-        type(fnode), pointer          :: rootNode,simulationNode,reducerNode,dataOptionsNude
+        type(fnode), pointer          :: rootNode,simulationNode,reducerNode,dataOptionsNode,dataAnalyzersNode
         type(fnodeList), pointer      :: tmpList,configNodes
         character (len=100) :: simulatiomNodeName,simulatiomNodeValue
 
         real :: timeReducer,lengthReducer,energyReducer,massReducer
         type(ReducersDTO),target :: reducers
-
         type(DataOptionsDTO),target :: dataOptions
+        type(DataAnalyzersListDTO) :: dataAnalyzersList
 
         integer :: i
 
@@ -90,13 +92,13 @@ contains
 
         if (getLength(tmpList) .gt. 0) then
 
-            dataOptionsNude => item(tmpList, 0)
+            dataOptionsNode => item(tmpList, 0)
 
-            if (IsFlagSet(dataOptionsNude,"use-strapping") == .true.) then
+            if (IsFlagSet(dataOptionsNode,"use-strapping") == .true.) then
 
-                dataOptions%TempForInitialVelocity = LoadXMLAttributeToInt(dataOptionsNude,"temp-for-initial-v")
+                dataOptions%TempForInitialVelocity = LoadXMLAttributeToInt(dataOptionsNode,"temp-for-initial-v")
 
-                dataOptions%BootstrapperType=char(getAttribute(dataOptionsNude,"bootstrapper-type"))
+                dataOptions%BootstrapperType=char(getAttribute(dataOptionsNode,"bootstrapper-type"))
 
                 dataOptions%UseVelocityStrapper = .true.
 
@@ -106,54 +108,68 @@ contains
 
         end if
 
+        tmpList => getElementsByTagName(rootNode, "analyzers")
+
+        if (getLength(tmpList) .gt. 0) then
+
+            dataAnalyzersNode => item(tmpList, 0)
+
+            if (IsFlagSet(dataAnalyzersNode,"kinetic-energy") == .true.) then
+                dataAnalyzersList%KineticEnergy = .true.
+            end if
+
+            allocate(configurations%DataAnalyzersList,source=dataAnalyzersList)
+
+    end if
 
 
 
-    end function
 
-    function LoadXMLAttributeToReal(node,nameOfAttr) result (returnValue)
-        type(fnode) , pointer :: node
-        character (len=*) :: nameOfAttr
-        real :: returnValue
-        character (len=100) :: simAttribute
+end function
 
-        simAttribute = getAttribute(node,nameOfAttr)
+function LoadXMLAttributeToReal(node,nameOfAttr) result (returnValue)
+    type(fnode) , pointer :: node
+    character (len=*) :: nameOfAttr
+    real :: returnValue
+    character (len=100) :: simAttribute
 
-        if (simAttribute == "") call die("When asked to load " // nameOfAttr // " from xml the attribute couldn't be found")
-        read(unit=simAttribute,fmt=*) returnValue
+    simAttribute = getAttribute(node,nameOfAttr)
 
-    end function LoadXMLAttributeToReal
+    if (simAttribute == "") call die("When asked to load " // nameOfAttr // " from xml the attribute couldn't be found")
+    read(unit=simAttribute,fmt=*) returnValue
 
-    function LoadXMLAttributeToInt(node,nameOfAttr) result (returnValue)
-        type(fnode) , pointer :: node
-        character (len=*) :: nameOfAttr
-        integer :: returnValue
-        character (len=100) :: simAttribute
+end function LoadXMLAttributeToReal
 
-        simAttribute = getAttribute(node,nameOfAttr)
+function LoadXMLAttributeToInt(node,nameOfAttr) result (returnValue)
+    type(fnode) , pointer :: node
+    character (len=*) :: nameOfAttr
+    integer :: returnValue
+    character (len=100) :: simAttribute
 
-        if (simAttribute == "") call die("When asked to load " // nameOfAttr // " from xml the attribute couldn't be found")
-        read(unit=simAttribute,fmt=*) returnValue
+    simAttribute = getAttribute(node,nameOfAttr)
 
-    end function LoadXMLAttributeToInt
+    if (simAttribute == "") call die("When asked to load " // nameOfAttr // " from xml the attribute couldn't be found")
+    read(unit=simAttribute,fmt=*) returnValue
 
-    function IsFlagSet(node,flagName) result(flag)
-        type(fnode) , pointer :: node
-        character (len=*) :: flagName
-        logical :: flag
-        character (len=100) :: simAttribute
+end function LoadXMLAttributeToInt
 
-        simAttribute = getAttribute(node,flagName)
+function IsFlagSet(node,flagName) result(flag)
+    type(fnode) , pointer :: node
+    character (len=*) :: flagName
+    logical :: flag
+    character (len=100) :: simAttribute
 
-        if (simAttribute == "" .or. simAttribute == "false")  then
-            flag = .false.
-        elseif (simAttribute == "true") then
-            flag = .true.
-        else
-            flag = .false.
-        end if
+    simAttribute = getAttribute(node,flagName)
 
-    end function
+    if (simAttribute == "" .or. simAttribute == "false")  then
+        flag = .false.
+    elseif (simAttribute == "true") then
+        flag = .true.
+    else
+        flag = .false.
+    end if
+
+end function
 
 
 

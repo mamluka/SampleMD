@@ -41,13 +41,8 @@ module class_DimensionlessRandomVelocityBootstapper
             m=particles(i)%Mass*massReducer
 
             factor = sqrt(Kb*T/(m*amu))*(timeReducer/lengthReducer)
-
             velocityTempArray = factor*GaussDeviateFor3DVector()
-
             particles(i)%Velocity = velocityTempArray
-
-            print *,velocityTempArray
-
         end do
 
     end subroutine LoadVelocityIntoAnArray

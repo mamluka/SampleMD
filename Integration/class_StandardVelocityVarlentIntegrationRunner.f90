@@ -7,6 +7,7 @@ module class_StandardVelocityVarlentIntegrationRunner
     use class_CellNeightbor
     use class_IntegrationConfigurationsBase
     use class_ParticlePredicateForCellMigration
+    use class_DataAnalyzersContainer
     use lib_Parse
     implicit none
     private
@@ -43,7 +44,7 @@ contains
 
         call CalculateForces(this)
 
-        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*50000
+        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*30
 
         do while (time .lt. this%Configurations%EndOfSimulation)
 
@@ -65,6 +66,8 @@ contains
 
             call ComputeVelocities(this)
 
+            call AnalyzeData(this)
+
         end do
 
 
@@ -73,16 +76,18 @@ contains
 
     end subroutine
 
-    subroutine Setup(this,g,potential,configurations)
+    subroutine Setup(this,g,potential,dataAnalyzers,configurations)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(Grid) :: g
         type(SimulationConfigurations) :: configurations
+        type(DataAnalyzersContainer) :: dataAnalyzers
         class(PotentialBase),pointer :: potential
 
         this%G=g
         call this%LoadIntegraionConfigurations(configurations)
         this%GlobalConfigurations = configurations
         this%Potential => potential
+        this%DataAnalyzers = dataAnalyzers
 
     end subroutine
 
@@ -294,6 +299,25 @@ contains
         p%Velocity = p%Velocity + a*(p%ForceFromPreviousIteration+ p%Force)
 
     end subroutine CalculateVelocitiesIterator
+
+    subroutine AnalyzeData(this)
+        class(StandardVelocityVarlentIntegrationRunner) :: this
+        class(DataAnalyzerBase),pointer :: currentAnalyzer
+
+        call this%DataAnalyzers%Reset()
+
+        do while (this%DataAnalyzers%AreThereMoreAnalyzers())
+
+            currentAnalyzer => this%DataAnalyzers%CurrentAnalyzer()
+
+            print *, currentAnalyzer%ParticlePointers(1)%p%Position
+
+            call currentAnalyzer%Analyze(this%GlobalConfigurations)
+
+            call this%DataAnalyzers%Next()
+        end do
+
+    end subroutine AnalyzeData
 
 
     subroutine LoadIntegraionConfigurations(this,simConfigurations)
