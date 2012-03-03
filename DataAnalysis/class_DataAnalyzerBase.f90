@@ -22,18 +22,18 @@ module class_DataAnalyzerBase
 
     contains
 
-    subroutine LoadParticles(this,particles)
+    subroutine LoadParticles(this,particlePointers)
         class(DataAnalyzerBase) :: this
-        type(Particle),allocatable,target:: particles(:)
+        type(ParticlePointer),allocatable,target:: particlePointers(:)
 
         integer :: arraySize,i
 
-        arraySize = size(particles)
+        arraySize = size(particlePointers)
 
         allocate(this%ParticlePointers(arraySize))
 
         do i=1,arraySize
-            this%ParticlePointers(i)%p=>particles(i)
+            this%ParticlePointers(i)%p=>particlePointers(i)%p
         end do
 
 

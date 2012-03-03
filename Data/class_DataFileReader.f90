@@ -4,6 +4,7 @@ module class_DataFileReader
     use class_AtomProperties
     use class_DataOptionsDTO
     use lib_BootstrapperManager
+    use class_ParticlePointer
     implicit none
     public :: DataFileReader
 
@@ -59,10 +60,13 @@ contains
 
     end subroutine LoadParticlesIntoAnArray
 
-    subroutine LoadPArticlesUsingConfigurations(configurations,particles)
+    subroutine LoadParticlesUsingConfigurations(configurations,particlePointers)
 
         type(SimulationConfigurations) :: configurations
+        type(ParticlePointer),allocatable :: particlePointers(:)
         type(Particle),allocatable :: particles(:)
+
+        integer :: i,arraySize
 
         call LoadParticlesIntoAnArray(configurations%DataFilename,particles)
 
@@ -73,6 +77,14 @@ contains
         if (configurations%DataOptions%UseVelocityStrapper == .true. ) then
             call BootstrapVelocity(particles,configurations)
         end if
+
+        arraySize = size(particles)
+
+        allocate(particlePointers(arraySize))
+
+        do i=1,size(particles)
+            allocate(particlePointers(i)%p,source=particles(i))
+        end do
 
     end subroutine LoadParticlesUsingConfigurations
 

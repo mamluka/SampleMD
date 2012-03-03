@@ -1,6 +1,6 @@
 module class_KineticEnergyAnalyzer
     use class_DataAnalyzerBase
-    use class_Particle
+    use class_ParticlePointer
     use lib_ConfigurationManager
     implicit none
 
@@ -28,16 +28,14 @@ contains
 
     end subroutine
 
-    function CreateAnalyzer(particles) result (analyzer)
-        type(Particle),allocatable :: particles(:)
+    function CreateAnalyzer(particlePointers) result (analyzer)
+        type(ParticlePointer),allocatable :: particlePointers(:)
         type(KineticEnergyAnalyzer),target :: target
         class(DataAnalyzerBase),pointer :: analyzer
 
-        particles(1)%Mass = 7
-
         allocate(analyzer,source=target)
 
-        call analyzer%LoadParticles(particles)
+        call analyzer%LoadParticles(particlePointers)
 
     end function
 

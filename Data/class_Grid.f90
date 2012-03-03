@@ -3,6 +3,7 @@ module class_Grid
     use lib_GridAlgorithms
     use class_CellNeightbor
     use class_IntegrationConfigurationsBase
+    use class_ParticlePointer
     implicit none
 
     public :: Grid
@@ -59,9 +60,9 @@ module class_Grid
 
 contains
 
-    subroutine CreateGrid(this,particles,rc)
+    subroutine CreateGrid(this,particlePointers,rc)
         class(Grid) :: this
-        type(Particle),allocatable :: particles(:)
+        type(ParticlePointer),allocatable :: particlePointers(:)
         real :: rc
 
         real ::box(8,3)
@@ -72,7 +73,7 @@ contains
 
         addToGrid = 1.342857142857143
 
-        box = DetermineSimulationBoxCoordinates(particles,addToGrid)
+        box = DetermineSimulationBoxCoordinates(particlePointers,addToGrid)
 
         this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
         this%SimulationBoxCoordinates = box
@@ -86,7 +87,7 @@ contains
         this%GridPartitioningLength = rc
 
 
-        call DistributeParticlesToGrid(this%CellContainers,particles,rc,box,this%GridSize)
+        call DistributeParticlesToGrid(this%CellContainers,particlePointers,rc,box,this%GridSize)
 
     end subroutine CreateGrid
 

@@ -2,21 +2,22 @@ module lib_GridAlgorithms
     use class_Particle
     use class_Cell
     use class_CellContainer
+    use class_ParticlePointer
     implicit none
 
 contains
 
-    function DetermineSimulationBoxCoordinates(particles,rc) result(box)
-        type(Particle),allocatable :: particles(:)
-        real :: particlePosition(size(particles),3)
+    function DetermineSimulationBoxCoordinates(particlePointers,rc) result(box)
+        type(ParticlePointer),allocatable :: particlePointers(:)
+        real :: particlePosition(size(particlePointers),3)
         real :: box(8,3)
 
         real :: rc
 
         integer :: i,xPosition=1,yPosition=2,zPosition=3
 
-        do i=1,size(particles)
-            particlePosition(i,:) =  particles(i)%Position
+        do i=1,size(particlePointers)
+            particlePosition(i,:) =  particlePointers(i)%p%Position
         end do
 
         box(1:4,xPosition) = minval(particlePosition(:,xPosition))-rc/2.0
@@ -65,10 +66,10 @@ contains
 
     end subroutine
 
-    subroutine DistributeParticlesToGrid(cellContainers,particles,rc,box,gridSize)
+    subroutine DistributeParticlesToGrid(cellContainers,particlePointers,rc,box,gridSize)
         type(CellContainer),allocatable,intent(inout) :: cellContainers(:,:,:)
         real ,intent(in) :: rc
-        type(Particle),allocatable,target :: particles(:)
+        type(ParticlePointer),allocatable,target :: particlePointers(:)
         real :: box(8,3)
         integer :: gridSize(3)
 
@@ -85,10 +86,10 @@ contains
 
         open(unit=98,file="cellsIndex.data")
 
-        do i=1,size(particles)
-            xIndex = ceiling(abs(box(1,1)-particles(i)%Position(1))/rc)
-            yIndex = ceiling(abs(box(1,2)-particles(i)%Position(2))/rc)
-            zIndex = ceiling(abs(box(1,3)-particles(i)%Position(3))/rc)
+        do i=1,size(particlePointers)
+            xIndex = ceiling(abs(box(1,1)-particlePointers(i)%p%Position(1))/rc)
+            yIndex = ceiling(abs(box(1,2)-particlePointers(i)%p%Position(2))/rc)
+            zIndex = ceiling(abs(box(1,3)-particlePointers(i)%p%Position(3))/rc)
 
             if (xIndex == 0)  xIndex=1
             if (yIndex == 0)  yIndex=1
@@ -99,7 +100,7 @@ contains
 
 
 
-            particlePointer => particles(i)
+            particlePointer => particlePointers(i)%p
 
             if (cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%Exists()) then
                 currentCell => cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%CurrentCell()

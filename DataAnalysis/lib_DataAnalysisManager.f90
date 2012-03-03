@@ -7,16 +7,16 @@ module lib_DataAnalysisManager
 
 contains
 
-    function DataAnalyzersFromConfiguration(configurations,particles) result(dataAnalyzers)
+    function DataAnalyzersFromConfiguration(configurations,particlePointers) result(dataAnalyzers)
         type(DataAnalyzersContainer) :: dataAnalyzers
         type(SimulationConfigurations) :: configurations
-        type(Particle),allocatable :: particles(:)
+        type(ParticlePointer),allocatable :: particlePointers(:)
 
         class(DataAnalyzerBase),pointer :: currentAnalyzer
 
 
         if (configurations%DataAnalyzersList%KineticEnergy == .true. ) then
-            currentAnalyzer=>CreateKineticEnergyAnalyzer(particles)
+            currentAnalyzer=>CreateKineticEnergyAnalyzer(particlePointers)
             call dataAnalyzers%AddAnalyzer(currentAnalyzer)
         end if
 

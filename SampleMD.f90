@@ -7,6 +7,7 @@ program SampleMD
     use class_Grid
     use class_ParticlePredicateForID
     use lib_DataAnalysisManager
+    use class_ParticlePointer
     implicit none
 
     type(IntegrationRunnerSelector) :: runnerSelector
@@ -15,35 +16,26 @@ program SampleMD
     type(SimulationConfigurations) :: configurations
 
     type(DataFileReader) :: dataReader
-    type(Particle),allocatable ,target:: particles(:)
+    type(ParticlePointer),allocatable:: particlePointers(:)
     type(Grid) :: g
     class(PotentialBase),pointer :: potential
 
     type(DataAnalyzersContainer) :: dataAnalyzers
 
-    type(Particle),pointer ::p
-
     configurations = LoadSimulationConfigurations("/home/mamluka/SampleMD/mdconfig.xml")
 
-    call dataReader%LoadParticlesUsingConfigurations(configurations,particles)
+    call dataReader%LoadParticlesUsingConfigurations(configurations,particlePointers)
 
     potential => LoadPotentialByConfiguration(configurations)
 
-    call g%CreateGrid(particles,potential%SizeOfGridCell())
+    call g%CreateGrid(particlePointers,potential%SizeOfGridCell())
 
-    p=>particles(1)
-
-
-    dataAnalyzers = DataAnalyzersFromConfiguration(configurations,particles)
-
-    print *,p%Position
+    dataAnalyzers = DataAnalyzersFromConfiguration(configurations,particlePointers)
 
     runner => runnerSelector%Select("standard")
     call runner%Setup(g,potential,dataAnalyzers,configurations)
 
     call runner%Start()
-
-    print *,p%Position,p%Mass
 
 end program SampleMD
 
