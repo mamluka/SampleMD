@@ -9,15 +9,11 @@ module class_AnalyzerLink
         class(DataAnalyzerBase), pointer :: value => null() ! value stored in AnalyzerLink
         type(AnalyzerLink), pointer :: next => null()! next AnalyzerLink in list
     contains
-        procedure :: getValue   ! return value pointer
+        procedure :: getAnalyzer   ! return value pointer
         procedure :: nextAnalyzerLink    ! return next pointer
         procedure :: setNextAnalyzerLink ! set next pointer
         procedure :: nullifyNext
     end type
-
-    interface CreateAnalyzerLink
-        module procedure CreateAnalyzerLink ! construct/initialize a AnalyzerLink
-    end interface
 
 contains
 
@@ -59,4 +55,5 @@ contains
         this%next => null()
 
     end subroutine nullifyNext
+
 end module class_AnalyzerLink

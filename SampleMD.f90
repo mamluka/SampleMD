@@ -22,6 +22,10 @@ program SampleMD
     type(Grid) :: g
     class(PotentialBase),pointer :: potential
 
+    type(DataAnalyzerContainer) :: dac
+    type
+
+
     configurations = LoadSimulationConfigurations("/home/mamluka/SampleMD/mdconfig.xml")
 
     call dataReader%LoadParticlesUsingConfigurations(configurations,particles)

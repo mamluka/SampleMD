@@ -1,5 +1,5 @@
 module class_DataAnalysisContainer
-    use class_DataAnalyserBase
+    use class_DataAnalyzerBase
     use class_AnalyzerLink
     implicit none
 
@@ -16,7 +16,7 @@ module class_DataAnalysisContainer
 
     subroutine AddAnalyzer(this, value)
         class(DataAnalysisContainer) :: this
-        class(DataAnalyserBase) ,pointer :: value
+        class(DataAnalyzerBase) :: value
         type(AnalyzerLink), pointer :: newLink
 
         type(AnalyzerLink) ,pointer :: firstLink,nextLink
