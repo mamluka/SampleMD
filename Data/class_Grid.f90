@@ -475,16 +475,14 @@ contains
         class(Grid) :: this
         integer :: fileNumberSuffix
         character(len=*) :: filename
-        character(len=5) :: fileCharSuffix
-        character(len=len(filename)+5) :: combinedFileName
+        character(len=7) :: fileCharSuffix
+        character(len=len(filename)+7) :: combinedFileName
         type(Cell),pointer :: currentCell
         integer :: I,J,K
 
-
-
         type(Particle),pointer :: currentParticle
 
-        write(fileCharSuffix,'(I5.5)'),fileNumberSuffix
+        write(fileCharSuffix,'(I7.7)'),fileNumberSuffix
 
         combinedFileName = filename // fileCharSuffix
 

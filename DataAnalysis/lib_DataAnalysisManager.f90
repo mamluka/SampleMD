@@ -14,9 +14,11 @@ contains
 
         class(DataAnalyzerBase),pointer :: currentAnalyzer
 
+        particlePointers(7)%p%Mass=11
 
         if (configurations%DataAnalyzersList%KineticEnergy == .true. ) then
             currentAnalyzer=>CreateKineticEnergyAnalyzer(particlePointers)
+            currentAnalyzer%ParticlePointers(7)%p%Mass=12
             call dataAnalyzers%AddAnalyzer(currentAnalyzer)
         end if
 

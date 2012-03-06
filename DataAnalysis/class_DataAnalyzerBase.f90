@@ -36,8 +36,6 @@ module class_DataAnalyzerBase
             this%ParticlePointers(i)%p=>particlePointers(i)%p
         end do
 
-
-
     end subroutine LoadParticles
 
 

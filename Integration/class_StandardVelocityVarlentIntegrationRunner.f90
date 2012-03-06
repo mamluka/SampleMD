@@ -44,7 +44,7 @@ contains
 
         call CalculateForces(this)
 
-        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*30
+        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*10000
 
         do while (time .lt. this%Configurations%EndOfSimulation)
 
@@ -52,11 +52,11 @@ contains
 
             call ComputePositions(this)
 
-            if (mod(stepCounter,50) == 0) then
-
-                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
-
-            end if
+!            if (mod(stepCounter,50) == 0) then
+!
+!                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+!
+!            end if
 
             call RedistributeParticlesToCells(this)
 
@@ -309,9 +309,6 @@ contains
         do while (this%DataAnalyzers%AreThereMoreAnalyzers())
 
             currentAnalyzer => this%DataAnalyzers%CurrentAnalyzer()
-
-            print *, currentAnalyzer%ParticlePointers(1)%p%Position
-
             call currentAnalyzer%Analyze(this%GlobalConfigurations)
 
             call this%DataAnalyzers%Next()

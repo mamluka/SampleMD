@@ -46,7 +46,7 @@ contains
         type(AnalyzerLink),target :: newLink
 
         allocate(CreateAnalyzerLink,source=newLink)
-        allocate(CreateAnalyzerLink%value,source=value)
+        CreateAnalyzerLink%value=>value
 
     end function CreateAnalyzerLink
 

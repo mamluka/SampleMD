@@ -21,7 +21,7 @@ contains
         Ek=0
 
         do i=1,size(this%ParticlePointers)
-            Ek=Ek+0.5*sum(this%ParticlePointers(i)%p%Position**2)*this%ParticlePointers(i)%p%Mass
+            Ek=Ek+0.5*sum(this%ParticlePointers(i)%p%Velocity**2)*this%ParticlePointers(i)%p%Mass
         end do
 
         print *,Ek
@@ -34,7 +34,6 @@ contains
         class(DataAnalyzerBase),pointer :: analyzer
 
         allocate(analyzer,source=target)
-
         call analyzer%LoadParticles(particlePointers)
 
     end function
