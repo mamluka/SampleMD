@@ -1,176 +1,50 @@
 module lib_ConfigurationManager
-    use flib_dom
-    use class_ErrorHandler
+    use class_SimulationConfigurationsDTO
     use class_ReducersDTO
     use class_DataOptionsDTO
     use class_DataAnalyzersListDTO
+    use class_ConfigurationsDTO
     implicit none
-
-    public :: SimulationConfigurations
-
-    type SimulationConfigurations
-        real :: TimeStep
-        real :: EndOfSimulation
-        integer :: Dimension
-        character (len=:),allocatable :: PotentialName
-        character (len=:),allocatable :: PotentialDataFile
-        character (len=:),allocatable :: DataFilename
-        type(ReducersDTO),allocatable :: Reducers
-        type(DataOptionsDTO),allocatable :: DataOptions
-        type(DataAnalyzersListDTO),allocatable ::DataAnalyzersList
-    end type
-
-
 
 contains
 
     function LoadSimulationConfigurations(filename) result (configurations)
-        type (SimulationConfigurations) :: configurations
-        character (len=*) :: filename
+        type(ConfigurationsDTO) :: configurations
 
-        type(fnode), pointer          :: confDoc
-        type(fnode), pointer          :: rootNode,simulationNode,reducerNode,dataOptionsNode,dataAnalyzersNode
-        type(fnodeList), pointer      :: tmpList,configNodes
-        character (len=100) :: simulatiomNodeName,simulatiomNodeValue
+        type(SimulationConfigurationsDTO) :: SimulationConfigurations
+        type(ReducersDTO) :: Reducers
+        type(DataOptionsDTO) :: DataOptions
+        type(DataAnalyzersListDTO) ::DataAnalyzersList
 
-        real :: timeReducer,lengthReducer,energyReducer,massReducer
-        type(ReducersDTO),target :: reducers
-        type(DataOptionsDTO),target :: dataOptions
-        type(DataAnalyzersListDTO) :: dataAnalyzersList
+        SimulationConfigurations%TimeStep=0.00217
+        SimulationConfigurations%EndOfSimulation=0.00217*100
+        SimulationConfigurations%Dimension=3
+        SimulationConfigurations%PotentialName="argon"
+        SimulationConfigurations%DataFilename="argon.xyz"
 
-        integer :: i
+        allocate(configurations%SimulationConfigurations,source=SimulationConfigurations)
 
+        Reducers%HasDimensionlessReduction = .true.
+        Reducers%Time=2.1555
+        Reducers%Energy=1.65E-12
+        Reducers%Length=3.4
+        Reducers%Mass=39.948
 
-        confDoc => parsefile(filename)
+        allocate(configurations%Reducers,source=Reducers)
 
-        call normalize(confDoc)
+        DataOptions%TempForInitialVelocity = 300
+        DataOptions%BootstrapperType = "dimensionless-random"
+        DataOptions%UseVelocityStrapper = .true.
 
-        tmpList => getElementsByTagName(confDoc, "mdconfig")
+        allocate(configurations%DataOptions,source=DataOptions)
 
-        rootNode => item(tmpList, 0)
+        DataAnalyzersList%KineticEnergy = .true.
 
-        tmpList => getElementsByTagName(rootNode, "sim")
-
-        if (getLength(tmpList) == 0) then
-            call die("When asked to load the simulation configuration the xml element was not found")
-        endif
-
-
-        simulationNode => item(tmpList, 0)
-
-        configurations%Dimension = LoadXMLAttributeToInt(simulationNode,"dim")
-        configurations%TimeStep = LoadXMLAttributeToReal(simulationNode,"timestep")
-        configurations%EndOfSimulation = LoadXMLAttributeToReal(simulationNode,"sim-end")
-        configurations%DataFilename = char(getAttribute(simulationNode,"data-filename"))
-        configurations%PotentialName = char(getAttribute(simulationNode,"potential"))
-        configurations%PotentialDataFile = char(getAttribute(simulationNode,"potential-data-file"))
-
-        tmpList => getElementsByTagName(rootNode, "dless")
-
-        if (getLength(tmpList) .gt. 0) then
-            reducerNode => item(tmpList, 0)
-            timeReducer = LoadXMLAttributeToReal(reducerNode,"time")
-            lengthReducer = LoadXMLAttributeToReal(reducerNode,"length")
-            massReducer = LoadXMLAttributeToReal(reducerNode,"mass")
-            energyReducer = LoadXMLAttributeToReal(reducerNode,"energy")
-
-            reducers%HasDimensionlessReduction = .true.
-
-            reducers%Time = timeReducer
-            reducers%Length = LengthReducer
-            reducers%Mass = massReducer
-            reducers%Energy = energyReducer
-
-            allocate(configurations%Reducers,source=Reducers)
-
-            configurations%TimeStep = configurations%TimeStep/timeReducer
-            configurations%EndOfSimulation = configurations%EndOfSimulation/timeReducer
-
-        end if
-
-        tmpList => getElementsByTagName(rootNode, "data")
-
-        if (getLength(tmpList) .gt. 0) then
-
-            dataOptionsNode => item(tmpList, 0)
-
-            if (IsFlagSet(dataOptionsNode,"use-strapping") == .true.) then
-
-                dataOptions%TempForInitialVelocity = LoadXMLAttributeToInt(dataOptionsNode,"temp-for-initial-v")
-
-                dataOptions%BootstrapperType=char(getAttribute(dataOptionsNode,"bootstrapper-type"))
-
-                dataOptions%UseVelocityStrapper = .true.
-
-                allocate(configurations%DataOptions,source=dataOptions)
-
-            end if
-
-        end if
-
-        tmpList => getElementsByTagName(rootNode, "analyzers")
-
-        if (getLength(tmpList) .gt. 0) then
-
-            dataAnalyzersNode => item(tmpList, 0)
-
-            if (IsFlagSet(dataAnalyzersNode,"kinetic-energy") == .true.) then
-                dataAnalyzersList%KineticEnergy = .true.
-            end if
-
-            allocate(configurations%DataAnalyzersList,source=dataAnalyzersList)
-
-    end if
+        allocate(configurations%DataAnalyzersList,source=DataAnalyzersList)
 
 
 
 
-end function
-
-function LoadXMLAttributeToReal(node,nameOfAttr) result (returnValue)
-    type(fnode) , pointer :: node
-    character (len=*) :: nameOfAttr
-    real :: returnValue
-    character (len=100) :: simAttribute
-
-    simAttribute = getAttribute(node,nameOfAttr)
-
-    if (simAttribute == "") call die("When asked to load " // nameOfAttr // " from xml the attribute couldn't be found")
-    read(unit=simAttribute,fmt=*) returnValue
-
-end function LoadXMLAttributeToReal
-
-function LoadXMLAttributeToInt(node,nameOfAttr) result (returnValue)
-    type(fnode) , pointer :: node
-    character (len=*) :: nameOfAttr
-    integer :: returnValue
-    character (len=100) :: simAttribute
-
-    simAttribute = getAttribute(node,nameOfAttr)
-
-    if (simAttribute == "") call die("When asked to load " // nameOfAttr // " from xml the attribute couldn't be found")
-    read(unit=simAttribute,fmt=*) returnValue
-
-end function LoadXMLAttributeToInt
-
-function IsFlagSet(node,flagName) result(flag)
-    type(fnode) , pointer :: node
-    character (len=*) :: flagName
-    logical :: flag
-    character (len=100) :: simAttribute
-
-    simAttribute = getAttribute(node,flagName)
-
-    if (simAttribute == "" .or. simAttribute == "false")  then
-        flag = .false.
-    elseif (simAttribute == "true") then
-        flag = .true.
-    else
-        flag = .false.
-    end if
-
-end function
-
-
+    end function
 
 end module lib_ConfigurationManager
