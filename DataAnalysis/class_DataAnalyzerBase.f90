@@ -16,7 +16,7 @@ module class_DataAnalyzerBase
         subroutine IAnalyze(this,configurations)
             import
             class(DataAnalyzerBase) :: this
-            type(SimulationConfigurations) :: configurations
+            type(ConfigurationsDTO) :: configurations
         end subroutine
     end interface
 

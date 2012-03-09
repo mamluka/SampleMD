@@ -13,7 +13,7 @@ contains
 
     subroutine Analyze(this,configurations)
         class(KineticEnergyAnalyzer) :: this
-        type(SimulationConfigurations) :: configurations
+        type(ConfigurationsDTO) :: configurations
 
         real :: Ek
         integer :: i

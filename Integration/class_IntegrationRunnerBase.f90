@@ -10,7 +10,7 @@ module class_IntegrationRunnerBase
     type,abstract :: IntegrationRunnerBase
         class(PotentialBase) ,pointer :: Potential
         type(Grid) :: G
-        type(SimulationConfigurations) :: GlobalConfigurations
+        type(ConfigurationsDTO) :: GlobalConfigurations
         type(DataAnalyzersContainer) :: dataAnalyzers
 
     contains
@@ -29,7 +29,7 @@ module class_IntegrationRunnerBase
             import
             class(IntegrationRunnerBase) :: this
             type(Grid) :: g
-            type(SimulationConfigurations) :: configurations
+            type(ConfigurationsDTO) :: configurations
             type(DataAnalyzersContainer) :: dataAnalyzers
             class(PotentialBase),pointer :: potential
         end subroutine
@@ -37,7 +37,7 @@ module class_IntegrationRunnerBase
         subroutine ILoadIntegraionConfigurations(this,simConfigurations)
             import
             class(IntegrationRunnerBase) :: this
-            type(SimulationConfigurations) :: simConfigurations
+            type(ConfigurationsDTO) :: simConfigurations
         end subroutine ILoadIntegraionConfigurations
     end interface
 

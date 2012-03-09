@@ -24,7 +24,7 @@ contains
     end function LoadPotentialByName
 
     function LoadPotentialByConfiguration(configurations) result(potential)
-        type(SimulationConfigurations) :: configurations
+        type(ConfigurationsDTO) :: configurations
         class(PotentialBase),pointer :: potential
 
         type(LeonardJonesPotential),target :: lg

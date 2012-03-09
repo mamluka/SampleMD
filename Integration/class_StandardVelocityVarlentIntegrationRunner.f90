@@ -79,7 +79,7 @@ contains
     subroutine Setup(this,g,potential,dataAnalyzers,configurations)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(Grid) :: g
-        type(SimulationConfigurations) :: configurations
+        type(ConfigurationsDTO) :: configurations
         type(DataAnalyzersContainer) :: dataAnalyzers
         class(PotentialBase),pointer :: potential
 
@@ -319,7 +319,7 @@ contains
 
     subroutine LoadIntegraionConfigurations(this,simConfigurations)
         class(StandardVelocityVarlentIntegrationRunner) :: this
-        type(SimulationConfigurations) :: simConfigurations
+        type(ConfigurationsDTO) :: simConfigurations
 
         type(StandardIntegrationConfigurations) :: standardConfigurations
 

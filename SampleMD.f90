@@ -14,7 +14,7 @@ program SampleMD
     type(IntegrationRunnerSelector) :: runnerSelector
     class(IntegrationRunnerBase) ,pointer :: runner
 
-    type(SimulationConfigurations) :: configurations
+    type(ConfigurationsDTO) :: configurations
 
     type(DataFileReader) :: dataReader
     type(ParticlePointer),allocatable:: particlePointers(:)
@@ -25,7 +25,7 @@ program SampleMD
     type(DataAnalyzersContainer) :: dataAnalyzers
     class(DataAnalyzerBase),pointer :: da
 
-    configurations = LoadSimulationConfigurations("/home/mamluka/SampleMD/mdconfig.xml")
+    configurations = LoadConfigurations()
 
     call dataReader%LoadParticlesUsingConfigurations(configurations,particlePointers)
 

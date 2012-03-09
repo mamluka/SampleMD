@@ -12,7 +12,7 @@ module class_VelocityBootstrapperBase
         subroutine ILoadVelocityIntoAnArray(particles,configurations)
             import
             type(Particle),allocatable :: particles(:)
-            type(SimulationConfigurations) :: Configurations
+            type(ConfigurationsDTO) :: Configurations
         end subroutine ILoadVelocityIntoAnArray
     end interface
 

@@ -9,7 +9,7 @@ contains
 
     function DataAnalyzersFromConfiguration(configurations,particlePointers) result(dataAnalyzers)
         type(DataAnalyzersContainer) :: dataAnalyzers
-        type(SimulationConfigurations) :: configurations
+        type(ConfigurationsDTO) :: configurations
         type(ParticlePointer),allocatable :: particlePointers(:)
 
         class(DataAnalyzerBase),pointer :: currentAnalyzer

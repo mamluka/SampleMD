@@ -8,7 +8,7 @@ module lib_ConfigurationManager
 
 contains
 
-    function LoadSimulationConfigurations(filename) result (configurations)
+    function LoadConfigurations() result (configurations)
         type(ConfigurationsDTO) :: configurations
 
         type(SimulationConfigurationsDTO) :: SimulationConfigurations

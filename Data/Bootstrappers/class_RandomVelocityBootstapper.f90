@@ -15,7 +15,7 @@ contains
 
     subroutine LoadVelocityIntoAnArray(particles,configurations)
         type(Particle),allocatable :: particles(:)
-        type(SimulationConfigurations) :: Configurations
+        type(ConfigurationsDTO) :: Configurations
 
     end subroutine LoadVelocityIntoAnArray
 

@@ -139,10 +139,10 @@ contains
 
         simulationNode => item(tmpList, 0)
 
-        this%Sigma = LoadXMLAttributeToReal(simulationNode,"sigma")
-        this%Eps = LoadXMLAttributeToReal(simulationNode,"epsilon")
-        this%Rcut = LoadXMLAttributeToReal(simulationNode,"rcut")
-        this%Rl = LoadXMLAttributeToReal(simulationNode,"rl")
+        this%Sigma = 3.4
+        this%Eps = 1.65E-12
+        this%Rcut = 7.82
+        this%Rl = 6.46
 
     end subroutine LoadPotentialParameters
 

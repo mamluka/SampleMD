@@ -19,7 +19,7 @@ module class_DataFileReader
         subroutine IMapParticles(p,configurations)
             import
             type(Particle) :: p
-            type(SimulationConfigurations) :: configurations
+            type(ConfigurationsDTO) :: configurations
         end subroutine IMapParticles
     end interface
 
@@ -62,7 +62,7 @@ contains
 
     subroutine LoadParticlesUsingConfigurations(configurations,particlePointers)
 
-        type(SimulationConfigurations) :: configurations
+        type(ConfigurationsDTO) :: configurations
         type(ParticlePointer),allocatable :: particlePointers(:)
         type(Particle),allocatable :: particles(:)
 
@@ -90,7 +90,7 @@ contains
 
     subroutine ReduceToDimensionlessParameters(p,configurations)
         type(Particle) :: p
-        type(SimulationConfigurations) :: configurations
+        type(ConfigurationsDTO) :: configurations
 
         p%Position = p%Position/configurations%Reducers%Length
         p%Mass = p%Mass/configurations%Reducers%Mass
@@ -100,8 +100,8 @@ contains
     subroutine ForEachParticle(particles,proc,configurations)
         type(Particle) :: particles(:)
         procedure(IMapParticles) :: proc
-        type(SimulationConfigurations) :: configurations
-        type(SimulationConfigurations),pointer :: configurationsPointer
+        type(ConfigurationsDTO) :: configurations
+        type(ConfigurationsDTO),pointer :: configurationsPointer
 
         integer :: i
 
@@ -113,7 +113,7 @@ contains
 
     subroutine BootstrapVelocity(particles,configurations)
         type(Particle),allocatable :: particles(:)
-        type(SimulationConfigurations) :: configurations
+        type(ConfigurationsDTO) :: configurations
 
         class(VelocityBootstrapperBase),pointer :: strapper
 

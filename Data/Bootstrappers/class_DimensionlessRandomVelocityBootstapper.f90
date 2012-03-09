@@ -17,7 +17,7 @@ module class_DimensionlessRandomVelocityBootstapper
 
     subroutine LoadVelocityIntoAnArray(particles,configurations)
         type(Particle),allocatable :: particles(:)
-        type(SimulationConfigurations) :: configurations
+        type(ConfigurationsDTO) :: configurations
 
         real :: factor
 
