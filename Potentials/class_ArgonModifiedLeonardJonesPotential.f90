@@ -110,34 +110,8 @@ contains
 
     end function
 
-    subroutine LoadPotentialParameters(this,filename)
+    subroutine LoadPotentialParameters(this)
         class(ArgonModifiedLeonardJonesPotential) :: this
-        character(len=*) :: filename
-
-        type(fnode), pointer          :: confDoc
-        type(fnode), pointer          :: rootNode,simulationNode
-        type(fnodeList), pointer      :: tmpList,configNodes
-        character (len=100) :: simulatiomNodeName,simulatiomNodeValue
-
-        integer :: i
-
-
-        confDoc => parsefile(filename)
-
-        call normalize(confDoc)
-
-
-        tmpList => getElementsByTagName(confDoc, "potential")
-
-        rootNode => item(tmpList, 0)
-
-        tmpList => getElementsByTagName(rootNode, "coeff")
-
-        if (getLength(tmpList) == 0) then
-            call die("When asked to load the simulation configuration the xml element was not found")
-        endif
-
-        simulationNode => item(tmpList, 0)
 
         this%Sigma = 3.4
         this%Eps = 1.65E-12

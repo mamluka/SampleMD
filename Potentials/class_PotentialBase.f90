@@ -36,10 +36,9 @@ module class_PotentialBase
             real :: rc
         end function ICutOffRadii
 
-        subroutine ILoadPotentialParameters(this,filename)
+        subroutine ILoadPotentialParameters(this)
             import
             class(PotentialBase) :: this
-            character(len=*) :: filename
         end subroutine ILoadPotentialParameters
 
         subroutine ISetReducers(this,reducers)

@@ -36,9 +36,8 @@ contains
         rc = this%CutOfDistance
     end function
 
-    subroutine LoadPotentialParameters(this,filename)
+    subroutine LoadPotentialParameters(this)
         class(LeonardJonesPotential) :: this
-        character(len=*) :: filename
     end subroutine LoadPotentialParameters
 
     subroutine SetReducers(this,reducers)

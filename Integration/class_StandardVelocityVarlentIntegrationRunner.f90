@@ -323,8 +323,8 @@ contains
 
         type(StandardIntegrationConfigurations) :: standardConfigurations
 
-        standardConfigurations%TimeStep = simConfigurations%TimeStep
-        standardConfigurations%EndOfSimulation = simConfigurations%EndOfSimulation
+        standardConfigurations%TimeStep = simConfigurations%SimulationConfigurations%TimeStep
+        standardConfigurations%EndOfSimulation = simConfigurations%SimulationConfigurations%EndOfSimulation
 
         this%Configurations = standardConfigurations
 

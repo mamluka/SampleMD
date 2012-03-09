@@ -68,7 +68,7 @@ contains
 
         integer :: i,arraySize
 
-        call LoadParticlesIntoAnArray(configurations%DataFilename,particles)
+        call LoadParticlesIntoAnArray(configurations%SimulationConfigurations%DataFilename,particles)
 
         if (configurations%Reducers%HasDimensionlessReduction == .true. ) then
             call ForEachParticle(particles,ReduceToDimensionlessParameters,configurations)

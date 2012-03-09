@@ -30,7 +30,7 @@ contains
         type(LeonardJonesPotential),target :: lg
         type(ArgonModifiedLeonardJonesPotential) ,target:: argon
 
-        select case (configurations%PotentialName)
+        select case (configurations%SimulationConfigurations%PotentialName)
             case ("lg")
                 !allocate(lg)
                 potential => lg
@@ -42,7 +42,7 @@ contains
                 potential => lg
         end select
 
-        call potential%LoadPotentialParameters(configurations%PotentialDataFile)
+        call potential%LoadPotentialParameters()
 
         if (configurations%Reducers%HasDimensionlessReduction == .true.) then
             call potential%SetReducers(configurations%Reducers)
