@@ -66,7 +66,7 @@ contains
 
             call ComputeVelocities(this)
 
-            call ScaleVelocity(this)
+           ! call ScaleVelocity(this)
 
             call AnalyzeData(this)
 

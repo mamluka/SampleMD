@@ -11,9 +11,9 @@ module class_ThermostatPlansContainer
     contains
         procedure :: AddThermostatPlan
         procedure :: CurrentThermostatPlan
-        procedure :: Next
+        procedure :: NextThermostat
         procedure :: AreThereMorePlans
-        procedure :: Reset
+        procedure :: ResetThermostatContainer
     end type
 
 contains
@@ -42,12 +42,12 @@ contains
         CurrentThermostatPlan => this%currLink%getThermostatPlan()
     end function
 
-    subroutine Next(this)
+    subroutine NextThermostat(this)
         class(ThermostatPlansContainer) :: this
         this%currLink => this%currLink%nextThermostatPlanLink()
 
 
-    end subroutine Next
+    end subroutine
 
     function AreThereMorePlans(this)
         class(ThermostatPlansContainer) :: this
@@ -57,8 +57,8 @@ contains
 
 
 
-    subroutine Reset(this)
+    subroutine ResetThermostatContainer(this)
         class(ThermostatPlansContainer) :: this
         this%currLink => this%firstLink
-    end subroutine Reset
+    end subroutine
 end module class_ThermostatPlansContainer

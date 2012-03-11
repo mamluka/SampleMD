@@ -48,8 +48,6 @@ module class_DataAnalyzersContainer
     subroutine Next(this)
         class(DataAnalyzersContainer) :: this
         this%currLink => this%currLink%nextAnalyzerLink()
-
-
     end subroutine Next
 
     function AreThereMoreAnalyzers(this)

@@ -4,6 +4,8 @@ module lib_ConfigurationManager
     use class_DataOptionsDTO
     use class_DataAnalyzersListDTO
     use class_ConfigurationsDTO
+    use class_ThermostatPlansContainer
+    use class_ThermostatPlan
     implicit none
 
 contains
@@ -15,6 +17,7 @@ contains
         type(ReducersDTO) :: Reducers
         type(DataOptionsDTO) :: DataOptions
         type(DataAnalyzersListDTO) ::DataAnalyzersList
+        type(ThermostatPlan) :: plan
 
         SimulationConfigurations%TimeStep=0.00217
         SimulationConfigurations%EndOfSimulation=0.00217*100
@@ -42,8 +45,7 @@ contains
 
         allocate(configurations%DataAnalyzersList,source=DataAnalyzersList)
 
-
-
+        plan = plan%CreateThermostatPlan(300.0,360.0,1E-4)
 
     end function
 

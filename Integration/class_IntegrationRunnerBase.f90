@@ -13,7 +13,6 @@ module class_IntegrationRunnerBase
         type(Grid) :: G
         type(ConfigurationsDTO) :: GlobalConfigurations
         type(DataAnalyzersContainer) :: dataAnalyzers
-        type(ThermostatPlansContainer) :: ThermostatPlans
     contains
         procedure(IStart),deferred :: Start
         procedure(ISetup),deferred :: Setup
