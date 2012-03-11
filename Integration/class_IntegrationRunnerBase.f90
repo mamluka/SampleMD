@@ -3,6 +3,7 @@ module class_IntegrationRunnerBase
     use lib_ConfigurationManager
     use class_Grid
     use class_DataAnalyzersContainer
+    use class_ThermostatPlansContainer
     implicit none
 
     public :: IntegrationRunnerBase
@@ -12,7 +13,7 @@ module class_IntegrationRunnerBase
         type(Grid) :: G
         type(ConfigurationsDTO) :: GlobalConfigurations
         type(DataAnalyzersContainer) :: dataAnalyzers
-
+        type(ThermostatPlansContainer) :: ThermostatPlans
     contains
         procedure(IStart),deferred :: Start
         procedure(ISetup),deferred :: Setup

@@ -83,13 +83,14 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
+						<entry excluding="Thermostat|Cells/integer_list_mod.f90|xmlsample|Data|ff|Potentials|Cells/abstract_list_mod.f90|Cells/class_AbstractLinkedList.f90|Cells/list_mod.f90|lib_StandardDataAnalysis.f90|Math|Bootstrappers|Logger|Core|DataAnalysis" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Thermostat"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
-						<entry excluding="Cells/integer_list_mod.f90|xmlsample|Data|ff|Potentials|Cells/abstract_list_mod.f90|Cells/class_AbstractLinkedList.f90|Cells/list_mod.f90|lib_StandardDataAnalysis.f90|Math|Bootstrappers|Logger|Core|DataAnalysis" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -136,14 +137,15 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
-						<entry excluding="ff|Core|Logger|lib_StandardDataAnalysis.f90|DataAnalysis|Potentials|Bootstrappers|Math|Data|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data/Bootstrappers"/>
-						<entry excluding="Bootstrappers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Thermostat"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
+						<entry excluding="Thermostat|ff|Core|Logger|lib_StandardDataAnalysis.f90|DataAnalysis|Potentials|Bootstrappers|Math|Data|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
+						<entry excluding="Bootstrappers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data/Bootstrappers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
