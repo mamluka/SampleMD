@@ -1,9 +1,9 @@
 module class_ArgonModifiedLeonardJonesPotential
     use class_PotentialBase
     use lib_Integration
-    use flib_dom
     use lib_ConfigurationManager
     use class_ReducersDTO
+    use class_ArgonModifiedLeonardJonesPotentialCofiguraions
     implicit none
 
     private
@@ -112,11 +112,12 @@ contains
 
     subroutine LoadPotentialParameters(this)
         class(ArgonModifiedLeonardJonesPotential) :: this
+        type(ArgonModifiedLeonardJonesPotentialCofiguraions) :: configurations
 
-        this%Sigma = 3.4
-        this%Eps = 1.65E-12
-        this%Rcut = 7.82
-        this%Rl = 6.46
+        this%Sigma = configurations%Sigma
+        this%Eps = configurations%Eps
+        this%Rcut = configurations%Rcut
+        this%Rl = configurations%Rl
 
     end subroutine LoadPotentialParameters
 
