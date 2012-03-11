@@ -17,7 +17,8 @@ contains
         type(ReducersDTO) :: Reducers
         type(DataOptionsDTO) :: DataOptions
         type(DataAnalyzersListDTO) ::DataAnalyzersList
-        type(ThermostatPlan) :: plan
+        type(ThermostatPlan),pointer :: plan
+
 
         SimulationConfigurations%TimeStep=0.00217
         SimulationConfigurations%EndOfSimulation=0.00217*100
@@ -29,7 +30,7 @@ contains
 
         Reducers%HasDimensionlessReduction = .true.
         Reducers%Time=2.1555
-        Reducers%Energy=1.65E-12
+        Reducers%Energy=1.65E-21
         Reducers%Length=3.4
         Reducers%Mass=39.948
 
@@ -42,10 +43,14 @@ contains
         allocate(configurations%DataOptions,source=DataOptions)
 
         DataAnalyzersList%KineticEnergy = .true.
+        DataAnalyzersList%Temperature = .true.
 
         allocate(configurations%DataAnalyzersList,source=DataAnalyzersList)
 
-        plan = plan%CreateThermostatPlan(300.0,360.0,1E-4)
+        plan => plan%CreateThermostatPlan(300.0,360.0,1E-4)
+
+        call configurations%ThermostatPlans%AddThermostatPlan(plan)
+
 
     end function
 

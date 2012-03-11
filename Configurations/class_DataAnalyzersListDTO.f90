@@ -3,5 +3,6 @@ module class_DataAnalyzersListDTO
 
     type :: DataAnalyzersListDTO
         logical :: KineticEnergy = .false.
+        logical :: Temperature = .false.
     end type
 end module class_DataAnalyzersListDTO

@@ -35,8 +35,6 @@ program SampleMD
 
     da => dataAnalyzers%CurrentAnalyzer()
 
-
-
     call g%CreateGrid(particlePointers,potential%SizeOfGridCell())
 
     runner => runnerSelector%Select("standard")

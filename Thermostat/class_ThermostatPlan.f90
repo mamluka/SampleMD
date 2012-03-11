@@ -4,17 +4,23 @@ module class_ThermostatPlan
     public :: ThermostatPlan
 
     type ThermostatPlan
+        real :: StartTemp
+        real :: EndTemp
+        real :: Rate
     contains
         procedure,nopass:: CreateThermostatPlan
-
     end type
 
 contains
 
     function CreateThermostatPlan(startTemp,endTemp,rate) result(plan)
-        type(ThermostatPlan) :: plan
+        type(ThermostatPlan),pointer :: plan
         real :: startTemp,endTemp,rate
 
+        allocate(plan)
+        plan%StartTemp = startTemp
+        plan%EndTemp = endTemp
+        plan%Rate = rate
 
     end function
 

@@ -5,7 +5,7 @@ module class_IntegrationConfigurationsBase
         type,abstract :: IntegrationConfigurationsBase
             real :: TimeStep
             real :: EndOfSimulation
-            type(ThermostatPlansContainer) :: ThermostatPlansContainer
+            type(ThermostatPlansContainer) :: ThermostatPlans
         end type
 
     contains

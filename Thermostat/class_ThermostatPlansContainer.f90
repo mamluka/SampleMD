@@ -3,6 +3,9 @@ module class_ThermostatPlansContainer
     use class_ThermostatPlan
     implicit none
 
+    private
+    public :: ThermostatPlansContainer
+
     type :: ThermostatPlansContainer
         private
         type(ThermostatPlanLink),pointer :: firstLink => null() ! first link in list
@@ -11,16 +14,16 @@ module class_ThermostatPlansContainer
     contains
         procedure :: AddThermostatPlan
         procedure :: CurrentThermostatPlan
-        procedure :: NextThermostat
+        procedure :: Next
         procedure :: AreThereMorePlans
-        procedure :: ResetThermostatContainer
+        procedure :: Reset
     end type
 
 contains
 
     subroutine AddThermostatPlan(this, value)
         class(ThermostatPlansContainer) :: this
-        class(ThermostatPlan),pointer,intent(in) :: value
+        type(ThermostatPlan),pointer,intent(in) :: value
         type(ThermostatPlanLink), pointer :: newLink
 
         type(ThermostatPlanLink) ,pointer :: firstLink,nextLink
@@ -42,7 +45,7 @@ contains
         CurrentThermostatPlan => this%currLink%getThermostatPlan()
     end function
 
-    subroutine NextThermostat(this)
+    subroutine Next(this)
         class(ThermostatPlansContainer) :: this
         this%currLink => this%currLink%nextThermostatPlanLink()
 
@@ -57,7 +60,7 @@ contains
 
 
 
-    subroutine ResetThermostatContainer(this)
+    subroutine Reset(this)
         class(ThermostatPlansContainer) :: this
         this%currLink => this%firstLink
     end subroutine

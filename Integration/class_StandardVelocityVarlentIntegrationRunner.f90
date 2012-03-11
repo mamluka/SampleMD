@@ -72,10 +72,6 @@ contains
 
         end do
 
-
-
-
-
     end subroutine
 
     subroutine Setup(this,g,potential,dataAnalyzers,configurations)
@@ -90,6 +86,8 @@ contains
         this%GlobalConfigurations = configurations
         this%Potential => potential
         this%DataAnalyzers = dataAnalyzers
+
+
 
     end subroutine
 
@@ -322,14 +320,19 @@ contains
     subroutine LoadIntegraionConfigurations(this,simConfigurations)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(ConfigurationsDTO) :: simConfigurations
+        type(ThermostatPlan),pointer :: plan
 
-        type(StandardIntegrationConfigurations) :: standardConfigurations
+        this%Configurations%TimeStep = simConfigurations%SimulationConfigurations%TimeStep
+        this%Configurations%EndOfSimulation = simConfigurations%SimulationConfigurations%EndOfSimulation
 
-        standardConfigurations%TimeStep = simConfigurations%SimulationConfigurations%TimeStep
-        standardConfigurations%EndOfSimulation = simConfigurations%SimulationConfigurations%EndOfSimulation
 
-        this%Configurations = standardConfigurations
+    do while (simConfigurations%ThermostatPlans%AreThereMorePlans())
+            plan=>simConfigurations%ThermostatPlans%CurrentThermostatPlan()
 
+            call this%Configurations%ThermostatPlans%AddThermostatPlan(plan)
+
+            call simConfigurations%ThermostatPlans%Next()
+        end do
 
     end subroutine LoadIntegraionConfigurations
 

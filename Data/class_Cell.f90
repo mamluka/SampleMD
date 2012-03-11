@@ -3,6 +3,7 @@ module class_Cell
     use class_Particle
     use class_ParticlePredicateBase
 
+    private
     public :: Cell,EmptyCell
     type :: Cell
         private
