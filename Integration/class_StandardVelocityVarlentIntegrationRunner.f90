@@ -52,11 +52,11 @@ contains
 
             call ComputePositions(this)
 
-!            if (mod(stepCounter,50) == 0) then
-!
-!                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
-!
-!            end if
+            !            if (mod(stepCounter,50) == 0) then
+            !
+            !                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+            !
+            !            end if
 
             call RedistributeParticlesToCells(this)
 
@@ -66,7 +66,7 @@ contains
 
             call ComputeVelocities(this)
 
-           ! call ScaleVelocity(this)
+            call ScaleVelocity(this,stepCounter)
 
             call AnalyzeData(this)
 
@@ -284,7 +284,6 @@ contains
 
         call this%g%ForEachParticleWithConfigurations(CalculateVelocitiesIterator,this%Configurations)
 
-
     end subroutine ComputeVelocities
 
     subroutine CalculateVelocitiesIterator(p,configurations)
@@ -299,6 +298,33 @@ contains
         p%Velocity = p%Velocity + a*(p%ForceFromPreviousIteration+ p%Force)
 
     end subroutine CalculateVelocitiesIterator
+
+    subroutine ScaleVelocities(this,step)
+        class(StandardVelocityVarlentIntegrationRunner) :: this
+        integer :: step
+
+        call this%g%ForEachParticleWithConfigurations(ScaleVelocitiesIterator,this%Configurations)
+
+    end subroutine
+
+    subroutine ScaleVelocitiesIterator(p,configurations)
+        type(Particle),pointer :: p
+        class(IntegrationConfigurationsBase) :: configurations
+        type(ThermostatPlan) :: plan
+
+        real :: beta,gammaParam
+        real :: startTemp,endTemp
+
+        plan => configurations%ThermostatPlans%CurrentThermostatPlan()
+
+        gammaParam =10*configurations%TimeStep
+
+        beta = (1+gammaParam*
+
+        p%Velocity = p%Velocity
+
+    end subroutine
+
 
     subroutine AnalyzeData(this)
         class(StandardVelocityVarlentIntegrationRunner) :: this
@@ -326,7 +352,7 @@ contains
         this%Configurations%EndOfSimulation = simConfigurations%SimulationConfigurations%EndOfSimulation
 
 
-    do while (simConfigurations%ThermostatPlans%AreThereMorePlans())
+        do while (simConfigurations%ThermostatPlans%AreThereMorePlans())
             plan=>simConfigurations%ThermostatPlans%CurrentThermostatPlan()
 
             call this%Configurations%ThermostatPlans%AddThermostatPlan(plan)
