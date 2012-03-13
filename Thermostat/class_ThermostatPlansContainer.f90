@@ -16,6 +16,7 @@ module class_ThermostatPlansContainer
         procedure :: CurrentThermostatPlan
         procedure :: Next
         procedure :: AreThereMorePlans
+        procedure :: IsLastPlan
         procedure :: Reset
     end type
 
@@ -56,6 +57,12 @@ contains
         class(ThermostatPlansContainer) :: this
         logical AreThereMorePlans
         AreThereMorePlans = associated(this%currLink)
+    end function
+
+    function IsLastPlan(this)
+        class(ThermostatPlansContainer) :: this
+        logical IsLastPlan
+        if (associated(this%currLink%nextThermostatPlanLink()) == .false.)  IsLastPlan = .true.
     end function
 
 

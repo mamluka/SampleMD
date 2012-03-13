@@ -1,6 +1,7 @@
 module class_DataAnalyzerBase
     use class_ParticlePointer
     use lib_ConfigurationManager
+    use lib_Particles
     implicit none
 
     public :: DataAnalyzerBase
@@ -26,15 +27,7 @@ module class_DataAnalyzerBase
         class(DataAnalyzerBase) :: this
         type(ParticlePointer),allocatable,target:: particlePointers(:)
 
-        integer :: arraySize,i
-
-        arraySize = size(particlePointers)
-
-        allocate(this%ParticlePointers(arraySize))
-
-        do i=1,arraySize
-            this%ParticlePointers(i)%p=>particlePointers(i)%p
-        end do
+        call CopyParticlePointer(particlePointers,this%ParticlePointers)
 
     end subroutine LoadParticles
 

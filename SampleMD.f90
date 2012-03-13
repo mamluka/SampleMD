@@ -38,7 +38,7 @@ program SampleMD
     call g%CreateGrid(particlePointers,potential%SizeOfGridCell())
 
     runner => runnerSelector%Select("standard")
-    call runner%Setup(g,potential,dataAnalyzers,configurations)
+    call runner%Setup(g,potential,dataAnalyzers,configurations,particlePointers)
 
     call runner%Start()
 

@@ -9,6 +9,8 @@ module class_StandardVelocityVarlentIntegrationRunner
     use class_ParticlePredicateForCellMigration
     use class_DataAnalyzersContainer
     use lib_Parse
+    use lib_Particles
+    use lib_DataAnalysis
     implicit none
     private
     public :: StandardVelocityVarlentIntegrationRunner,Create
@@ -40,11 +42,11 @@ contains
 
         stepCounter = 1
 
+        call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+
         print *,"Starting..."
 
         call CalculateForces(this)
-
-        this%Configurations%EndOfSimulation=this%Configurations%TimeStep*10000
 
         do while (time .lt. this%Configurations%EndOfSimulation)
 
@@ -52,11 +54,11 @@ contains
 
             call ComputePositions(this)
 
-            !            if (mod(stepCounter,50) == 0) then
-            !
-            !                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
-            !
-            !            end if
+            if (mod(stepCounter,500) == 0) then
+
+                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+
+            end if
 
             call RedistributeParticlesToCells(this)
 
@@ -66,7 +68,7 @@ contains
 
             call ComputeVelocities(this)
 
-            call ScaleVelocity(this,stepCounter)
+            call ScaleVelocities(this,stepCounter)
 
             call AnalyzeData(this)
 
@@ -74,12 +76,13 @@ contains
 
     end subroutine
 
-    subroutine Setup(this,g,potential,dataAnalyzers,configurations)
+    subroutine Setup(this,g,potential,dataAnalyzers,configurations,particlePointers)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(Grid) :: g
         type(ConfigurationsDTO) :: configurations
         type(DataAnalyzersContainer) :: dataAnalyzers
         class(PotentialBase),pointer :: potential
+        type(ParticlePointer),allocatable :: particlePointers(:)
 
         this%G=g
         call this%LoadIntegraionConfigurations(configurations)
@@ -87,7 +90,7 @@ contains
         this%Potential => potential
         this%DataAnalyzers = dataAnalyzers
 
-
+        call CopyParticlePointer(particlePointers,this%ParticlePointers)
 
     end subroutine
 
@@ -301,29 +304,53 @@ contains
 
     subroutine ScaleVelocities(this,step)
         class(StandardVelocityVarlentIntegrationRunner) :: this
-        integer :: step
+        integer :: step,arraySize,i
 
-        call this%g%ForEachParticleWithConfigurations(ScaleVelocitiesIterator,this%Configurations)
-
-    end subroutine
-
-    subroutine ScaleVelocitiesIterator(p,configurations)
-        type(Particle),pointer :: p
-        class(IntegrationConfigurationsBase) :: configurations
-        type(ThermostatPlan) :: plan
+        type(ThermostatPlan),pointer :: plan
 
         real :: beta,gammaParam
-        real :: startTemp,endTemp
+        real :: startTemp,endTemp,rate
 
-        plan => configurations%ThermostatPlans%CurrentThermostatPlan()
+        real :: T,Tafter
 
-        gammaParam =10*configurations%TimeStep
+        if (mod(step,50) /= 0) return
 
-        beta = (1+gammaParam*
+        T = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
 
-        p%Velocity = p%Velocity
+
+
+        plan => this%Configurations%ThermostatPlans%CurrentThermostatPlan()
+        startTemp = plan%StartTemp
+        endTemp = plan%EndTemp
+        rate = plan%Rate
+
+        if ( ( T .gt. endTemp ) .and. (this%Configurations%ThermostatPlans%IsLastPlan() /= .true. ) ) then
+            call this%Configurations%ThermostatPlans%Next()
+            print *,"Next Plan"
+        end if
+
+        if (plan%MultiplyRateByTimeStep == .true. ) then
+            gammaParam = rate*this%Configurations%TimeStep/this%GlobalConfigurations%Reducers%Time
+        else
+            gammaParam = rate
+        end if
+
+        beta = sqrt(1.0+gammaParam*(endTemp/T-1))
+
+        arraySize = size(this%ParticlePointers)
+
+
+        do i=1,arraySize
+            this%ParticlePointers(i)%p%Velocity = this%ParticlePointers(i)%p%Velocity*beta
+        end do
+
+        Tafter = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
+
+        print *,"beta:",beta,"T after:",Tafter,"step:",step
 
     end subroutine
+
+
 
 
     subroutine AnalyzeData(this)

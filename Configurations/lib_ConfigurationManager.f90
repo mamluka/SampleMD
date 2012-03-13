@@ -21,7 +21,7 @@ contains
 
 
         SimulationConfigurations%TimeStep=0.00217
-        SimulationConfigurations%EndOfSimulation=0.00217*100
+        SimulationConfigurations%EndOfSimulation=0.00217*100000
         SimulationConfigurations%Dimension=3
         SimulationConfigurations%PotentialName="argon"
         SimulationConfigurations%DataFilename="argon.xyz"
@@ -36,7 +36,7 @@ contains
 
         allocate(configurations%Reducers,source=Reducers)
 
-        DataOptions%TempForInitialVelocity = 300
+        DataOptions%TempForInitialVelocity = 50
         DataOptions%BootstrapperType = "dimensionless-random"
         DataOptions%UseVelocityStrapper = .true.
 
@@ -47,7 +47,11 @@ contains
 
         allocate(configurations%DataAnalyzersList,source=DataAnalyzersList)
 
-        plan => plan%CreateThermostatPlan(300.0,360.0,1E-4)
+        plan => plan%CreateThermostatPlan(200.0,360.0,0.02,.false.)
+
+        call configurations%ThermostatPlans%AddThermostatPlan(plan)
+
+        plan => plan%CreateThermostatPlan(550.0,70.0,0.01,.false.)
 
         call configurations%ThermostatPlans%AddThermostatPlan(plan)
 

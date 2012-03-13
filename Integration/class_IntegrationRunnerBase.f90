@@ -13,6 +13,7 @@ module class_IntegrationRunnerBase
         type(Grid) :: G
         type(ConfigurationsDTO) :: GlobalConfigurations
         type(DataAnalyzersContainer) :: dataAnalyzers
+        type(ParticlePointer),allocatable :: particlePointers(:)
     contains
         procedure(IStart),deferred :: Start
         procedure(ISetup),deferred :: Setup
@@ -25,13 +26,14 @@ module class_IntegrationRunnerBase
             class(IntegrationRunnerBase) :: this
         end subroutine
 
-        subroutine ISetup(this,g,potential,dataAnalyzers,configurations)
+        subroutine ISetup(this,g,potential,dataAnalyzers,configurations,particlePointers)
             import
             class(IntegrationRunnerBase) :: this
             type(Grid) :: g
             type(ConfigurationsDTO) :: configurations
             type(DataAnalyzersContainer) :: dataAnalyzers
             class(PotentialBase),pointer :: potential
+            type(ParticlePointer),allocatable :: particlePointers(:)
         end subroutine
 
         subroutine ILoadIntegraionConfigurations(this,simConfigurations)
