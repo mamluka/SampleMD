@@ -60,7 +60,7 @@ module class_Grid
 
 contains
 
-    subroutine CreateGrid(this,particlePointers,rc)
+    subroutine CreateGrid(this,particlePointers,rc,box)
         class(Grid) :: this
         type(ParticlePointer),allocatable :: particlePointers(:)
         real :: rc
@@ -68,8 +68,6 @@ contains
         real ::box(8,3)
 
         integer :: GhostCellsWidth = 2
-
-        box = DetermineSimulationBoxCoordinates(particlePointers)
 
         this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
         this%SimulationBoxCoordinates = box
@@ -83,7 +81,7 @@ contains
         this%GridPartitioningLength = rc
 
 
-        call DistributeParticlesToGrid(this%CellContainers,particlePointers,rc,box,this%GridSize)
+        call DistributeParticlesToGrid(this%CellContainers,particlePointers,rc,box,this%GridSize,this%SimulationBoxSize)
 
     end subroutine CreateGrid
 

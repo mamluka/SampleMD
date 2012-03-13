@@ -35,16 +35,13 @@ program SampleMD
 
     da => dataAnalyzers%CurrentAnalyzer()
 
-    call g%CreateGrid(particlePointers,potential%SizeOfGridCell())
+    call g%CreateGrid(particlePointers,potential%SizeOfGridCell(),dataReader%SimulationBoxCoordinates)
 
     runner => runnerSelector%Select("standard")
     call runner%Setup(g,potential,dataAnalyzers,configurations,particlePointers)
 
     call runner%Start()
 
-    p=>da%ParticlePointers(7)%p
-
-    particlePointers(7)%p%Mass=13
 end program SampleMD
 
 

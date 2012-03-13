@@ -7,15 +7,15 @@ module lib_GridAlgorithms
 
 contains
 
-    function DetermineSimulationBoxCoordinates(particlePointers) result(box)
-        type(ParticlePointer),allocatable :: particlePointers(:)
-        real :: particlePosition(size(particlePointers),3)
+    function DetermineSimulationBoxCoordinates(particles) result(box)
+        type(Particle),allocatable :: particles(:)
+        real :: particlePosition(size(particles),3)
         real :: box(8,3)
 
         integer :: i,xPosition=1,yPosition=2,zPosition=3
 
-        do i=1,size(particlePointers)
-            particlePosition(i,:) =  particlePointers(i)%p%Position
+        do i=1,size(particles)
+            particlePosition(i,:) =  particles(i)%Position
         end do
 
         box(1:4,xPosition) = minval(particlePosition(:,xPosition))
@@ -64,12 +64,13 @@ contains
 
     end subroutine
 
-    subroutine DistributeParticlesToGrid(cellContainers,particlePointers,rc,box,gridSize)
+    subroutine DistributeParticlesToGrid(cellContainers,particlePointers,rc,box,gridSize,boxSize)
         type(CellContainer),allocatable,intent(inout) :: cellContainers(:,:,:)
         real ,intent(in) :: rc
         type(ParticlePointer),allocatable,target :: particlePointers(:)
         real :: box(8,3)
         integer :: gridSize(3)
+        real :: boxsize(3)
 
         type(Cell),pointer :: currentCell
         type(Particle),pointer ::particlePointer
@@ -81,17 +82,23 @@ contains
         integer :: InnerMaxX,InnerMinX,InnerMaxY,InnerMinY,InnerMaxZ,InnerMinZ
         integer :: OuterMaxX,OuterMinX,OuterMaxY,OuterMinY,OuterMaxZ,OuterMinZ
 
+        real :: xVector,yVector,zVector
+
         open(unit=98,file="cellsIndex.data")
 
         do i=1,size(particlePointers)
-            xIndex = ceiling(abs(box(1,1)-particlePointers(i)%p%Position(1))/rc)
-            yIndex = ceiling(abs(box(1,2)-particlePointers(i)%p%Position(2))/rc)
-            zIndex = ceiling(abs(box(1,3)-particlePointers(i)%p%Position(3))/rc)
+
+            xVector = abs(box(1,1)-particlePointers(i)%p%Position(1))
+            yVector = abs(box(1,2)-particlePointers(i)%p%Position(2))
+            zVector = abs(box(1,3)-particlePointers(i)%p%Position(3))
+
+            xIndex = ceiling((xVector)/rc)
+            yIndex = ceiling((yVector)/rc)
+            zIndex = ceiling((zVector)/rc)
 
             if (xIndex == 0)  xIndex=1
             if (yIndex == 0)  yIndex=1
             if (zIndex == 0)  zIndex=1
-
 
             write (98,*),xIndex,yIndex,zIndex
 
