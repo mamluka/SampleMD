@@ -7,12 +7,10 @@ module lib_GridAlgorithms
 
 contains
 
-    function DetermineSimulationBoxCoordinates(particlePointers,rc) result(box)
+    function DetermineSimulationBoxCoordinates(particlePointers) result(box)
         type(ParticlePointer),allocatable :: particlePointers(:)
         real :: particlePosition(size(particlePointers),3)
         real :: box(8,3)
-
-        real :: rc
 
         integer :: i,xPosition=1,yPosition=2,zPosition=3
 
@@ -20,14 +18,14 @@ contains
             particlePosition(i,:) =  particlePointers(i)%p%Position
         end do
 
-        box(1:4,xPosition) = minval(particlePosition(:,xPosition))-rc/2.0
-        box(5:8,xPosition) = maxval(particlePosition(:,xPosition))+rc/2.0
+        box(1:4,xPosition) = minval(particlePosition(:,xPosition))
+        box(5:8,xPosition) = maxval(particlePosition(:,xPosition))
 
-        box((/1,4,5,8/),yPosition) = minval(particlePosition(:,yPosition))-rc/2.0
-        box((/2,3,6,7/),yPosition) = maxval(particlePosition(:,yPosition))+rc/2.0
+        box((/1,4,5,8/),yPosition) = minval(particlePosition(:,yPosition))
+        box((/2,3,6,7/),yPosition) = maxval(particlePosition(:,yPosition))
 
-        box((/1,2,5,6/),zPosition) = minval(particlePosition(:,zPosition))-rc/2.0
-        box((/3,4,7,8/),zPosition) = maxval(particlePosition(:,zPosition))+rc/2.0
+        box((/1,2,5,6/),zPosition) = minval(particlePosition(:,zPosition))
+        box((/3,4,7,8/),zPosition) = maxval(particlePosition(:,zPosition))
 
     end function DetermineSimulationBoxCoordinates
 
@@ -73,7 +71,6 @@ contains
         real :: box(8,3)
         integer :: gridSize(3)
 
-
         type(Cell),pointer :: currentCell
         type(Particle),pointer ::particlePointer
         integer :: i,xIndex,yIndex,zIndex
@@ -111,10 +108,6 @@ contains
             currentCell => null()
 
         end do
-
-
-
-
 
         close(98)
 
@@ -229,6 +222,7 @@ contains
         cellContainers(OuterMaxX,OuterMaxY,OuterMaxZ)%Ghost = .true.
 
     end subroutine DistributeParticlesToGrid
+
 
 
 

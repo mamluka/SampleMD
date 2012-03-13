@@ -69,11 +69,7 @@ contains
 
         integer :: GhostCellsWidth = 2
 
-        real :: addToGrid
-
-        addToGrid = 1.342857142857143
-
-        box = DetermineSimulationBoxCoordinates(particlePointers,addToGrid)
+        box = DetermineSimulationBoxCoordinates(particlePointers)
 
         this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
         this%SimulationBoxCoordinates = box
