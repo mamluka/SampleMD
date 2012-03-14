@@ -125,8 +125,11 @@ contains
         logical :: isGhostCell
 
         real :: minDistance
+        integer :: minPA
 
         minDistance=10
+
+
 
 
         forceDirection=0
@@ -197,6 +200,7 @@ contains
 
                                     if (minDistance .gt. Distance) then
                                         minDistance = Distance
+                                        minPA = currentInteractionParticle%ID
                                     end if
 
                                 end if
@@ -216,7 +220,7 @@ contains
             end do
         end do
 
-        print *,minDistance
+        print *,minDistance,minPA
 
     end subroutine CalculateForces
 

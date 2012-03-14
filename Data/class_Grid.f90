@@ -64,9 +64,7 @@ contains
         class(Grid) :: this
         type(ParticlePointer),allocatable :: particlePointers(:)
         real :: rc
-
         real ::box(8,3)
-
         integer :: GhostCellsWidth = 2
 
         this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
