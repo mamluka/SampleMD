@@ -385,14 +385,24 @@ contains
 
     end function
 
-    subroutine DumpDataToFile(this)
+    subroutine DumpDataToFile(this,filename,fileNumberSuffix)
         class(Grid) :: this
+        integer :: fileNumberSuffix
+        character(len=*) :: filename
+        character(len=7) :: fileCharSuffix
+        character(len=len(filename)+7) :: combinedFileName
         type(Cell),pointer :: currentCell
         integer :: I,J,K
 
+
+
         type(Particle),pointer :: currentParticle
 
-        open(unit=98,file="dump.data",form="formatted",access="append")
+        write(fileCharSuffix,'(I7.7)'),fileNumberSuffix
+
+        combinedFileName = filename // fileCharSuffix
+
+        open(unit=98,file=combinedFileName,form="formatted")
 
         do I=1,this%GridSize(1)
             do J=1,this%GridSize(2)
@@ -418,14 +428,14 @@ contains
 
         close(98)
 
-    end subroutine DumpDataToFile
+    end subroutine
 
     subroutine DumpPositionToFile(this,filename,fileNumberSuffix)
         class(Grid) :: this
         integer :: fileNumberSuffix
         character(len=*) :: filename
-        character(len=5) :: fileCharSuffix
-        character(len=len(filename)+5) :: combinedFileName
+        character(len=7) :: fileCharSuffix
+        character(len=len(filename)+7) :: combinedFileName
         type(Cell),pointer :: currentCell
         integer :: I,J,K
 
@@ -433,7 +443,7 @@ contains
 
         type(Particle),pointer :: currentParticle
 
-        write(fileCharSuffix,'(I5.5)'),fileNumberSuffix
+        write(fileCharSuffix,'(I7.7)'),fileNumberSuffix
 
         combinedFileName = filename // fileCharSuffix
 
@@ -486,7 +496,7 @@ contains
             do J=1,this%GridSize(2)
                 do K=1,this%GridSize(3)
 
-                    currentCell => this%CellContainers(I,J,K)%C
+                    currentCell => this%GetCell(I,J,K)
 
                     call currentCell%Reset()
 

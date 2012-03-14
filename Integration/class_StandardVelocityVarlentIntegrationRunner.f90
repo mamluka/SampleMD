@@ -42,7 +42,7 @@ contains
 
         stepCounter = 1
 
-        call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+        call this%G%DumpDataToFile("/home/mamluka/mddata/argon",0)
 
         print *,"Starting..."
 
@@ -54,13 +54,13 @@ contains
 
             call ComputePositions(this)
 
-            if (mod(stepCounter,500) == 0) then
+            call RedistributeParticlesToCells(this)
 
-                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+            if (mod(stepCounter,1) == 0) then
+
+                call this%G%DumpDataToFile("/home/mamluka/mddata/argon",stepCounter)
 
             end if
-
-            call RedistributeParticlesToCells(this)
 
             stepCounter = stepCounter + 1
 
@@ -123,6 +123,11 @@ contains
         integer :: ncounter
 
         logical :: isGhostCell
+
+        real :: minDistance
+
+        minDistance=10
+
 
         forceDirection=0
 
@@ -190,6 +195,10 @@ contains
                                         flop=flop+1
                                     end if
 
+                                    if (minDistance .gt. Distance) then
+                                        minDistance = Distance
+                                    end if
+
                                 end if
 
                                 call currentNeighborCell%Next()
@@ -206,6 +215,8 @@ contains
                 end do
             end do
         end do
+
+        print *,minDistance
 
     end subroutine CalculateForces
 
@@ -267,9 +278,7 @@ contains
             do while (removedParticlesCell%AreThereMoreParticles())
                 currentDeletedParticle => removedParticlesCell%CurrentValue()
                 movedToCellCoordinates = g%ParticleCellCoordinatesByPosition(currentDeletedParticle%Position)
-
                 call g%RebaseParticlePosition(currentDeletedParticle)
-
                 movedToCell => g%GetCell(movedToCellCoordinates(1),movedToCellCoordinates(2),movedToCellCoordinates(3))
 
                 call movedToCell%AddParticle(currentDeletedParticle)
@@ -316,8 +325,6 @@ contains
         if (mod(step,50) /= 0) return
 
         T = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
-
-
 
         plan => this%Configurations%ThermostatPlans%CurrentThermostatPlan()
         startTemp = plan%StartTemp

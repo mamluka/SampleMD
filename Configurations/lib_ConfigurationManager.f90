@@ -36,7 +36,7 @@ contains
 
         allocate(configurations%Reducers,source=Reducers)
 
-        DataOptions%TempForInitialVelocity = 50
+        DataOptions%TempForInitialVelocity = 200
         DataOptions%BootstrapperType = "dimensionless-random"
         DataOptions%UseVelocityStrapper = .true.
 

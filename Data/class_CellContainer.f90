@@ -12,6 +12,7 @@ module class_CellContainer
         procedure :: New
         procedure :: Exists
         procedure :: CurrentCell
+        procedure :: CreateHere
     end type
 
 contains
@@ -30,6 +31,19 @@ contains
 
 
     end function
+
+    subroutine CreateHere(this,x,y,z)
+        type(Cell),target :: c
+        class(CellContainer) :: this
+        integer :: x,y,z
+
+        c=EmptyCell()
+        call c%SetCellCoordinates(x,y,z)
+
+        allocate(this%C,source=c)
+
+
+    end subroutine
 
     function CurrentCell(this) result(cellPointer)
         type(Cell),pointer :: cellPointer

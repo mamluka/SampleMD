@@ -58,6 +58,13 @@ contains
 
         allocate(cellContainers(numberOfXCells,numberOfYCells,numberOfZCells))
 
+        do I=2,numberOfXCells
+            do J=2,numberOfXCells
+                do K=2,numberOfXCells
+                    call cellContainers(I,J,K)%CreateHere(I,J,K)
+                end do
+            end do
+        end do
 
 
 
