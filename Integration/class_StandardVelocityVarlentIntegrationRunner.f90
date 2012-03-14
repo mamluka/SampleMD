@@ -124,6 +124,10 @@ contains
 
         logical :: isGhostCell
 
+        real :: minDistance
+
+        minDistance = 10
+
         forceDirection=0
 
         ncounter=0
@@ -190,6 +194,11 @@ contains
                                         flop=flop+1
                                     end if
 
+                                    if (minDistance .gt. Distance) then
+                                        minDistance=Distance
+                                    end if
+
+
                                 end if
 
                                 call currentNeighborCell%Next()
@@ -206,6 +215,8 @@ contains
                 end do
             end do
         end do
+
+        print *,minDistance
 
     end subroutine CalculateForces
 
