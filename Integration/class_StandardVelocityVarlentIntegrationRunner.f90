@@ -132,6 +132,11 @@ contains
 
 
 
+        real :: minDistance
+        integer :: minPI
+        minDistance = 10
+
+
         forceDirection=0
 
         ncounter=0
@@ -203,6 +208,12 @@ contains
                                         minPA = currentInteractionParticle%ID
                                     end if
 
+                                    if (minDistance .gt. Distance) then
+                                        minDistance=Distance
+                                        minPI = currentInteractionParticle%ID
+                                    end if
+
+
                                 end if
 
                                 call currentNeighborCell%Next()
@@ -221,6 +232,8 @@ contains
         end do
 
         !print *,minDistance,minPA
+
+        print *,minDistance,minPI
 
     end subroutine CalculateForces
 
