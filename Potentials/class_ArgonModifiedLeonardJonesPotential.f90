@@ -72,7 +72,6 @@ contains
         dLGBasic = 24.0*reducedEpsilon*(2.0*SigmaOverR**12-SigmaOverR**6)*reducedDirection/reducedr**2
 
         if ( reducedr .le. reducedrl ) then
-          !  print *,pi%ID,"used rl"
             dV = dLGBasic
             pi%Force = pi%Force - dV
         elseif ( ( reducedr .gt. reducedrl ) .and. ( reducedr .le. reducedrcut )) then
@@ -86,11 +85,8 @@ contains
             dV=LGBasic*2*reducedDirection*(dSpart1-dSpart2)+dLGBasic*S
 
             pi%Force= pi%Force - dV
-
-           ! print *,pi%ID,"used rcut"
         else
             pi%Force = pi%Force+0
-            !print *,pi%ID,"used zero"
         end if
 
 

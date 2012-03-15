@@ -39,9 +39,9 @@ contains
 
     end function DetermineSimulationBoxDimensions
 
-    subroutine AllocateGridByCutOffRadiiWithGhostCells(cellContainers,rc,box)
+    subroutine AllocateGridByCutOffRadiiWithGhostCells(cellContainers,gridPartitioningLength,box)
         type(CellContainer),allocatable,intent(inout) :: CellContainers(:,:,:)
-        real ,intent(in) :: rc
+        real ,intent(in) :: gridPartitioningLength
         real ,intent(in):: box(8,3)
         real :: boxsize(3)
         integer :: numberOfXCells,numberOfYCells,numberOfZCells
@@ -52,9 +52,9 @@ contains
 
         boxsize=DetermineSimulationBoxDimensions(box)
 
-        numberOfXCells = ceiling(boxsize(1)/rc)+ghostCellsAddition
-        numberOfYCells = ceiling(boxsize(2)/rc)+ghostCellsAddition
-        numberOfZCells = ceiling(boxsize(3)/rc)+ghostCellsAddition
+        numberOfXCells = ceiling(boxsize(1)/gridPartitioningLength)+ghostCellsAddition
+        numberOfYCells = ceiling(boxsize(2)/gridPartitioningLength)+ghostCellsAddition
+        numberOfZCells = ceiling(boxsize(3)/gridPartitioningLength)+ghostCellsAddition
 
         allocate(cellContainers(numberOfXCells,numberOfYCells,numberOfZCells))
 
@@ -71,9 +71,9 @@ contains
 
     end subroutine
 
-    subroutine DistributeParticlesToGrid(cellContainers,particlePointers,rc,box,gridSize,boxSize)
+    subroutine DistributeParticlesToGrid(cellContainers,particlePointers,gridPartitioningLength,box,gridSize,boxSize)
         type(CellContainer),allocatable,intent(inout) :: cellContainers(:,:,:)
-        real ,intent(in) :: rc
+        real ,intent(in) :: gridPartitioningLength
         type(ParticlePointer),allocatable,target :: particlePointers(:)
         real :: box(8,3)
         integer :: gridSize(3)
@@ -99,9 +99,9 @@ contains
             yVector = abs(box(1,2)-particlePointers(i)%p%Position(2))
             zVector = abs(box(1,3)-particlePointers(i)%p%Position(3))
 
-            xIndex = ceiling((xVector)/rc)
-            yIndex = ceiling((yVector)/rc)
-            zIndex = ceiling((zVector)/rc)
+            xIndex = ceiling((xVector)/gridPartitioningLength)
+            yIndex = ceiling((yVector)/gridPartitioningLength)
+            zIndex = ceiling((zVector)/gridPartitioningLength)
 
             if (xIndex == 0)  xIndex=1
             if (yIndex == 0)  yIndex=1

@@ -70,16 +70,15 @@ contains
         this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
         this%SimulationBoxCoordinates = box
 
-        call AllocateGridByCutOffRadiiWithGhostCells(this%CellContainers,rc,box)
+        this%GridPartitioningLength = floor(this%SimulationBoxSize(1)/rc)
+
+        call AllocateGridByCutOffRadiiWithGhostCells(this%CellContainers,this%GridPartitioningLength,box)
 
         this%GridSize(1) = size(this%CellContainers,1)-GhostCellsWidth
         this%GridSize(2) = size(this%CellContainers,2)-GhostCellsWidth
         this%GridSize(3) = size(this%CellContainers,3)-GhostCellsWidth
 
-        this%GridPartitioningLength = rc
-
-
-        call DistributeParticlesToGrid(this%CellContainers,particlePointers,rc,box,this%GridSize,this%SimulationBoxSize)
+        call DistributeParticlesToGrid(this%CellContainers,particlePointers,this%GridPartitioningLength,box,this%GridSize,this%SimulationBoxSize)
 
     end subroutine CreateGrid
 

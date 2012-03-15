@@ -56,7 +56,7 @@ contains
 
             call RedistributeParticlesToCells(this)
 
-            if (mod(stepCounter,1) == 0) then
+            if (mod(stepCounter,1000) == 0) then
 
                 call this%G%DumpDataToFile("/home/mamluka/mddata/argon",stepCounter)
 
@@ -187,7 +187,7 @@ contains
                                         Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
                                     endif
 
-                                    if (Distance .le. (this%Potential%CutOffRadii())) then
+                                    if (Distance <= (this%Potential%CutOffRadii())) then
 
                                         ncounter=ncounter+1
 
@@ -198,7 +198,7 @@ contains
                                         flop=flop+1
                                     end if
 
-                                    if (minDistance .gt. Distance) then
+                                    if (minDistance >= Distance) then
                                         minDistance = Distance
                                         minPA = currentInteractionParticle%ID
                                     end if
@@ -220,7 +220,7 @@ contains
             end do
         end do
 
-        print *,minDistance,minPA
+        !print *,minDistance,minPA
 
     end subroutine CalculateForces
 
@@ -357,7 +357,11 @@ contains
 
         Tafter = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
 
-        print *,"beta:",beta,"T after:",Tafter,"step:",step
+        if(mod(step,1000) == 0 ) then
+
+            print *,"beta:",beta,"T after:",Tafter,"step:",step
+
+        end if
 
     end subroutine
 

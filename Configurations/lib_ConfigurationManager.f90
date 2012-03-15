@@ -21,7 +21,7 @@ contains
 
 
         SimulationConfigurations%TimeStep=0.00217
-        SimulationConfigurations%EndOfSimulation=0.00217*100000
+        SimulationConfigurations%EndOfSimulation=0.00217*500000
         SimulationConfigurations%Dimension=3
         SimulationConfigurations%PotentialName="argon"
         SimulationConfigurations%DataFilename="argon.xyz"
@@ -51,7 +51,7 @@ contains
 
         call configurations%ThermostatPlans%AddThermostatPlan(plan)
 
-        plan => plan%CreateThermostatPlan(550.0,70.0,0.01,.false.)
+        plan => plan%CreateThermostatPlan(550.0,60.0,0.005,.false.)
 
         call configurations%ThermostatPlans%AddThermostatPlan(plan)
 
