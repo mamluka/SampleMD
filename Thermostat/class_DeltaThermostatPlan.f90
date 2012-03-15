@@ -27,7 +27,7 @@ contains
         rate = this%Rate
 
         if (this%MultiplyRateByTimeStep == .true. ) then
-            gammaParam = rate*this%Simulation%TimeStep/this%Reducers%Time
+            gammaParam = rate*this%Simulation%TimeStep
         else
             gammaParam = rate
         end if

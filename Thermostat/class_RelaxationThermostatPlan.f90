@@ -25,12 +25,12 @@ contains
         T=currentTemp
 
         endTemp = this%RelaxationTemp
-        dt = this%Simulation%TimeStep/this%Reducers%Time
+        dt = this%Simulation%TimeStep
         gammaParam = this%TimeStepMultiplier*dt
 
         beta = sqrt(1.0+gammaParam*(endTemp/T-1))
 
-        this%internalTime = this%internalTime+this%Simulation%TimeStep*this%ApplyRate
+        this%internalTime = this%internalTime+this%Simulation%TimeStep*this%Reducers%Time*this%ApplyRate
 
     end function
 

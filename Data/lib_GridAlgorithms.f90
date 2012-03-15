@@ -91,8 +91,6 @@ contains
 
         real :: xVector,yVector,zVector
 
-        open(unit=98,file="cellsIndex.data")
-
         do i=1,size(particlePointers)
 
             xVector = abs(box(1,1)-particlePointers(i)%p%Position(1))
@@ -107,8 +105,6 @@ contains
             if (yIndex == 0)  yIndex=1
             if (zIndex == 0)  zIndex=1
 
-            write (98,*),xIndex,yIndex,zIndex
-
             particlePointer => particlePointers(i)%p
 
             if (cellContainers(xIndex+BoundryShift,yIndex+BoundryShift,zIndex+BoundryShift)%Exists()) then
@@ -122,8 +118,6 @@ contains
             currentCell => null()
 
         end do
-
-        close(98)
 
         InnerMaxX=gridSize(1)+1
         InnerMinX=2
