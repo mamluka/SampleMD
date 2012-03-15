@@ -31,6 +31,4 @@ module class_DataAnalyzerBase
 
     end subroutine LoadParticles
 
-
-
 end module class_DataAnalyzerBase

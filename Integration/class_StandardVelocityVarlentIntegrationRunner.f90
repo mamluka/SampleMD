@@ -68,7 +68,7 @@ contains
 
             call ComputeVelocities(this)
 
-            call ScaleVelocities(this,stepCounter)
+            call ScaleVelocities(this,stepCounter,time)
 
             call AnalyzeData(this)
 
@@ -315,58 +315,42 @@ contains
 
     end subroutine CalculateVelocitiesIterator
 
-    subroutine ScaleVelocities(this,step)
+    subroutine ScaleVelocities(this,step,time)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         integer :: step,arraySize,i
+        real :: time
 
-        type(ThermostatPlan),pointer :: plan
+        class(ThermostatPlanBase),pointer :: plan
 
         real :: beta,gammaParam
         real :: startTemp,endTemp,rate
 
-        real :: T,Tafter
+        real :: T,TAfter
 
-        if (mod(step,50) /= 0) return
+        plan => this%Configurations%ThermostatPlans%CurrentThermostatPlan()
+
+        if (mod(step,plan%ApplyRate) /= 0) return
+
+        if ((plan%IsFinished(T,time) == .true. ) .and. (this%Configurations%ThermostatPlans%IsLastPlan() /= .true. )) then
+            call this%Configurations%ThermostatPlans%Next()
+            plan => this%Configurations%ThermostatPlans%CurrentThermostatPlan()
+            print *,"Next Thermostat"
+        end if
 
         T = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
 
-        plan => this%Configurations%ThermostatPlans%CurrentThermostatPlan()
-        startTemp = plan%StartTemp
-        endTemp = plan%EndTemp
-        rate = plan%Rate
-
-        if ( ( T .gt. endTemp ) .and. (this%Configurations%ThermostatPlans%IsLastPlan() /= .true. ) ) then
-            call this%Configurations%ThermostatPlans%Next()
-            print *,"Next Plan"
-        end if
-
-        if (plan%MultiplyRateByTimeStep == .true. ) then
-            gammaParam = rate*this%Configurations%TimeStep/this%GlobalConfigurations%Reducers%Time
-        else
-            gammaParam = rate
-        end if
-
-        beta = sqrt(1.0+gammaParam*(endTemp/T-1))
+        beta = plan%CalculateBeta(T,time)
 
         arraySize = size(this%ParticlePointers)
-
 
         do i=1,arraySize
             this%ParticlePointers(i)%p%Velocity = this%ParticlePointers(i)%p%Velocity*beta
         end do
 
-        Tafter = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
+        TAfter = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
 
-        if(mod(step,1000) == 0 ) then
-
-            print *,"beta:",beta,"T after:",Tafter,"step:",step
-
-        end if
-
+        print *,"beta:",beta,"T after:",Tafter,"step:",step
     end subroutine
-
-
-
 
     subroutine AnalyzeData(this)
         class(StandardVelocityVarlentIntegrationRunner) :: this
@@ -388,7 +372,7 @@ contains
     subroutine LoadIntegraionConfigurations(this,simConfigurations)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(ConfigurationsDTO) :: simConfigurations
-        type(ThermostatPlan),pointer :: plan
+        class(ThermostatPlanBase),pointer :: plan
 
         this%Configurations%TimeStep = simConfigurations%SimulationConfigurations%TimeStep
         this%Configurations%EndOfSimulation = simConfigurations%SimulationConfigurations%EndOfSimulation

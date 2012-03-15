@@ -1,5 +1,5 @@
 module class_ThermostatPlanLink
-    use class_ThermostatPlan
+    use class_ThermostatPlanBase
     implicit none
 
     private
@@ -7,7 +7,7 @@ module class_ThermostatPlanLink
 
     type ThermostatPlanLink
         private
-        type(ThermostatPlan), pointer :: value => null() ! value stored in ThermostatPlanLink
+        class(ThermostatPlanBase), pointer :: value => null() ! value stored in ThermostatPlanLink
         type(ThermostatPlanLink), pointer :: next => null()! next ThermostatPlanLink in list
     contains
         procedure :: getThermostatPlan   ! return value pointer
@@ -36,14 +36,14 @@ contains
 
     function getThermostatPlan(this)
         class(ThermostatPlanLink) :: this
-        type(ThermostatPlan), pointer :: getThermostatPlan
+        class(ThermostatPlanBase), pointer :: getThermostatPlan
         getThermostatPlan => this%value
 
     end function getThermostatPlan
 
     function CreateThermostatPlanLink(value)
         class(ThermostatPlanLink),pointer :: CreateThermostatPlanLink
-        type(ThermostatPlan),pointer :: value
+        class(ThermostatPlanBase),pointer :: value
         type(ThermostatPlanLink),target :: newLink
 
         allocate(CreateThermostatPlanLink,source=newLink)

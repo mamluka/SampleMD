@@ -5,7 +5,8 @@ module lib_ConfigurationManager
     use class_DataAnalyzersListDTO
     use class_ConfigurationsDTO
     use class_ThermostatPlansContainer
-    use class_ThermostatPlan
+    use class_ThermostatPlanBase
+    use lib_ThermostatFactory
     implicit none
 
 contains
@@ -17,16 +18,9 @@ contains
         type(ReducersDTO) :: Reducers
         type(DataOptionsDTO) :: DataOptions
         type(DataAnalyzersListDTO) ::DataAnalyzersList
-        type(ThermostatPlan),pointer :: plan
+        class(ThermostatPlanBase),pointer :: plan
 
 
-        SimulationConfigurations%TimeStep=0.00217
-        SimulationConfigurations%EndOfSimulation=0.00217*500000
-        SimulationConfigurations%Dimension=3
-        SimulationConfigurations%PotentialName="argon"
-        SimulationConfigurations%DataFilename="argon.xyz"
-
-        allocate(configurations%SimulationConfigurations,source=SimulationConfigurations)
 
         Reducers%HasDimensionlessReduction = .true.
         Reducers%Time=2.1555
@@ -36,7 +30,20 @@ contains
 
         allocate(configurations%Reducers,source=Reducers)
 
-        DataOptions%TempForInitialVelocity = 200
+        SimulationConfigurations%TimeStep=0.00217
+        SimulationConfigurations%EndOfSimulation=0.00217*500000
+        SimulationConfigurations%Dimension=3
+        SimulationConfigurations%PotentialName="argon"
+        SimulationConfigurations%DataFilename="argon.xyz"
+
+        if (Reducers%HasDimensionlessReduction == .true.) then
+            SimulationConfigurations%TimeStep = SimulationConfigurations%TimeStep/Reducers%Time
+            SimulationConfigurations%EndOfSimulation = SimulationConfigurations%EndOfSimulation/Reducers%Time
+        end if
+
+        allocate(configurations%SimulationConfigurations,source=SimulationConfigurations)
+
+        DataOptions%TempForInitialVelocity = 360
         DataOptions%BootstrapperType = "dimensionless-random"
         DataOptions%UseVelocityStrapper = .true.
 
@@ -47,11 +54,13 @@ contains
 
         allocate(configurations%DataAnalyzersList,source=DataAnalyzersList)
 
-        plan => plan%CreateThermostatPlan(200.0,360.0,0.02,.false.)
+        plan => RelaxationThermostat(360.0,20.0,5.0)
+        call plan%SetupThermostat(SimulationConfigurations,Reducers)
 
         call configurations%ThermostatPlans%AddThermostatPlan(plan)
 
-        plan => plan%CreateThermostatPlan(550.0,60.0,0.005,.false.)
+        plan => DeltaFromHereThermostat(60.0,0.005,.false.)
+        call plan%SetupThermostat(SimulationConfigurations,Reducers)
 
         call configurations%ThermostatPlans%AddThermostatPlan(plan)
 
