@@ -126,14 +126,8 @@ contains
 
         real :: minDistance
         integer :: minPA
-
-        minDistance=10
-
-
-
-
-        real :: minDistance
         integer :: minPI
+
         minDistance = 10
 
 
@@ -230,10 +224,6 @@ contains
                 end do
             end do
         end do
-
-        !print *,minDistance,minPA
-
-        print *,minDistance,minPI
 
     end subroutine CalculateForces
 
