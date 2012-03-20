@@ -69,7 +69,7 @@ contains
 
         SigmaOverR = reducedSigma/reducedr
 
-        dLGBasic = 24.0*reducedEpsilon*(2.0*SigmaOverR**12-SigmaOverR**6)*reducedDirection/reducedr**2
+        dLGBasic = 24.0*reducedEpsilon*(SigmaOverR**6-2.0*SigmaOverR**12)*reducedDirection/reducedr
 
         if ( reducedr .le. reducedrl ) then
             dV = dLGBasic

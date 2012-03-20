@@ -35,6 +35,8 @@ module class_Particle
         real :: x,y,z
         p = AllocateParticle()
         call p%SetPosition(x,y,z)
+        p%Force=0
+        p%Velocity=0
     end function
 
     subroutine GiveID(this,id)

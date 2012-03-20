@@ -54,7 +54,7 @@ contains
 
         allocate(configurations%DataAnalyzersList,source=DataAnalyzersList)
 
-        plan => RelaxationThermostat(360.0,20.0,5.0)
+        plan => RelaxationThermostat(360.0,20.0,0.01)
         call plan%SetupThermostat(SimulationConfigurations,Reducers)
 
         call configurations%ThermostatPlans%AddThermostatPlan(plan)

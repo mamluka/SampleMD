@@ -20,7 +20,6 @@ module class_Cell
         procedure, non_overridable :: Reset
         procedure, non_overridable :: Next
         procedure, non_overridable :: CurrentValue
-        procedure, non_overridable :: RemoveParticle
         procedure, non_overridable :: RemoveWhenTrue
         procedure, non_overridable :: AreThereMoreParticles
         procedure, non_overridable :: ParticleCount
@@ -98,44 +97,6 @@ contains
 
     end function
 
-    subroutine RemoveParticle(this,particleToBeDeleted)
-        class(Cell) :: this
-        type(Particle),pointer :: particleToBeDeleted,currentParticle
-        integer :: particleID
-        type(ParticleLink),pointer  :: previousLink,nextLink
-
-        previousLink => null()
-
-        call this%Reset()
-
-        do while (this%AreThereMoreParticles())
-
-            currentParticle => this%CurrentValue()
-            particleID = currentParticle%ID
-
-            if ( particleID == particleToBeDeleted%ID ) then
-
-                if (.not. associated(previousLink)) then
-                    this%firstLink => this%currLink%nextParticleLink()
-                    this%lastLink => this%firstLink
-                    this%currLink => this%firstLink
-                else
-                    nextLink => this%currLink%nextParticleLink()
-                    call previousLink%setNextParticleLink(nextLink)
-                end if
-                this%NumberOfParticles=this%NumberOfParticles-1
-                exit
-
-            end if
-            previousLink => this%currLink
-
-            call this%Next()
-
-        end do
-
-
-    end subroutine RemoveParticle
-
     subroutine RemoveWhenTrue(this,predicateObject,removedParticlesCell)
         class(Cell) :: this
         class(ParticlePredicateBase) :: predicateObject
@@ -161,6 +122,7 @@ contains
 
                 if (.not. associated(previousLink)) then
                     this%firstLink => this%currLink%nextParticleLink()
+                    deallocate(this%currLink)
                     this%currLink => this%firstLink
 
                 else
@@ -170,6 +132,7 @@ contains
                         call previousLink%nullifyNext()
                         this%lastLink =>previousLink
                     end if
+                    deallocate(this%currLink)
                 end if
 
                 call removedParticlesCell%AddParticle(currentParticle)

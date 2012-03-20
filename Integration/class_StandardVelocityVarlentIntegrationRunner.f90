@@ -56,7 +56,7 @@ contains
 
             call RedistributeParticlesToCells(this)
 
-            if (mod(stepCounter,1000) == 0) then
+            if (mod(stepCounter,50) == 0) then
 
                 call this%G%DumpDataToFile("/home/mamluka/mddata/argon",stepCounter)
 
@@ -224,6 +224,8 @@ contains
                 end do
             end do
         end do
+
+       ! print *,minPI,minDistance
 
     end subroutine CalculateForces
 
