@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198" moduleId="org.eclipse.cdt.core.settings" name="Debug">
@@ -23,7 +21,7 @@
 					<folderInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198." name="/" resourcePath="">
 						<toolChain id="photran.managedbuild.toolchain.intel.fortran.x86.base.977839228" name="Intel(R) Fortran Toolchain on IA-32" superClass="photran.managedbuild.toolchain.intel.fortran.x86.base">
 							<targetPlatform archList="x86" binaryParser="org.eclipse.cdt.core.ELF" id="photran.managedbuild.target.intel.platform.x86.base.412720827" name="IA-32 Platform" osList="linux" superClass="photran.managedbuild.target.intel.platform.x86.base"/>
-							<builder buildPath="${workspace_loc:/SampleMD/Debug}" id="photran.managedbuild.target.intel.builder.x86.base.1064724885" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="photran.managedbuild.target.intel.builder.x86.base">
+							<builder buildPath="${workspace_loc:/SampleMD/Debug}" id="photran.managedbuild.target.intel.builder.x86.base.1064724885" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="-1" stopOnErr="true" superClass="photran.managedbuild.target.intel.builder.x86.base">
 								<outputEntries>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Debug"/>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Release"/>
@@ -174,4 +172,5 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

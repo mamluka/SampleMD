@@ -60,8 +60,7 @@ contains
             new(3)= particleJ%Position(3) + (CellPosition(3)-NeighborPosition(3))/abs(CellPosition(3)-NeighborPosition(3))*box(3)
         end if
 
-        d=particleI%Position-new
-        d=d/sqrt(sum(d**2))
+        d=new-particleI%Position
 
     end function
 

@@ -25,7 +25,8 @@ contains
         T=currentTemp
 
         endTemp = this%RelaxationTemp
-        dt = this%Simulation%TimeStep
+        dt = this%Simulation%TimeStep/this%Reducers%Time
+
         gammaParam = this%TimeStepMultiplier*dt
 
         beta = sqrt(1.0+gammaParam*(endTemp/T-1))
@@ -42,7 +43,7 @@ contains
 
         fResult = .false.
 
-        if ( this%internalTime .gt. this%Duration) then
+        if ( this%internalTime > this%Duration) then
             fResult = .true.
         end if
 

@@ -42,7 +42,7 @@ contains
 
         stepCounter = 1
 
-        call this%G%DumpDataToFile("/home/mamluka/mddata/argon",0)
+        call this%G%DumpDataToFile("/home/davidmz/mddata/argon",0)
 
         print *,"Starting..."
 
@@ -56,9 +56,9 @@ contains
 
             call RedistributeParticlesToCells(this)
 
-            if (mod(stepCounter,50) == 0) then
+            if (mod(stepCounter,1) == 0) then
 
-                call this%G%DumpDataToFile("/home/mamluka/mddata/argon",stepCounter)
+                call this%G%DumpDataToFile("/home/davidmz/mddata/argon",stepCounter)
 
             end if
 
@@ -70,9 +70,11 @@ contains
 
             call ScaleVelocities(this,stepCounter,time)
 
-            call AnalyzeData(this)
+            call AnalyzeData(this,stepCounter)
 
         end do
+
+        print *,"Stopping..."
 
     end subroutine
 
@@ -352,14 +354,16 @@ contains
             this%ParticlePointers(i)%p%Velocity = this%ParticlePointers(i)%p%Velocity*beta
         end do
 
-        TAfter = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
 
-        print *,"beta:",beta,"T after:",Tafter,"step:",step
+
     end subroutine
 
-    subroutine AnalyzeData(this)
+    subroutine AnalyzeData(this,step)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         class(DataAnalyzerBase),pointer :: currentAnalyzer
+        integer :: step
+
+        if (mod(step,50) /= 0) return
 
         call this%DataAnalyzers%Reset()
 

@@ -9,6 +9,7 @@ program SampleMD
     use lib_DataAnalysisManager
     use class_ParticlePointer
     use class_DataAnalyzerBase
+    use class_Logger
     implicit none
 
     type(IntegrationRunnerSelector) :: runnerSelector

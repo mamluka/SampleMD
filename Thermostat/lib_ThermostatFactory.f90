@@ -1,19 +1,20 @@
 module lib_ThermostatFactory
     use class_RelaxationThermostatPlan
     use class_DeltaThermostatPlan
+    use class_ConstantRateThermostatPlan
     implicit none
 
     contains
 
-    function DeltaFromHereThermostat(endTemp,rate,multiplyRateByTimeStep) result(plan)
+    function DeltaFromHereThermostat(endTemp,rate,useTimeStepAsRate) result(plan)
         type(DeltaThermostatPlan),pointer :: plan
         real :: endTemp,rate
-        logical :: multiplyRateByTimeStep
+        logical :: useTimeStepAsRate
 
         allocate(plan)
         plan%EndTemp = endTemp
         plan%Rate = rate
-        plan%MultiplyRateByTimeStep = multiplyRateByTimeStep
+        plan%UseTimeStepAsRate = useTimeStepAsRate
 
     end function
 
@@ -26,6 +27,16 @@ module lib_ThermostatFactory
         plan%RelaxationTemp = relaxationTemp
         plan%Duration = duration
         plan%TimeStepMultiplier = timeStepMultiplier
+
+    end function
+
+    function ConstantRateThermostat(endTemp,rate) result(plan)
+        type(ConstantRateThermostatPlan),pointer :: plan
+        real :: endTemp,rate
+
+        allocate(plan)
+        plan%Rate = rate
+        plan%EndTemp = endTemp
 
     end function
 

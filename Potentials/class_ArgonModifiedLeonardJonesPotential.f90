@@ -4,6 +4,7 @@ module class_ArgonModifiedLeonardJonesPotential
     use lib_ConfigurationManager
     use class_ReducersDTO
     use class_ArgonModifiedLeonardJonesPotentialCofiguraions
+    use class_Logger
     implicit none
 
     private
@@ -30,6 +31,7 @@ contains
         class(ArgonModifiedLeonardJonesPotential) :: this
         type(Particle):: pi,pj
 
+        type(FileLogger) :: logger
 
         real :: r,direction(3)
 
@@ -55,6 +57,9 @@ contains
 
         real :: dV(3)
 
+        character (len=300):: logLine
+
+        dV=0
 
         reducedm=1
         reducedSigma = 1
@@ -69,7 +74,7 @@ contains
 
         SigmaOverR = reducedSigma/reducedr
 
-        dLGBasic = 24.0*reducedEpsilon*(SigmaOverR**6-2.0*SigmaOverR**12)*reducedDirection/reducedr
+        dLGBasic = -24.0*reducedEpsilon*(SigmaOverR**6-2.0*SigmaOverR**12)*reducedDirection/reducedr**2
 
         if ( reducedr .le. reducedrl ) then
             dV = dLGBasic
@@ -89,7 +94,10 @@ contains
             pi%Force = pi%Force+0
         end if
 
-
+!        if (sum(dV) > 0) then
+!            write (logLine,*) pi%ID,r,reducedDirection,-dV
+!            call logger%LogText('potential.log',logLine)
+!        end if
 
     end subroutine Force
 

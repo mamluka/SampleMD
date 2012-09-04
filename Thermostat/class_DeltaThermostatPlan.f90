@@ -5,7 +5,7 @@ module class_DeltaThermostatPlan
     type,extends(ThermostatPlanBase) :: DeltaThermostatPlan
         real :: EndTemp
         real :: Rate
-        real :: MultiplyRateByTimeStep
+        real :: UseTimeStepAsRate
     contains
         procedure :: CalculateBeta
         procedure :: IsFinished
@@ -26,8 +26,8 @@ contains
         endTemp = this%EndTemp
         rate = this%Rate
 
-        if (this%MultiplyRateByTimeStep == .true. ) then
-            gammaParam = rate*this%Simulation%TimeStep
+        if (this%UseTimeStepAsRate == .true. ) then
+            gammaParam = this%Simulation%TimeStep/this%Reducers%Time
         else
             gammaParam = rate
         end if

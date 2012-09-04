@@ -20,13 +20,14 @@ contains
         real :: beta
 
         real :: endTemp,rate,gammaParam,T
-        rate = this%Rate
+        real :: TRate
 
-        if (currentTemp > this%EndTemp) then
-            rate = 1-rate
-        end if
+        T=currentTemp
 
-        beta = rate
+        TRate = this%Rate*this%Reducers%Energy/1.3806488E-23
+
+        beta = sqrt(T*(1.0-TRate/T))
+
     end function
 
     function IsFinished(this,currentTemp,time) result(fResult)

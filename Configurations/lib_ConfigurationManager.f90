@@ -31,19 +31,19 @@ contains
         allocate(configurations%Reducers,source=Reducers)
 
         SimulationConfigurations%TimeStep=0.00217
-        SimulationConfigurations%EndOfSimulation=0.00217*500000
+        SimulationConfigurations%EndOfSimulation=0.00217*900000
         SimulationConfigurations%Dimension=3
         SimulationConfigurations%PotentialName="argon"
-        SimulationConfigurations%DataFilename="argon.xyz"
+        SimulationConfigurations%DataFilename="argon350.xyz"
 
         if (Reducers%HasDimensionlessReduction == .true.) then
-            SimulationConfigurations%TimeStep = SimulationConfigurations%TimeStep/Reducers%Time
-            SimulationConfigurations%EndOfSimulation = SimulationConfigurations%EndOfSimulation/Reducers%Time
+            SimulationConfigurations%TimeStep = SimulationConfigurations%TimeStep / Reducers%Time
+            SimulationConfigurations%EndOfSimulation = SimulationConfigurations%EndOfSimulation / Reducers%Time
         end if
 
         allocate(configurations%SimulationConfigurations,source=SimulationConfigurations)
 
-        DataOptions%TempForInitialVelocity = 360
+        DataOptions%TempForInitialVelocity = 350
         DataOptions%BootstrapperType = "dimensionless-random"
         DataOptions%UseVelocityStrapper = .true.
 
@@ -51,19 +51,22 @@ contains
 
         DataAnalyzersList%KineticEnergy = .true.
         DataAnalyzersList%Temperature = .true.
+        DataAnalyzersList%AverageVelocity = .true.
+        DataAnalyzersList%Pressure = .true.
 
         allocate(configurations%DataAnalyzersList,source=DataAnalyzersList)
 
-        plan => RelaxationThermostat(360.0,20.0,0.01)
+!        plan => DeltaFromHereThermostat(350.0,0.005,.false.)
+!        call plan%SetupThermostat(SimulationConfigurations,Reducers)
+!        call configurations%ThermostatPlans%AddThermostatPlan(plan)
+!
+!        plan => RelaxationThermostat(350.0,5.0,1.0)
+!        call plan%SetupThermostat(SimulationConfigurations,Reducers)
+!        call configurations%ThermostatPlans%AddThermostatPlan(plan)
+
+        plan => ConstantRateThermostat(75.0,7.8E-4)
         call plan%SetupThermostat(SimulationConfigurations,Reducers)
-
         call configurations%ThermostatPlans%AddThermostatPlan(plan)
-
-        plan => DeltaFromHereThermostat(60.0,0.005,.false.)
-        call plan%SetupThermostat(SimulationConfigurations,Reducers)
-
-        call configurations%ThermostatPlans%AddThermostatPlan(plan)
-
 
     end function
 
