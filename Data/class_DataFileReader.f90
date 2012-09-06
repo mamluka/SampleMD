@@ -54,7 +54,6 @@ contains
 
             if (inputStatus /= 0) exit
             read (99,*),type,x,y,z
-            print *,x,y,z
             p=AllocateParticleWithPosition(x,y,z)
 
             p%Mass=atomProperties%AtomMassInAMU(type)

@@ -26,8 +26,7 @@ contains
 
         TRate = this%Rate*this%Reducers%Energy/1.3806488E-23
 
-        beta = sqrt(T*(1.0-TRate/T))
-
+        beta = sqrt(1.0-TRate/T)
     end function
 
     function IsFinished(this,currentTemp,time) result(fResult)

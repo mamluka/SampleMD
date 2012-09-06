@@ -56,7 +56,7 @@ contains
 
             call RedistributeParticlesToCells(this)
 
-            if (mod(stepCounter,1) == 0) then
+            if (mod(stepCounter,1000) == 0) then
 
                 call this%G%DumpDataToFile("/home/davidmz/mddata/argon",stepCounter)
 
