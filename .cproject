@@ -45,6 +45,7 @@
 								<option id="intel.linux.fortran.compiler.runtime.chkfmt.1034658679" name="Check Edit Descriptor Data Type (-check format)" superClass="intel.linux.fortran.compiler.runtime.chkfmt" value="false" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.runtime.chkargtmp.62399164" name="Check For Actual Arguments Using Temporary Storage (-check arg-temp-created)" superClass="intel.linux.fortran.compiler.runtime.chkargtmp" value="false" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.preprocessor.includedirectories.1937978670" name="Additional Include Directories (-I)" superClass="intel.linux.fortran.compiler.preprocessor.includedirectories" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/local/lib"/>
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.8.273/mkl/include"/>
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.7.256/tbb/include"/>
 								</option>
@@ -57,6 +58,12 @@
 								<inputType id="photran.managedbuild.tool.intel.fortran.compiler.input.1101937056" superClass="photran.managedbuild.tool.intel.fortran.compiler.input"/>
 							</tool>
 							<tool id="photran.managedbuild.tool.intel.fortran.linker.x86.base.1316158385" name="Intel(R) Fortran Linker" superClass="photran.managedbuild.tool.intel.fortran.linker.x86.base">
+								<option id="intel.fortran.link.option.l.227641268" name="Additional Libraries (-l)" superClass="intel.fortran.link.option.l" valueType="libs">
+									<listOptionValue builtIn="false" value="mpi_f90"/>
+								</option>
+								<option id="intel.fortran.link.option.libpath.126297593" name="Search Directory for Libraries (-L)" superClass="intel.fortran.link.option.libpath" valueType="stringList">
+									<listOptionValue builtIn="false" value="/usr/local/lib"/>
+								</option>
 								<inputType id="photran.managedbuild.tool.intel.fortran.linker.input.358023085" superClass="photran.managedbuild.tool.intel.fortran.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

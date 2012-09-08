@@ -10,6 +10,7 @@ program SampleMD
     use class_ParticlePointer
     use class_DataAnalyzerBase
     use class_Logger
+    use mpi
     implicit none
 
     type(IntegrationRunnerSelector) :: runnerSelector
