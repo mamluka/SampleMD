@@ -60,34 +60,25 @@ module class_Grid
 
 contains
 
-    subroutine CreateGrid(this,particlePointers,rc)
+    subroutine CreateGrid(this,particlePointers,rc,box)
         class(Grid) :: this
         type(ParticlePointer),allocatable :: particlePointers(:)
         real :: rc
-
         real ::box(8,3)
-
         integer :: GhostCellsWidth = 2
-
-        real :: addToGrid
-
-        addToGrid = 1.342857142857143
-
-        box = DetermineSimulationBoxCoordinates(particlePointers,addToGrid)
 
         this%SimulationBoxSize = DetermineSimulationBoxDimensions(box)
         this%SimulationBoxCoordinates = box
 
-        call AllocateGridByCutOffRadiiWithGhostCells(this%CellContainers,rc,box)
+        this%GridPartitioningLength = floor(this%SimulationBoxSize(1)/rc)
+
+        call AllocateGridByCutOffRadiiWithGhostCells(this%CellContainers,this%GridPartitioningLength,box)
 
         this%GridSize(1) = size(this%CellContainers,1)-GhostCellsWidth
         this%GridSize(2) = size(this%CellContainers,2)-GhostCellsWidth
         this%GridSize(3) = size(this%CellContainers,3)-GhostCellsWidth
 
-        this%GridPartitioningLength = rc
-
-
-        call DistributeParticlesToGrid(this%CellContainers,particlePointers,rc,box,this%GridSize)
+        call DistributeParticlesToGrid(this%CellContainers,particlePointers,this%GridPartitioningLength,box,this%GridSize,this%SimulationBoxSize)
 
     end subroutine CreateGrid
 
@@ -391,14 +382,24 @@ contains
 
     end function
 
-    subroutine DumpDataToFile(this)
+    subroutine DumpDataToFile(this,filename,fileNumberSuffix)
         class(Grid) :: this
+        integer :: fileNumberSuffix
+        character(len=*) :: filename
+        character(len=7) :: fileCharSuffix
+        character(len=len(filename)+7) :: combinedFileName
         type(Cell),pointer :: currentCell
         integer :: I,J,K
 
+
+
         type(Particle),pointer :: currentParticle
 
-        open(unit=98,file="dump.data",form="formatted",access="append")
+        write(fileCharSuffix,'(I7.7)'),fileNumberSuffix
+
+        combinedFileName = filename // fileCharSuffix
+
+        open(unit=98,file=combinedFileName,form="formatted")
 
         do I=1,this%GridSize(1)
             do J=1,this%GridSize(2)
@@ -424,14 +425,14 @@ contains
 
         close(98)
 
-    end subroutine DumpDataToFile
+    end subroutine
 
     subroutine DumpPositionToFile(this,filename,fileNumberSuffix)
         class(Grid) :: this
         integer :: fileNumberSuffix
         character(len=*) :: filename
-        character(len=5) :: fileCharSuffix
-        character(len=len(filename)+5) :: combinedFileName
+        character(len=7) :: fileCharSuffix
+        character(len=len(filename)+7) :: combinedFileName
         type(Cell),pointer :: currentCell
         integer :: I,J,K
 
@@ -439,7 +440,7 @@ contains
 
         type(Particle),pointer :: currentParticle
 
-        write(fileCharSuffix,'(I5.5)'),fileNumberSuffix
+        write(fileCharSuffix,'(I7.7)'),fileNumberSuffix
 
         combinedFileName = filename // fileCharSuffix
 
@@ -492,7 +493,7 @@ contains
             do J=1,this%GridSize(2)
                 do K=1,this%GridSize(3)
 
-                    currentCell => this%CellContainers(I,J,K)%C
+                    currentCell => this%GetCell(I,J,K)
 
                     call currentCell%Reset()
 

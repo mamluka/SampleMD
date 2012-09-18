@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198" moduleId="org.eclipse.cdt.core.settings" name="Debug">
@@ -23,7 +21,7 @@
 					<folderInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.556908198." name="/" resourcePath="">
 						<toolChain id="photran.managedbuild.toolchain.intel.fortran.x86.base.977839228" name="Intel(R) Fortran Toolchain on IA-32" superClass="photran.managedbuild.toolchain.intel.fortran.x86.base">
 							<targetPlatform archList="x86" binaryParser="org.eclipse.cdt.core.ELF" id="photran.managedbuild.target.intel.platform.x86.base.412720827" name="IA-32 Platform" osList="linux" superClass="photran.managedbuild.target.intel.platform.x86.base"/>
-							<builder buildPath="${workspace_loc:/SampleMD/Debug}" id="photran.managedbuild.target.intel.builder.x86.base.1064724885" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="photran.managedbuild.target.intel.builder.x86.base">
+							<builder buildPath="${workspace_loc:/SampleMD/Debug}" id="photran.managedbuild.target.intel.builder.x86.base.1064724885" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="-1" stopOnErr="true" superClass="photran.managedbuild.target.intel.builder.x86.base">
 								<outputEntries>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Debug"/>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Release"/>
@@ -47,6 +45,7 @@
 								<option id="intel.linux.fortran.compiler.runtime.chkfmt.1034658679" name="Check Edit Descriptor Data Type (-check format)" superClass="intel.linux.fortran.compiler.runtime.chkfmt" value="false" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.runtime.chkargtmp.62399164" name="Check For Actual Arguments Using Temporary Storage (-check arg-temp-created)" superClass="intel.linux.fortran.compiler.runtime.chkargtmp" value="false" valueType="boolean"/>
 								<option id="intel.linux.fortran.compiler.preprocessor.includedirectories.1937978670" name="Additional Include Directories (-I)" superClass="intel.linux.fortran.compiler.preprocessor.includedirectories" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/local/lib"/>
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.8.273/mkl/include"/>
 									<listOptionValue builtIn="false" value="/opt/intel/composer_xe_2011_sp1.7.256/tbb/include"/>
 								</option>
@@ -59,6 +58,12 @@
 								<inputType id="photran.managedbuild.tool.intel.fortran.compiler.input.1101937056" superClass="photran.managedbuild.tool.intel.fortran.compiler.input"/>
 							</tool>
 							<tool id="photran.managedbuild.tool.intel.fortran.linker.x86.base.1316158385" name="Intel(R) Fortran Linker" superClass="photran.managedbuild.tool.intel.fortran.linker.x86.base">
+								<option id="intel.fortran.link.option.l.227641268" name="Additional Libraries (-l)" superClass="intel.fortran.link.option.l" valueType="libs">
+									<listOptionValue builtIn="false" value="mpi_f90"/>
+								</option>
+								<option id="intel.fortran.link.option.libpath.126297593" name="Search Directory for Libraries (-L)" superClass="intel.fortran.link.option.libpath" valueType="stringList">
+									<listOptionValue builtIn="false" value="/usr/local/lib"/>
+								</option>
 								<inputType id="photran.managedbuild.tool.intel.fortran.linker.input.358023085" superClass="photran.managedbuild.tool.intel.fortran.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -83,13 +88,13 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
-						<entry excluding="Thermostat|Cells/integer_list_mod.f90|xmlsample|Data|ff|Potentials|Cells/abstract_list_mod.f90|Cells/class_AbstractLinkedList.f90|Cells/list_mod.f90|lib_StandardDataAnalysis.f90|Math|Bootstrappers|Logger|Core|DataAnalysis" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Thermostat"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Thermostat"/>
+						<entry excluding="Cells/integer_list_mod.f90|xmlsample|Data|ff|Potentials|Cells/abstract_list_mod.f90|Cells/class_AbstractLinkedList.f90|Cells/list_mod.f90|DataStructures|lib_StandardDataAnalysis.f90|Thermostat|Math|Bootstrappers|Logger|DataAnalysis|Core" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
 					</sourceEntries>
 				</configuration>
@@ -138,14 +143,14 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Thermostat"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
-						<entry excluding="Thermostat|ff|Core|Logger|lib_StandardDataAnalysis.f90|DataAnalysis|Potentials|Bootstrappers|Math|Data|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DataAnalysis"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logger"/>
 						<entry excluding="Bootstrappers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data/Bootstrappers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Math"/>
+						<entry excluding="DataStructures|Thermostat|ff|Core|Logger|lib_StandardDataAnalysis.f90|DataAnalysis|Potentials|Bootstrappers|Math|Data|xmlsample" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Potentials"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Data/Bootstrappers"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -174,4 +179,5 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

@@ -32,13 +32,10 @@ contains
 
         select case (configurations%SimulationConfigurations%PotentialName)
             case ("lg")
-                !allocate(lg)
                 potential => lg
             case ("argon")
-                !allocate(argon)
                 potential => argon
             case default
-                !allocate(lg)
                 potential => lg
         end select
 

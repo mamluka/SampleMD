@@ -4,6 +4,7 @@ module class_ArgonModifiedLeonardJonesPotential
     use lib_ConfigurationManager
     use class_ReducersDTO
     use class_ArgonModifiedLeonardJonesPotentialCofiguraions
+    use class_Logger
     implicit none
 
     private
@@ -30,6 +31,7 @@ contains
         class(ArgonModifiedLeonardJonesPotential) :: this
         type(Particle):: pi,pj
 
+        type(FileLogger) :: logger
 
         real :: r,direction(3)
 
@@ -55,6 +57,9 @@ contains
 
         real :: dV(3)
 
+        character (len=300):: logLine
+
+        dV=0
 
         reducedm=1
         reducedSigma = 1
@@ -69,10 +74,9 @@ contains
 
         SigmaOverR = reducedSigma/reducedr
 
-        dLGBasic = 24.0*reducedEpsilon*(2.0*SigmaOverR**12-SigmaOverR**6)*reducedDirection/reducedr**2
+        dLGBasic = -24.0*reducedEpsilon*(SigmaOverR**6-2.0*SigmaOverR**12)*reducedDirection/reducedr**2
 
         if ( reducedr .le. reducedrl ) then
-          !  print *,pi%ID,"used rl"
             dV = dLGBasic
             pi%Force = pi%Force - dV
         elseif ( ( reducedr .gt. reducedrl ) .and. ( reducedr .le. reducedrcut )) then
@@ -86,14 +90,14 @@ contains
             dV=LGBasic*2*reducedDirection*(dSpart1-dSpart2)+dLGBasic*S
 
             pi%Force= pi%Force - dV
-
-           ! print *,pi%ID,"used rcut"
         else
             pi%Force = pi%Force+0
-            !print *,pi%ID,"used zero"
         end if
 
-
+!        if (sum(dV) > 0) then
+!            write (logLine,*) pi%ID,r,reducedDirection,-dV
+!            call logger%LogText('potential.log',logLine)
+!        end if
 
     end subroutine Force
 

@@ -1,6 +1,6 @@
 module class_ThermostatPlansContainer
     use class_ThermostatPlanLink
-    use class_ThermostatPlan
+    use class_ThermostatPlanBase
     implicit none
 
     private
@@ -24,7 +24,7 @@ contains
 
     subroutine AddThermostatPlan(this, value)
         class(ThermostatPlansContainer) :: this
-        type(ThermostatPlan),pointer,intent(in) :: value
+        class(ThermostatPlanBase),pointer,intent(in) :: value
         type(ThermostatPlanLink), pointer :: newLink
 
         type(ThermostatPlanLink) ,pointer :: firstLink,nextLink
@@ -42,7 +42,7 @@ contains
 
     function CurrentThermostatPlan(this)
         class(ThermostatPlansContainer) :: this
-        class(ThermostatPlan), pointer :: CurrentThermostatPlan
+        class(ThermostatPlanBase), pointer :: CurrentThermostatPlan
         CurrentThermostatPlan => this%currLink%getThermostatPlan()
     end function
 

@@ -42,7 +42,7 @@ contains
 
         stepCounter = 1
 
-        call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+        call this%G%DumpDataToFile("/home/davidmz/mddata/argon",0)
 
         print *,"Starting..."
 
@@ -54,13 +54,13 @@ contains
 
             call ComputePositions(this)
 
-            if (mod(stepCounter,500) == 0) then
+            call RedistributeParticlesToCells(this)
 
-                call this%G%DumpPositionToFileWithParticleId("/home/mamluka/mddata/argon",stepCounter)
+            if (mod(stepCounter,1000) == 0) then
+
+                call this%G%DumpDataToFile("/home/davidmz/mddata/argon",stepCounter)
 
             end if
-
-            call RedistributeParticlesToCells(this)
 
             stepCounter = stepCounter + 1
 
@@ -68,11 +68,13 @@ contains
 
             call ComputeVelocities(this)
 
-            call ScaleVelocities(this,stepCounter)
+            call ScaleVelocities(this,stepCounter,time)
 
-            call AnalyzeData(this)
+            call AnalyzeData(this,stepCounter)
 
         end do
+
+        print *,"Stopping..."
 
     end subroutine
 
@@ -123,6 +125,13 @@ contains
         integer :: ncounter
 
         logical :: isGhostCell
+
+        real :: minDistance
+        integer :: minPA
+        integer :: minPI
+
+        minDistance = 10
+
 
         forceDirection=0
 
@@ -179,7 +188,7 @@ contains
                                         Distance=DistanceBetweenParticles(currentParticle,currentInteractionParticle)
                                     endif
 
-                                    if (Distance .le. (this%Potential%CutOffRadii())) then
+                                    if (Distance <= (this%Potential%CutOffRadii())) then
 
                                         ncounter=ncounter+1
 
@@ -189,6 +198,17 @@ contains
 
                                         flop=flop+1
                                     end if
+
+                                    if (minDistance >= Distance) then
+                                        minDistance = Distance
+                                        minPA = currentInteractionParticle%ID
+                                    end if
+
+                                    if (minDistance .gt. Distance) then
+                                        minDistance=Distance
+                                        minPI = currentInteractionParticle%ID
+                                    end if
+
 
                                 end if
 
@@ -206,6 +226,8 @@ contains
                 end do
             end do
         end do
+
+       ! print *,minPI,minDistance
 
     end subroutine CalculateForces
 
@@ -267,9 +289,7 @@ contains
             do while (removedParticlesCell%AreThereMoreParticles())
                 currentDeletedParticle => removedParticlesCell%CurrentValue()
                 movedToCellCoordinates = g%ParticleCellCoordinatesByPosition(currentDeletedParticle%Position)
-
                 call g%RebaseParticlePosition(currentDeletedParticle)
-
                 movedToCell => g%GetCell(movedToCellCoordinates(1),movedToCellCoordinates(2),movedToCellCoordinates(3))
 
                 call movedToCell%AddParticle(currentDeletedParticle)
@@ -302,60 +322,48 @@ contains
 
     end subroutine CalculateVelocitiesIterator
 
-    subroutine ScaleVelocities(this,step)
+    subroutine ScaleVelocities(this,step,time)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         integer :: step,arraySize,i
+        real :: time
 
-        type(ThermostatPlan),pointer :: plan
+        class(ThermostatPlanBase),pointer :: plan
 
         real :: beta,gammaParam
         real :: startTemp,endTemp,rate
 
-        real :: T,Tafter
+        real :: T,TAfter
 
-        if (mod(step,50) /= 0) return
+        plan => this%Configurations%ThermostatPlans%CurrentThermostatPlan()
+
+        if (mod(step,plan%ApplyRate) /= 0) return
+
+        if ((plan%IsFinished(T,time) == .true. ) .and. (this%Configurations%ThermostatPlans%IsLastPlan() /= .true. )) then
+            call this%Configurations%ThermostatPlans%Next()
+            plan => this%Configurations%ThermostatPlans%CurrentThermostatPlan()
+            print *,"Next Thermostat"
+        end if
 
         T = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
 
-
-
-        plan => this%Configurations%ThermostatPlans%CurrentThermostatPlan()
-        startTemp = plan%StartTemp
-        endTemp = plan%EndTemp
-        rate = plan%Rate
-
-        if ( ( T .gt. endTemp ) .and. (this%Configurations%ThermostatPlans%IsLastPlan() /= .true. ) ) then
-            call this%Configurations%ThermostatPlans%Next()
-            print *,"Next Plan"
-        end if
-
-        if (plan%MultiplyRateByTimeStep == .true. ) then
-            gammaParam = rate*this%Configurations%TimeStep/this%GlobalConfigurations%Reducers%Time
-        else
-            gammaParam = rate
-        end if
-
-        beta = sqrt(1.0+gammaParam*(endTemp/T-1))
+        beta = plan%CalculateBeta(T,time)
 
         arraySize = size(this%ParticlePointers)
-
 
         do i=1,arraySize
             this%ParticlePointers(i)%p%Velocity = this%ParticlePointers(i)%p%Velocity*beta
         end do
 
-        Tafter = CalculateTemperature(this%ParticlePointers,this%GlobalConfigurations%Reducers%Energy)
 
-        print *,"beta:",beta,"T after:",Tafter,"step:",step
 
     end subroutine
 
-
-
-
-    subroutine AnalyzeData(this)
+    subroutine AnalyzeData(this,step)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         class(DataAnalyzerBase),pointer :: currentAnalyzer
+        integer :: step
+
+        if (mod(step,50) /= 0) return
 
         call this%DataAnalyzers%Reset()
 
@@ -373,7 +381,7 @@ contains
     subroutine LoadIntegraionConfigurations(this,simConfigurations)
         class(StandardVelocityVarlentIntegrationRunner) :: this
         type(ConfigurationsDTO) :: simConfigurations
-        type(ThermostatPlan),pointer :: plan
+        class(ThermostatPlanBase),pointer :: plan
 
         this%Configurations%TimeStep = simConfigurations%SimulationConfigurations%TimeStep
         this%Configurations%EndOfSimulation = simConfigurations%SimulationConfigurations%EndOfSimulation

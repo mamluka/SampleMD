@@ -7,27 +7,25 @@ module lib_GridAlgorithms
 
 contains
 
-    function DetermineSimulationBoxCoordinates(particlePointers,rc) result(box)
-        type(ParticlePointer),allocatable :: particlePointers(:)
-        real :: particlePosition(size(particlePointers),3)
+    function DetermineSimulationBoxCoordinates(particles) result(box)
+        type(Particle),allocatable :: particles(:)
+        real :: particlePosition(size(particles),3)
         real :: box(8,3)
-
-        real :: rc
 
         integer :: i,xPosition=1,yPosition=2,zPosition=3
 
-        do i=1,size(particlePointers)
-            particlePosition(i,:) =  particlePointers(i)%p%Position
+        do i=1,size(particles)
+            particlePosition(i,:) =  particles(i)%Position
         end do
 
-        box(1:4,xPosition) = minval(particlePosition(:,xPosition))-rc/2.0
-        box(5:8,xPosition) = maxval(particlePosition(:,xPosition))+rc/2.0
+        box(1:4,xPosition) = minval(particlePosition(:,xPosition))
+        box(5:8,xPosition) = maxval(particlePosition(:,xPosition))
 
-        box((/1,4,5,8/),yPosition) = minval(particlePosition(:,yPosition))-rc/2.0
-        box((/2,3,6,7/),yPosition) = maxval(particlePosition(:,yPosition))+rc/2.0
+        box((/1,4,5,8/),yPosition) = minval(particlePosition(:,yPosition))
+        box((/2,3,6,7/),yPosition) = maxval(particlePosition(:,yPosition))
 
-        box((/1,2,5,6/),zPosition) = minval(particlePosition(:,zPosition))-rc/2.0
-        box((/3,4,7,8/),zPosition) = maxval(particlePosition(:,zPosition))+rc/2.0
+        box((/1,2,5,6/),zPosition) = minval(particlePosition(:,zPosition))
+        box((/3,4,7,8/),zPosition) = maxval(particlePosition(:,zPosition))
 
     end function DetermineSimulationBoxCoordinates
 
@@ -41,9 +39,9 @@ contains
 
     end function DetermineSimulationBoxDimensions
 
-    subroutine AllocateGridByCutOffRadiiWithGhostCells(cellContainers,rc,box)
+    subroutine AllocateGridByCutOffRadiiWithGhostCells(cellContainers,gridPartitioningLength,box)
         type(CellContainer),allocatable,intent(inout) :: CellContainers(:,:,:)
-        real ,intent(in) :: rc
+        real ,intent(in) :: gridPartitioningLength
         real ,intent(in):: box(8,3)
         real :: boxsize(3)
         integer :: numberOfXCells,numberOfYCells,numberOfZCells
@@ -54,25 +52,32 @@ contains
 
         boxsize=DetermineSimulationBoxDimensions(box)
 
-        numberOfXCells = ceiling(boxsize(1)/rc)+ghostCellsAddition
-        numberOfYCells = ceiling(boxsize(2)/rc)+ghostCellsAddition
-        numberOfZCells = ceiling(boxsize(3)/rc)+ghostCellsAddition
+        numberOfXCells = ceiling(boxsize(1)/gridPartitioningLength)+ghostCellsAddition
+        numberOfYCells = ceiling(boxsize(2)/gridPartitioningLength)+ghostCellsAddition
+        numberOfZCells = ceiling(boxsize(3)/gridPartitioningLength)+ghostCellsAddition
 
         allocate(cellContainers(numberOfXCells,numberOfYCells,numberOfZCells))
 
+        do I=2,numberOfXCells
+            do J=2,numberOfXCells
+                do K=2,numberOfXCells
+                    call cellContainers(I,J,K)%CreateHere(I,J,K)
+                end do
+            end do
+        end do
 
 
 
 
     end subroutine
 
-    subroutine DistributeParticlesToGrid(cellContainers,particlePointers,rc,box,gridSize)
+    subroutine DistributeParticlesToGrid(cellContainers,particlePointers,gridPartitioningLength,box,gridSize,boxSize)
         type(CellContainer),allocatable,intent(inout) :: cellContainers(:,:,:)
-        real ,intent(in) :: rc
+        real ,intent(in) :: gridPartitioningLength
         type(ParticlePointer),allocatable,target :: particlePointers(:)
         real :: box(8,3)
         integer :: gridSize(3)
-
+        real :: boxsize(3)
 
         type(Cell),pointer :: currentCell
         type(Particle),pointer ::particlePointer
@@ -84,19 +89,21 @@ contains
         integer :: InnerMaxX,InnerMinX,InnerMaxY,InnerMinY,InnerMaxZ,InnerMinZ
         integer :: OuterMaxX,OuterMinX,OuterMaxY,OuterMinY,OuterMaxZ,OuterMinZ
 
-        open(unit=98,file="cellsIndex.data")
+        real :: xVector,yVector,zVector
 
         do i=1,size(particlePointers)
-            xIndex = ceiling(abs(box(1,1)-particlePointers(i)%p%Position(1))/rc)
-            yIndex = ceiling(abs(box(1,2)-particlePointers(i)%p%Position(2))/rc)
-            zIndex = ceiling(abs(box(1,3)-particlePointers(i)%p%Position(3))/rc)
+
+            xVector = abs(box(1,1)-particlePointers(i)%p%Position(1))
+            yVector = abs(box(1,2)-particlePointers(i)%p%Position(2))
+            zVector = abs(box(1,3)-particlePointers(i)%p%Position(3))
+
+            xIndex = ceiling((xVector)/gridPartitioningLength)
+            yIndex = ceiling((yVector)/gridPartitioningLength)
+            zIndex = ceiling((zVector)/gridPartitioningLength)
 
             if (xIndex == 0)  xIndex=1
             if (yIndex == 0)  yIndex=1
             if (zIndex == 0)  zIndex=1
-
-
-            write (98,*),xIndex,yIndex,zIndex
 
             particlePointer => particlePointers(i)%p
 
@@ -111,12 +118,6 @@ contains
             currentCell => null()
 
         end do
-
-
-
-
-
-        close(98)
 
         InnerMaxX=gridSize(1)+1
         InnerMinX=2
@@ -229,6 +230,7 @@ contains
         cellContainers(OuterMaxX,OuterMaxY,OuterMaxZ)%Ghost = .true.
 
     end subroutine DistributeParticlesToGrid
+
 
 
 
